@@ -1,0 +1,51 @@
+{
+  "date": "2026-09-11T15:58:12.060Z",
+  "node": "v26.7.0",
+  "cpu": "Apple M1",
+  "sourceSha256": "a615a4160e5c3ea263aafaf192faaf4dbfa38664dd3945abdcffddf95d3690a4",
+  "scope": "CPU only, 36 chips, 120 frames at 60 Hz; shake at frames 0 and 60. Rate variants are research probes, not validated replacements.",
+  "variants": [
+    {
+      "hz": 720,
+      "stepsPerFrame": 12,
+      "medianMs": 103.97,
+      "p95Ms": 133.4,
+      "maxMs": 151.38,
+      "maximumEscapedVerticesAtFrameBoundary": 0
+    },
+    {
+      "hz": 240,
+      "stepsPerFrame": 4,
+      "medianMs": 40.01,
+      "p95Ms": 52.72,
+      "maxMs": 59.11,
+      "maximumEscapedVerticesAtFrameBoundary": 0
+    },
+    {
+      "hz": 120,
+      "stepsPerFrame": 2,
+      "medianMs": 20.97,
+      "p95Ms": 31.7,
+      "maxMs": 66.38,
+      "maximumEscapedVerticesAtFrameBoundary": 0
+    },
+    {
+      "hz": 120,
+      "proxy": "prism",
+      "stepsPerFrame": 2,
+      "medianMs": 6.79,
+      "p95Ms": 11.54,
+      "maxMs": 18.2,
+      "maximumEscapedVerticesAtFrameBoundary": 0
+    },
+    {
+      "hz": 120,
+      "proxy": "cuboid",
+      "stepsPerFrame": 2,
+      "medianMs": 4.44,
+      "p95Ms": 7.46,
+      "maxMs": 13.64,
+      "maximumEscapedVerticesAtFrameBoundary": 0
+    }
+  ]
+}
