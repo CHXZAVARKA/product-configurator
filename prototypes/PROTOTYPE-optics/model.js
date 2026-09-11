@@ -16,9 +16,13 @@ export function mirrorRay(origin, direction, limit=64) {
  return {position:p,direction:d,bounces,complete:false};
 }
 function rng(seed){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
-export function makeShard(sx,sy,h){
- const vertices=[[-sx,-.7*sy,-h],[sx,-.7*sy,-h],[0,sy,-h],[-sx,-.7*sy,h],[sx,-.7*sy,h],[0,sy,h]].map(v=>new C.Vec3(...v));
- const faces=[[2,1,0],[3,4,5],[0,1,4,3],[1,2,5,4],[2,0,3,5]];
+export function makeShard(sx,sy,h,variant=0){
+ // Convex, irregular five-sided chip. Bevels are shared by physics and ray optics.
+ const profiles=[ [[-1,-.5],[.35,-.9],[1,-.15],[.55,.8],[-.65,1]], [[-.9,-.8],[.55,-.65],[1,.4],[-.15,1],[-1,.2]], [[-.8,-1],[.7,-.55],[1,.15],[.2,.95],[-1,.55]] ];
+ const polygon=profiles[variant%3],vertices=[];
+ for(const [scale,z] of [[.94,-h],[1,0],[.92,h]])for(const [x,y] of polygon)vertices.push(new C.Vec3(x*sx*scale,y*sy*scale,z));
+ const faces=[[4,3,2,1,0],[10,11,12,13,14]];
+ for(let ring=0;ring<2;ring++)for(let i=0;i<5;i++){const j=(i+1)%5;faces.push([ring*5+i,ring*5+j,(ring+1)*5+j,(ring+1)*5+i]);}
  return new C.ConvexPolyhedron({vertices,faces});
 }
 export class Filling {
@@ -33,11 +37,11 @@ export class Filling {
   solid.addShape(new C.Box(new C.Vec3(3,3,.2)),new C.Vec3(0,0,this.depth/10+.2));
   for(let i=0;i<48;i++){const a=i*Math.PI*2/48,q=new C.Quaternion();q.setFromAxisAngle(new C.Vec3(0,0,1),a);solid.addShape(new C.Box(new C.Vec3(.2,.16,this.depth/20+.1)),new C.Vec3(Math.cos(a)*2.08,Math.sin(a)*2.08,this.depth/20),q);}
   this.world.addBody(solid);const rand=rng(seed);this.pieces=[];
-  const slots=[];for(let y=-12;y<=12;y+=6)for(let x=-12;x<=12;x+=6)if(Math.hypot(x,y)<15)slots.push([x,y]);
+  const slots=[];for(let y=-9;y<=9;y+=9)for(let x=-9;x<=9;x+=9)if(Math.hypot(x,y)<14)slots.push([x,y]);
   for(let i=0;i<count;i++){
-   const sx=1.65+rand()*.7,sy=1.8+rand()*.55,h=.48+rand()*.17;
-   const body=new C.Body({mass:.01,shape:makeShard(sx/10,sy/10,h/10),linearDamping:.15,angularDamping:.35,sleepSpeedLimit:.8,sleepTimeLimit:.7});
-   const [x,y]=slots[i%slots.length];body.position.set(x/10,y/10,.16+Math.floor(i/slots.length)*.32);
+   const sx=3.7+rand()*.7,sy=3.4+rand()*1.0,h=.62+rand()*.22;
+   const body=new C.Body({mass:.01,shape:makeShard(sx/10,sy/10,h/10,i),linearDamping:.15,angularDamping:.35,sleepSpeedLimit:.8,sleepTimeLimit:.7});
+   const [x,y]=slots[i%slots.length];body.position.set(x/10,y/10,.12+Math.floor(i/slots.length)*.25);
    body.quaternion.setFromAxisAngle(new C.Vec3(0,0,1),rand()*Math.PI*2);
    this.world.addBody(body);this.pieces.push({body,sx,sy,h,color:i%4,anchor:body.position.clone(),anchorQ:body.quaternion.clone(),quiet:0});
   }

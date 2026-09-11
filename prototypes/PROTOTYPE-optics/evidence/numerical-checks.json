@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11T14:13:58.613Z",
+  "generated": "2026-09-11T15:31:05.148Z",
   "physics": [
     {
       "count": 0,
@@ -42,8 +42,8 @@
       "pausePreservesPositions": true,
       "state": {
         "count": 24,
-        "moving": 0,
-        "energy": 2.2257708880395413e-9,
+        "moving": 1,
+        "energy": 0.14091996030831933,
         "escaped": 0,
         "tick": 7200,
         "paused": true,
@@ -73,7 +73,7 @@
   "settling": [
     {
       "count": 12,
-      "settledAfterSeconds": 0.72,
+      "settledAfterSeconds": 0.74,
       "restingState": {
         "moving": 0,
         "energy": 0,

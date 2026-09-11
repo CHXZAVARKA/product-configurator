@@ -1,0 +1,142 @@
+{
+ "generated": "2026-09-11T15:31:05.148Z",
+ "physics": [
+  {
+   "count": 0,
+   "seconds": 10,
+   "maximumEscapedVertices": 0,
+   "pausePreservesPositions": true,
+   "state": {
+    "count": 0,
+    "moving": 0,
+    "energy": 0,
+    "escaped": 0,
+    "tick": 7200,
+    "paused": true,
+    "shaking": false,
+    "roll": 300,
+    "tilt": 150
+   }
+  },
+  {
+   "count": 12,
+   "seconds": 10,
+   "maximumEscapedVertices": 0,
+   "pausePreservesPositions": true,
+   "state": {
+    "count": 12,
+    "moving": 0,
+    "energy": 0,
+    "escaped": 0,
+    "tick": 7200,
+    "paused": true,
+    "shaking": false,
+    "roll": 300,
+    "tilt": 150
+   }
+  },
+  {
+   "count": 24,
+   "seconds": 10,
+   "maximumEscapedVertices": 0,
+   "pausePreservesPositions": true,
+   "state": {
+    "count": 24,
+    "moving": 1,
+    "energy": 0.14091996030831933,
+    "escaped": 0,
+    "tick": 7200,
+    "paused": true,
+    "shaking": false,
+    "roll": 300,
+    "tilt": 150
+   }
+  },
+  {
+   "count": 36,
+   "seconds": 10,
+   "maximumEscapedVertices": 0,
+   "pausePreservesPositions": true,
+   "state": {
+    "count": 36,
+    "moving": 0,
+    "energy": 0,
+    "escaped": 0,
+    "tick": 7200,
+    "paused": true,
+    "shaking": false,
+    "roll": 300,
+    "tilt": 150
+   }
+  }
+ ],
+ "settling": [
+  {
+   "count": 12,
+   "settledAfterSeconds": 0.74,
+   "restingState": {
+    "moving": 0,
+    "energy": 0,
+    "escaped": 0,
+    "sleeping": 12
+   },
+   "positionsFrozenOneMoreSecond": true,
+   "wakesOnShake": true,
+   "movingPeakAfterShake": 12,
+   "movingQuarterSecondAfterShake": 12,
+   "wakesOnOrientation": true,
+   "escapedAfterWake": 0
+  },
+  {
+   "count": 24,
+   "settledAfterSeconds": 1,
+   "restingState": {
+    "moving": 0,
+    "energy": 0,
+    "escaped": 0,
+    "sleeping": 24
+   },
+   "positionsFrozenOneMoreSecond": true,
+   "wakesOnShake": true,
+   "movingPeakAfterShake": 24,
+   "movingQuarterSecondAfterShake": 24,
+   "wakesOnOrientation": true,
+   "escapedAfterWake": 0
+  },
+  {
+   "count": 36,
+   "settledAfterSeconds": 1,
+   "restingState": {
+    "moving": 0,
+    "energy": 0,
+    "escaped": 0,
+    "sleeping": 36
+   },
+   "positionsFrozenOneMoreSecond": true,
+   "wakesOnShake": true,
+   "movingPeakAfterShake": 36,
+   "movingQuarterSecondAfterShake": 36,
+   "wakesOnOrientation": true,
+   "escapedAfterWake": 0
+  }
+ ],
+ "rayCheck": {
+  "rays": 441,
+  "invalid": 0,
+  "maxBounces": 18,
+  "axis": {
+   "position": [
+    0,
+    0,
+    12
+   ],
+   "direction": [
+    0,
+    0,
+    -1
+   ],
+   "bounces": 0,
+   "complete": true
+  }
+ }
+}
