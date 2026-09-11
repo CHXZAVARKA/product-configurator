@@ -1,0 +1,202 @@
+[
+  {
+    "file": "glazok - elving.step",
+    "sha256": "2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0",
+    "solids": 1,
+    "faces": 20757,
+    "surfaceTypes": {
+      "Plane": 20757
+    },
+    "boundsMm": [
+      [
+        -20.779303199766357,
+        20.913192146303103
+      ],
+      [
+        -20.7499992102385,
+        20.7499992102385
+      ],
+      [
+        -17.653710126876838,
+        -0.49999999999995026
+      ]
+    ],
+    "volumeMm3": 16478.45405733847,
+    "cylinderRadiiMm": []
+  },
+  {
+    "file": "glazok - glazok.step",
+    "sha256": "9058ec38e187802fc1ec109b9daf34484c8717cfca6d530691acfd2f8cc28399",
+    "solids": 1,
+    "faces": 20,
+    "surfaceTypes": {
+      "Cylinder": 4,
+      "Plane": 4,
+      "Toroid": 6,
+      "Cone": 6
+    },
+    "boundsMm": [
+      [
+        -27.05980500730985,
+        27.05980500730985
+      ],
+      [
+        -27.05980500730985,
+        27.05980500730985
+      ],
+      [
+        195.0,
+        208.0
+      ]
+    ],
+    "volumeMm3": 14053.277775016448,
+    "cylinderRadiiMm": [
+      5.5,
+      15.0,
+      20.375,
+      21.375
+    ]
+  },
+  {
+    "file": "glazok - krishka.step",
+    "sha256": "629a83f443ac6a1264f93bb6bdb4c9e7c947634047721ff290678607af064106",
+    "solids": 1,
+    "faces": 10,
+    "surfaceTypes": {
+      "Toroid": 2,
+      "Cone": 2,
+      "Plane": 3,
+      "Cylinder": 3
+    },
+    "boundsMm": [
+      [
+        -27.05980500730985,
+        27.05980500730985
+      ],
+      [
+        -27.05980500730985,
+        27.05980500730985
+      ],
+      [
+        -10.0,
+        3.000000000000001
+      ]
+    ],
+    "volumeMm3": 8450.360687865059,
+    "cylinderRadiiMm": [
+      14.4,
+      20.375,
+      21.375
+    ]
+  },
+  {
+    "file": "glazok - nasipka.step",
+    "sha256": "2548651eb1b3d874eeed4f78af5dc65c3183a9464af7be577bac67639934e5f3",
+    "solids": 1,
+    "faces": 3,
+    "surfaceTypes": {
+      "Cylinder": 1,
+      "Plane": 2
+    },
+    "boundsMm": [
+      [
+        -19.0,
+        19.0
+      ],
+      [
+        -19.0,
+        19.0
+      ],
+      [
+        10.0,
+        12.0
+      ]
+    ],
+    "volumeMm3": 2268.2298958918304,
+    "cylinderRadiiMm": [
+      19.0
+    ]
+  },
+  {
+    "file": "glazok - prizma.step",
+    "sha256": "c5394aac1cc65153de2350c2800cf3bdf0f246611adfc7dc60e47a2f4ec1bdda",
+    "solids": 1,
+    "faces": 8,
+    "surfaceTypes": {
+      "Plane": 8
+    },
+    "boundsMm": [
+      [
+        -11.500000000000004,
+        11.5
+      ],
+      [
+        -6.63952809568071,
+        13.2790561913614
+      ],
+      [
+        12.0,
+        192.0
+      ]
+    ],
+    "volumeMm3": 5976.173140978127,
+    "cylinderRadiiMm": []
+  },
+  {
+    "file": "glazok - steklo.step",
+    "sha256": "30c7e80e3543d34659770af528d1f471672553bf411a19ac5d7f1c873d740cc3",
+    "solids": 1,
+    "faces": 3,
+    "surfaceTypes": {
+      "Cylinder": 1,
+      "Plane": 2
+    },
+    "boundsMm": [
+      [
+        -18.0,
+        18.0
+      ],
+      [
+        -18.0,
+        18.0
+      ],
+      [
+        192.0,
+        195.0
+      ]
+    ],
+    "volumeMm3": 3053.628059289279,
+    "cylinderRadiiMm": [
+      18.0
+    ]
+  },
+  {
+    "file": "glazok - trubka.step",
+    "sha256": "3d815fd03171d01c8b5ec9bf5603e9df87eeb0505650f416301673c0acfcc554",
+    "solids": 1,
+    "faces": 4,
+    "surfaceTypes": {
+      "Cylinder": 2,
+      "Plane": 2
+    },
+    "boundsMm": [
+      [
+        -20.0,
+        20.0
+      ],
+      [
+        -20.0,
+        20.0
+      ],
+      [
+        -2.0,
+        200.0
+      ]
+    ],
+    "volumeMm3": 24749.4669249804,
+    "cylinderRadiiMm": [
+      19.0,
+      20.0
+    ]
+  }
+]

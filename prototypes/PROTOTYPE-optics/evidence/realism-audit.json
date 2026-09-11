@@ -1,0 +1,36 @@
+{
+  "commit": "45b1bd5",
+  "count": 64,
+  "initialRoundedContacts": {
+    "overlappingPairs": 21,
+    "maximumInitialOverlapMm": 0.06493508815765381
+  },
+  "chamberVolumeMm3": 11103.645074847765,
+  "planarDiameter": {
+    "min": 5.472459983780524,
+    "median": 6.985160554707105,
+    "max": 8.801155421800173
+  },
+  "thickness": {
+    "min": 2.3025021960493177,
+    "median": 2.4615746756317094,
+    "max": 2.596403575548902
+  },
+  "roundedMaxPointSpan": {
+    "min": 6.543149162501077,
+    "median": 8.025394185186288,
+    "max": 9.705618901055159
+  },
+  "roundedSpansOver9Mm": 19,
+  "roundedSpansOver10Mm": 0,
+  "renderVolumeFraction": 0.2588188507930729,
+  "prismVolumeFraction": 0.34791163232298966,
+  "roundedGeometricVolumeFraction": 0.5376073589707452,
+  "nativeReportedVolumeFraction": 0.34791162832307404,
+  "roundedToRenderedVolumeRatio": 2.077156889165563,
+  "notes": [
+    "Sum of individual solid volumes, not a union, jam threshold or spatial free-path measurement.",
+    "Rounded geometric volume uses a convex-prism Minkowski offset formula; native volume may use a different mass-property approximation.",
+    "Max point span over chamber depth restricts some orientations; it does not prove that a piece cannot move."
+  ]
+}
