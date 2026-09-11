@@ -1,0 +1,124 @@
+{
+  "date": "2026-09-11T16:49:05.286Z",
+  "checks": [
+    {
+      "step": "initial settled",
+      "error": "",
+      "stats": {
+        "draws": "240",
+        "fps": "60",
+        "mirrorPasses": "1",
+        "motionDurationMs": "4143",
+        "motionFps": "58",
+        "motionFrames": "240",
+        "p95": "18",
+        "physicsTick": "1920",
+        "settled": "true",
+        "sourcePasses": "240"
+      },
+      "status": "Стёклышки улеглись"
+    },
+    {
+      "step": "example logo in empty eye",
+      "error": "",
+      "logo": "Пример F.png · только в этом браузере",
+      "stats": {
+        "draws": "246",
+        "fps": "60",
+        "mirrorPasses": "1",
+        "motionDurationMs": "4143",
+        "motionFps": "58",
+        "motionFrames": "240",
+        "p95": "18",
+        "physicsTick": "0",
+        "settled": "false",
+        "sourcePasses": "246"
+      }
+    },
+    {
+      "step": "empty eye after FOV change",
+      "logo": "Логотип не загружен",
+      "stats": {
+        "draws": "248",
+        "fps": "60",
+        "mirrorPasses": "2",
+        "motionDurationMs": "4143",
+        "motionFps": "58",
+        "motionFrames": "240",
+        "p95": "18",
+        "physicsTick": "0",
+        "settled": "false",
+        "sourcePasses": "248"
+      },
+      "status": "Камера пуста"
+    },
+    {
+      "step": "paused first",
+      "stats": {
+        "draws": "297",
+        "fps": "60",
+        "mirrorPasses": "3",
+        "motionDurationMs": "850",
+        "motionFps": "56",
+        "motionFrames": "48",
+        "p95": "18",
+        "physicsTick": "406",
+        "settled": "false",
+        "sourcePasses": "297"
+      },
+      "status": "На паузе"
+    },
+    {
+      "step": "paused later",
+      "stats": {
+        "draws": "297",
+        "fps": "60",
+        "mirrorPasses": "3",
+        "motionDurationMs": "850",
+        "motionFps": "56",
+        "motionFrames": "48",
+        "p95": "17",
+        "physicsTick": "406",
+        "settled": "false",
+        "sourcePasses": "297"
+      },
+      "status": "На паузе"
+    },
+    {
+      "step": "resumed and settled",
+      "error": "",
+      "stats": {
+        "draws": "401",
+        "fps": "60",
+        "mirrorPasses": "3",
+        "motionDurationMs": "1733",
+        "motionFps": "60",
+        "motionFrames": "104",
+        "p95": "18",
+        "physicsTick": "1230",
+        "settled": "true",
+        "sourcePasses": "401"
+      },
+      "status": "Стёклышки улеглись"
+    },
+    {
+      "step": "idle later",
+      "error": "",
+      "stats": {
+        "draws": "401",
+        "fps": "60",
+        "mirrorPasses": "3",
+        "motionDurationMs": "1733",
+        "motionFps": "60",
+        "motionFrames": "104",
+        "p95": "17",
+        "physicsTick": "1230",
+        "settled": "true",
+        "sourcePasses": "401"
+      },
+      "status": "Стёклышки улеглись"
+    }
+  ],
+  "freezeAssertionsPassed": true,
+  "shaderErrors": []
+}

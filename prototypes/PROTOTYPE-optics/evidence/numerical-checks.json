@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11T15:31:05.148Z",
+  "generated": "2026-09-11T16:43:05.040Z",
   "physics": [
     {
       "count": 0,
@@ -11,11 +11,11 @@
         "moving": 0,
         "energy": 0,
         "escaped": 0,
-        "tick": 7200,
+        "tick": 2400,
         "paused": true,
         "shaking": false,
-        "roll": 300,
-        "tilt": 150
+        "roll": 288,
+        "tilt": 144
       }
     },
     {
@@ -28,11 +28,11 @@
         "moving": 0,
         "energy": 0,
         "escaped": 0,
-        "tick": 7200,
+        "tick": 2880,
         "paused": true,
         "shaking": false,
-        "roll": 300,
-        "tilt": 150
+        "roll": 288,
+        "tilt": 144
       }
     },
     {
@@ -42,14 +42,14 @@
       "pausePreservesPositions": true,
       "state": {
         "count": 24,
-        "moving": 1,
-        "energy": 0.14091996030831933,
+        "moving": 4,
+        "energy": 38.53160158901322,
         "escaped": 0,
-        "tick": 7200,
+        "tick": 4320,
         "paused": true,
         "shaking": false,
-        "roll": 300,
-        "tilt": 150
+        "roll": 288,
+        "tilt": 144
       }
     },
     {
@@ -62,18 +62,18 @@
         "moving": 0,
         "energy": 0,
         "escaped": 0,
-        "tick": 7200,
+        "tick": 3840,
         "paused": true,
         "shaking": false,
-        "roll": 300,
-        "tilt": 150
+        "roll": 288,
+        "tilt": 144
       }
     }
   ],
   "settling": [
     {
       "count": 12,
-      "settledAfterSeconds": 0.74,
+      "settledAfterSeconds": 0.75,
       "restingState": {
         "moving": 0,
         "energy": 0,
@@ -81,6 +81,7 @@
         "sleeping": 12
       },
       "positionsFrozenOneMoreSecond": true,
+      "worldDidNotStepWhileFrozen": true,
       "wakesOnShake": true,
       "movingPeakAfterShake": 12,
       "movingQuarterSecondAfterShake": 12,
@@ -89,7 +90,7 @@
     },
     {
       "count": 24,
-      "settledAfterSeconds": 1,
+      "settledAfterSeconds": 0.75,
       "restingState": {
         "moving": 0,
         "energy": 0,
@@ -97,6 +98,7 @@
         "sleeping": 24
       },
       "positionsFrozenOneMoreSecond": true,
+      "worldDidNotStepWhileFrozen": true,
       "wakesOnShake": true,
       "movingPeakAfterShake": 24,
       "movingQuarterSecondAfterShake": 24,
@@ -105,7 +107,7 @@
     },
     {
       "count": 36,
-      "settledAfterSeconds": 1,
+      "settledAfterSeconds": 0.75,
       "restingState": {
         "moving": 0,
         "energy": 0,
@@ -113,6 +115,7 @@
         "sleeping": 36
       },
       "positionsFrozenOneMoreSecond": true,
+      "worldDidNotStepWhileFrozen": true,
       "wakesOnShake": true,
       "movingPeakAfterShake": 36,
       "movingQuarterSecondAfterShake": 36,

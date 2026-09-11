@@ -1,0 +1,28 @@
+{
+  "generated": "2026-09-11T16:48:11.580Z",
+  "hz": 480,
+  "method": "Separating axes: face normals and edge cross-products, 36 chips, three seeds, eight seconds of shaking/tilt then eight seconds to settle.",
+  "rows": [
+    {
+      "seed": 71,
+      "maxDynamicPenetrationMm": 0.475,
+      "restingPenetrationMm": 0.041,
+      "escaped": 0,
+      "settled": true
+    },
+    {
+      "seed": 107,
+      "maxDynamicPenetrationMm": 0.344,
+      "restingPenetrationMm": 0.04,
+      "escaped": 0,
+      "settled": true
+    },
+    {
+      "seed": 213,
+      "maxDynamicPenetrationMm": 0.257,
+      "restingPenetrationMm": 0.03,
+      "escaped": 0,
+      "settled": true
+    }
+  ]
+}

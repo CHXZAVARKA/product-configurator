@@ -2,7 +2,9 @@
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import os from 'node:os';
-const modelURL=new URL('../model.js',import.meta.url), original=readFileSync(modelURL,'utf8');
+import {execFileSync} from 'node:child_process';
+// Historical baseline, pinned so future model edits cannot silently relabel these probes.
+const original=execFileSync('git',['show','f4dc7de:prototypes/PROTOTYPE-optics/model.js'],{cwd:new URL('..',import.meta.url),encoding:'utf8'});
 const result={date:new Date().toISOString(),node:process.version,cpu:os.cpus()[0].model,sourceSha256:createHash('sha256').update(original).digest('hex'),scope:'CPU only, 36 chips, 120 frames at 60 Hz; shake at frames 0 and 60. Rate variants are research probes, not validated replacements.',variants:[]};
 const proxiesOnly=process.argv.includes('--proxies-only');
 if(proxiesOnly)result.variants=JSON.parse(readFileSync(new URL('./physics-performance.json',import.meta.url),'utf8')).variants.filter(v=>!v.proxy);

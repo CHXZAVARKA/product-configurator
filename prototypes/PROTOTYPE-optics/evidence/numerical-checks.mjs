@@ -1,13 +1,14 @@
 // PROTOTYPE: headless checks of model.js; regenerates numerical-checks.json.
 // Run from this folder: node evidence/numerical-checks.mjs
+import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-const src = readFileSync('model.js', 'utf8').replace("'cannon-es'", JSON.stringify(new URL('../vendor/cannon-es.js', import.meta.url).href));
-const { Filling, mirrorRay, NORMALS, OPTICS } = await import('data:text/javascript;base64,' + Buffer.from(src).toString('base64'));
+const src = readFileSync('model.js', 'utf8').replace("'cannon-es'", JSON.stringify(new URL('../vendor/cannon-es.js', import.meta.url).href)).replace("'rapier'", JSON.stringify(new URL('../vendor/rapier.js', import.meta.url).href));
+const { Filling, mirrorRay, NORMALS, OPTICS, PHYSICS_HZ } = await import('data:text/javascript;base64,' + Buffer.from(src).toString('base64'));
 const SLEEPING = 2;
 const results = [];
 for (const count of [0, 12, 24, 36]) {
  const f = new Filling(count); let escaped = 0;
- for (let i = 0; i < 7200; i++) { if (i % 1200 === 0) { f.setOrientation(i / 20, (i / 40) % 180); f.shake(); } f.step(); escaped = Math.max(escaped, f.state().escaped); }
+ for (let i = 0; i < PHYSICS_HZ * 10; i++) { if (i % (PHYSICS_HZ * 2) === 0) { f.setOrientation(i * 36 / PHYSICS_HZ, (i * 18 / PHYSICS_HZ) % 180); f.shake(); } f.step(); escaped = Math.max(escaped, f.state().escaped); }
  const before = JSON.stringify(f.pieces.map(p => p.body.position));
  f.paused = true; for (let i = 0; i < 100; i++) f.step();
  results.push({ count, seconds: 10, maximumEscapedVertices: escaped, pausePreservesPositions: before === JSON.stringify(f.pieces.map(p => p.body.position)), state: f.state() });
@@ -17,17 +18,17 @@ const settle = [];
 for (const count of [12, 24, 36]) {
  const f = new Filling(count);
  let settledAt = null;
- for (let i = 0; i < 10800; i++) { f.step(); if (settledAt === null && f.pieces.every(p => p.body.sleepState === SLEEPING)) settledAt = +(i / 720).toFixed(2); }
- const rest = f.state();
+ for (let i = 0; i < PHYSICS_HZ * 15; i++) { f.step(); if (settledAt === null && f.pieces.every(p => p.body.sleepState === SLEEPING)) settledAt = +(i / PHYSICS_HZ).toFixed(2); }
+ const rest = f.state(), sleeping=f.pieces.filter(p=>p.body.sleepState===SLEEPING).length, frozenTick=f.tick;
  const frozen = JSON.stringify(f.pieces.map(p => p.body.position));
- for (let i = 0; i < 720; i++) f.step();
- const stillFrozen = frozen === JSON.stringify(f.pieces.map(p => p.body.position));
+ for (let i = 0; i < PHYSICS_HZ; i++) f.step();
+ const stillFrozen = frozen === JSON.stringify(f.pieces.map(p => p.body.position)), worldDidNotStepWhileFrozen=f.tick===frozenTick;
  // A shake adds ±10 cm/s; on a level floor friction stops sliding within ~0.05 s, so read the peak.
- let shakePeak = 0; f.shake(); for (let i = 0; i < 180; i++) { f.step(); shakePeak = Math.max(shakePeak, f.state().moving); }
+ let shakePeak = 0; f.shake(); for (let i = 0; i < PHYSICS_HZ / 4; i++) { f.step(); shakePeak = Math.max(shakePeak, f.state().moving); }
  const afterShake = f.state();
- f.setOrientation(90, 80); for (let i = 0; i < 180; i++) f.step();
+ f.setOrientation(90, 80); for (let i = 0; i < PHYSICS_HZ / 4; i++) f.step();
  const afterTurn = f.state();
- settle.push({ count, settledAfterSeconds: settledAt, restingState: { moving: rest.moving, energy: rest.energy, escaped: rest.escaped, sleeping: f.pieces.length && count }, positionsFrozenOneMoreSecond: stillFrozen, wakesOnShake: shakePeak > 0, movingPeakAfterShake: shakePeak, movingQuarterSecondAfterShake: afterShake.moving, wakesOnOrientation: afterTurn.moving > 0, escapedAfterWake: Math.max(afterShake.escaped, afterTurn.escaped) });
+ settle.push({ count, settledAfterSeconds: settledAt, restingState: { moving: rest.moving, energy: rest.energy, escaped: rest.escaped, sleeping }, positionsFrozenOneMoreSecond: stillFrozen, worldDidNotStepWhileFrozen, wakesOnShake: shakePeak > 0, movingPeakAfterShake: shakePeak, movingQuarterSecondAfterShake: afterShake.moving, wakesOnOrientation: afterTurn.moving > 0, escapedAfterWake: Math.max(afterShake.escaped, afterTurn.escaped) });
 }
 let invalid = 0, maxBounces = 0;
 for (let x = -10; x <= 10; x++) for (let y = -10; y <= 10; y++) {
@@ -38,3 +39,7 @@ const rayCheck = { rays: 441, invalid, maxBounces, axis: mirrorRay([0, 0, 192], 
 const report = { generated: new Date().toISOString(), physics: results, settling: settle, rayCheck };
 writeFileSync(new URL('./numerical-checks.json', import.meta.url), JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 1));
+
+assert(results.every(r=>r.maximumEscapedVertices===0&&r.pausePreservesPositions));
+assert(settle.every(r=>r.settledAfterSeconds!==null&&r.restingState.sleeping===r.count&&r.positionsFrozenOneMoreSecond&&r.worldDidNotStepWhileFrozen&&r.wakesOnShake&&r.wakesOnOrientation&&r.escapedAfterWake===0));
+assert.equal(rayCheck.invalid,0);

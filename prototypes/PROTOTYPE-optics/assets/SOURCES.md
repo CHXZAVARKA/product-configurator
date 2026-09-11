@@ -15,3 +15,9 @@
 - [three-gpu-pathtracer](https://github.com/gkjohnson/three-gpu-pathtracer), 0.0.24, MIT.
 - [three-mesh-bvh](https://github.com/gkjohnson/three-mesh-bvh), 0.9.10, MIT.
 - Пакеты закреплены в `tooling/package-lock.json`; лицензии сохранены в `vendor/`.
+
+## Физика текущего быстрого прототипа
+
+- [Rapier JavaScript](https://github.com/dimforge/rapier.js), пакет `@dimforge/rapier3d-compat` **0.19.3**, Apache-2.0. Версия закреплена в `tooling/package-lock.json`, копия ESM с WASM внутри в `vendor/rapier.js`, лицензия в `vendor/RAPIER-LICENSE`.
+- Cannon-es сохранён для геометрии и математического адаптера; расчёт движения выполняет Rapier.
+- Пакеты pathtracer и BVH выше относятся к историческому варианту, в текущий HTML не включаются.
