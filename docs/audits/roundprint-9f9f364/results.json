@@ -1,0 +1,39 @@
+{
+  "revision": "9f9f36476e84405e883c932d4f91f49ec4abd719",
+  "observations": [
+    {
+      "case": "save-twice",
+      "latest": "Second",
+      "storedFiles": [
+        "audit-project.json",
+        "audit-project.meta.json"
+      ],
+      "previousRevisionStored": false
+    },
+    {
+      "case": "uploaded-layer-reference",
+      "persistedAs": "blob URL unchanged; no asset persistence in this path"
+    },
+    {
+      "case": "unauthenticated-read",
+      "result": "full document is returned despite configured publish key"
+    },
+    {
+      "case": "invalid-document",
+      "status": 200,
+      "result": "invalid nested document and share accepted"
+    },
+    {
+      "case": "concurrent-saves",
+      "attempts": 6,
+      "failures": 5,
+      "errors": [
+        "Error: ENOENT: no such file or directory, rename '<scratch>/projects/concurrent.json.52644.tmp' -> '<scratch>/projects/concurrent.json'",
+        "Error: ENOENT: no such file or directory, rename '<scratch>/projects/concurrent.json.52644.tmp' -> '<scratch>/projects/concurrent.json'",
+        "Error: ENOENT: no such file or directory, rename '<scratch>/projects/concurrent.json.52644.tmp' -> '<scratch>/projects/concurrent.json'",
+        "Error: ENOENT: no such file or directory, rename '<scratch>/projects/concurrent.json.52644.tmp' -> '<scratch>/projects/concurrent.json'",
+        "Error: ENOENT: no such file or directory, rename '<scratch>/projects/concurrent.json.52644.tmp' -> '<scratch>/projects/concurrent.json'"
+      ]
+    }
+  ]
+}
