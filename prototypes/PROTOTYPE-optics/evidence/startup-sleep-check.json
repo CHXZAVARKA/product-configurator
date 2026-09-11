@@ -1,0 +1,26 @@
+[
+  {
+    "seed": 71,
+    "settled": true,
+    "seconds": 1.5,
+    "penetrationMm": 0,
+    "stoppedWorld": true,
+    "stoppedPoses": true
+  },
+  {
+    "seed": 107,
+    "settled": true,
+    "seconds": 2.75,
+    "penetrationMm": 0.23088475286885624,
+    "stoppedWorld": true,
+    "stoppedPoses": true
+  },
+  {
+    "seed": 213,
+    "settled": true,
+    "seconds": 1.75,
+    "penetrationMm": 0,
+    "stoppedWorld": true,
+    "stoppedPoses": true
+  }
+]

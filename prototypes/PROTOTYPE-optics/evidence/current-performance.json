@@ -1,11 +1,11 @@
 {
-  "date": "2026-09-11T16:43:05.665Z",
+  "date": "2026-09-11T18:27:37.051Z",
   "node": "v26.7.0",
   "cpu": "Apple M1",
-  "hz": 480,
-  "count": 36,
+  "hz": 240,
+  "count": 96,
   "scope": "CPU physics only, 120 logical frames at 60Hz, shakes at frames 0 and 60",
-  "medianMs": 6.83,
-  "p95Ms": 12.28,
-  "maxMs": 33
+  "medianMs": 12.28,
+  "p95Ms": 16.96,
+  "maxMs": 36.01
 }

@@ -1,0 +1,52 @@
+{
+  "date": "2026-09-11T18:30:39.862Z",
+  "finalRestA": {
+    "error": "",
+    "fps": {
+      "draws": "388",
+      "fps": "60",
+      "mirrorPasses": "1",
+      "motionDurationMs": "2750",
+      "motionFps": "58",
+      "motionFrames": "159",
+      "p95": "18",
+      "physicsTick": "659",
+      "settled": "true",
+      "sourcePasses": "388"
+    },
+    "moving": "Стёклышки улеглись"
+  },
+  "finalRestB": {
+    "error": "",
+    "fps": {
+      "draws": "388",
+      "fps": "60",
+      "mirrorPasses": "1",
+      "motionDurationMs": "2750",
+      "motionFps": "58",
+      "motionFrames": "159",
+      "p95": "18",
+      "physicsTick": "659",
+      "settled": "true",
+      "sourcePasses": "388"
+    },
+    "moving": "Стёклышки улеглись"
+  },
+  "photoFinal": {
+    "canvas": {
+      "draws": "22310",
+      "mode": "live",
+      "playing": "true",
+      "time": "21.0610"
+    },
+    "error": "",
+    "status": "Фотография в движении",
+    "upload": "Фотография с сайта «Красивое стекло» · только в этом браузере"
+  },
+  "notes": [
+    "No shader errors in browser log.",
+    "Relief 0 and 1 compared using example F; backlight 0 tested.",
+    "Photo pause preserved draws=20365 and time=220.7252 between reads.",
+    "Native file selection not automated."
+  ]
+}

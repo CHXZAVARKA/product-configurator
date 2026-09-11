@@ -5,7 +5,7 @@ class PhotoMotion {
  advance(dt){if(this.playing&&this.mode!=='original')this.time+=Math.min(dt,.05)*this.speed;}
 }
 const $=id=>document.getElementById(id),canvas=$('glass'),state=new PhotoMotion(matchMedia('(prefers-reduced-motion: reduce)').matches);
-let dirty=true,last=performance.now(),draws=0,ready=false;
+let dirty=true,last=performance.now(),draws=0,ready=false,photoLabel='Фотография с сайта «Красивое стекло»';
 const gl=canvas.getContext('webgl',{alpha:false,antialias:false,preserveDrawingBuffer:false});
 function fail(message){$('error').hidden=false;$('error').textContent=message;}
 function shader(kind,source){const s=gl.createShader(kind);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
@@ -14,11 +14,11 @@ try {
  const program=gl.createProgram();
  gl.attachShader(program,shader(gl.VERTEX_SHADER,'attribute vec2 position;varying vec2 uv;void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}'));
  gl.attachShader(program,shader(gl.FRAGMENT_SHADER,`
- precision highp float;varying vec2 uv;uniform sampler2D photo;uniform float time,strength,roll,mode;uniform vec2 offset;
+ precision highp float;varying vec2 uv;uniform sampler2D photo;uniform float time,strength,roll,mode;uniform vec2 offset,crop;
  mat2 rotation(float a){return mat2(cos(a),-sin(a),sin(a),cos(a));}
  void main(){
   vec2 p=uv-.5;
-  if(mode>1.5){gl_FragColor=texture2D(photo,uv);return;}
+  if(mode>1.5){gl_FragColor=texture2D(photo,.5+(uv-.5)*crop);return;}
   if(mode>.5){
    // Fold a triangular lattice into one source triangle, including its mirrored copies.
    p=rotation(roll*.45)*p*5.6;
@@ -29,23 +29,37 @@ try {
    p*=.43;
   }else p*=.84;
   float t=time;
-  // Small continuous deformations preserve the photograph's glass detail.
-  vec2 flow=vec2(sin(p.y*9.+t*.71)+.45*sin(p.x*13.-t*.43),cos(p.x*8.-t*.57)+.4*sin(p.y*11.+t*.39));
-  p+=flow*.012*strength;
-  p=rotation(roll+.085*sin(t*.23)*strength)*p;
-  vec2 drift=vec2(sin(t*.19),cos(t*.17)-1.)*.035*strength;
+  // One rigid transform for the whole image: no spatially varying wave.
+  p=rotation(roll+t*.11*strength)*p;
+  vec2 drift=vec2(sin(t*.31),cos(t*.23)-1.)*.09*strength;
   vec2 sampleUV=.5+p+drift+offset*.055;
   // Mirrored wrapping keeps dragging continuous without stretching border pixels.
   sampleUV=1.-abs(mod(sampleUV,2.)-1.);
-  vec3 color=texture2D(photo,sampleUV).rgb;
+  vec3 color=texture2D(photo,.5+(sampleUV-.5)*crop).rgb;
   gl_FragColor=vec4(color,1.);
  }`));
  gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
  const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
  const position=gl.getAttribLocation(program,'position');gl.enableVertexAttribArray(position);gl.vertexAttribPointer(position,2,gl.FLOAT,false,0,0);
- const uniforms=Object.fromEntries(['photo','time','strength','roll','mode','offset'].map(n=>[n,gl.getUniformLocation(program,n)]));
+ const uniforms=Object.fromEntries(['photo','time','strength','roll','mode','offset','crop'].map(n=>[n,gl.getUniformLocation(program,n)]));
  const texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
- const image=new Image();image.onload=()=>{gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,image);ready=true;dirty=true;update();};image.onerror=()=>fail('Не удалось прочитать встроенную фотографию.');image.src=PHOTO;
+ let loadTicket=0;
+ async function loadPhoto(url,label,ticket=++loadTicket){
+  try{const image=new Image();image.src=url;await image.decode();if(ticket!==loadTicket)return;
+   const limit=Math.min(2048,gl.getParameter(gl.MAX_TEXTURE_SIZE)),k=Math.min(1,limit/Math.max(image.width,image.height));
+   const bitmap=document.createElement('canvas');bitmap.width=Math.max(1,Math.round(image.width*k));bitmap.height=Math.max(1,Math.round(image.height*k));
+   const ctx=bitmap.getContext('2d');ctx.fillStyle='#f2e5d2';ctx.fillRect(0,0,bitmap.width,bitmap.height);ctx.drawImage(image,0,0,bitmap.width,bitmap.height);
+   gl.bindTexture(gl.TEXTURE_2D,texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,bitmap);
+   gl.uniform2f(uniforms.crop,Math.min(1,bitmap.height/bitmap.width),Math.min(1,bitmap.width/bitmap.height));
+   photoLabel=label;$('source').src=url;$('photo-credit').hidden=url!==PHOTO;$('upload-status').textContent=label+' · только в этом браузере';$('error').hidden=true;ready=true;state.time=0;state.offset=[0,0];state.roll=0;dirty=true;update();
+  }catch(error){if(ticket===loadTicket)fail('Не удалось прочитать изображение. Выберите PNG, JPEG или WebP.');}
+ }
+ $('upload').onchange=()=>{const file=$('upload').files[0];if(!file)return;const ticket=++loadTicket;
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>20*1024*1024){fail('Выберите PNG, JPEG или WebP до 20 МБ.');return;}
+  $('upload-status').textContent='Открываем '+file.name+'…';const reader=new FileReader();reader.onload=()=>{if(ticket===loadTicket)loadPhoto(reader.result,file.name,ticket);};reader.onerror=()=>{if(ticket===loadTicket)fail('Не удалось прочитать файл.');};reader.readAsDataURL(file);
+ };
+ $('photo-default').onclick=()=>{$('upload').value='';loadPhoto(PHOTO,'Фотография с сайта «Красивое стекло»');};
+ loadPhoto(PHOTO,photoLabel);
  function resize(){const size=Math.min(1100,Math.round(canvas.clientWidth*Math.min(devicePixelRatio,1.5)));if(canvas.width!==size){canvas.width=canvas.height=size;gl.viewport(0,0,size,size);dirty=true;}}
  const observer=new ResizeObserver(resize);observer.observe(canvas);resize();
  function render(){gl.uniform1i(uniforms.photo,0);gl.uniform1f(uniforms.time,state.time);gl.uniform1f(uniforms.strength,state.strength);gl.uniform1f(uniforms.roll,state.roll);gl.uniform1f(uniforms.mode,state.mode==='original'?2:state.mode==='mirror'?1:0);gl.uniform2f(uniforms.offset,...state.offset);gl.drawArrays(gl.TRIANGLES,0,6);draws++;canvas.dataset.draws=String(draws);canvas.dataset.time=state.time.toFixed(4);}
@@ -58,7 +72,7 @@ function update(){
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode)));
  $('pause').textContent=state.playing?'Остановить':'Оживить';$('pause').disabled=state.mode==='original';
  $('status').textContent=!ready?'Загрузка фотографии…':state.mode==='original'?'Оригинальная фотография':state.playing?'Фотография в движении':'Движение остановлено';
- $('caption').textContent=state.mode==='mirror'?'Один фрагмент фотографии в зеркалах':state.mode==='original'?'Фотография с сайта «Красивое стекло»':'Настоящее стекло. Плавное движение фотографии.';
+ $('caption').textContent=state.mode==='mirror'?'Один фрагмент фотографии в зеркалах':state.mode==='original'?photoLabel:'Перемещение и поворот изображения.';
  canvas.dataset.mode=state.mode;canvas.dataset.playing=String(state.playing);dirty=true;
 }
 function mode(value){state.mode=value;update();}

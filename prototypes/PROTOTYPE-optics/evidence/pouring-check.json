@@ -1,0 +1,9 @@
+{
+  "meanTravelAfterHorizontalTwistMm": 2.16,
+  "count": 96,
+  "volumeFraction": 0.522,
+  "horizontalTriangleCoverage": 0.953,
+  "meanTravelAfterVerticalTwistMm": 0.119,
+  "escaped": 0,
+  "settled": true
+}

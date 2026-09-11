@@ -6,7 +6,7 @@ const src = readFileSync('model.js', 'utf8').replace("'cannon-es'", JSON.stringi
 const { Filling, mirrorRay, NORMALS, OPTICS, PHYSICS_HZ } = await import('data:text/javascript;base64,' + Buffer.from(src).toString('base64'));
 const SLEEPING = 2;
 const results = [];
-for (const count of [0, 12, 24, 36]) {
+for (const count of [0, 24, 48, 72, 96]) {
  const f = new Filling(count); let escaped = 0;
  for (let i = 0; i < PHYSICS_HZ * 10; i++) { if (i % (PHYSICS_HZ * 2) === 0) { f.setOrientation(i * 36 / PHYSICS_HZ, (i * 18 / PHYSICS_HZ) % 180); f.shake(); } f.step(); escaped = Math.max(escaped, f.state().escaped); }
  const before = JSON.stringify(f.pieces.map(p => p.body.position));
@@ -15,7 +15,7 @@ for (const count of [0, 12, 24, 36]) {
 }
 // Settling: no input for 15 s must end with every shard asleep and no residual motion.
 const settle = [];
-for (const count of [12, 24, 36]) {
+for (const count of [24, 48, 72, 96]) {
  const f = new Filling(count);
  let settledAt = null;
  for (let i = 0; i < PHYSICS_HZ * 15; i++) { f.step(); if (settledAt === null && f.pieces.every(p => p.body.sleepState === SLEEPING)) settledAt = +(i / PHYSICS_HZ).toFixed(2); }
@@ -23,12 +23,12 @@ for (const count of [12, 24, 36]) {
  const frozen = JSON.stringify(f.pieces.map(p => p.body.position));
  for (let i = 0; i < PHYSICS_HZ; i++) f.step();
  const stillFrozen = frozen === JSON.stringify(f.pieces.map(p => p.body.position)), worldDidNotStepWhileFrozen=f.tick===frozenTick;
- // A shake adds ±10 cm/s; on a level floor friction stops sliding within ~0.05 s, so read the peak.
+ // The chamber moves through a smooth pulse; read the peak, not one resting frame.
  let shakePeak = 0; f.shake(); for (let i = 0; i < PHYSICS_HZ / 4; i++) { f.step(); shakePeak = Math.max(shakePeak, f.state().moving); }
  const afterShake = f.state();
- f.setOrientation(90, 80); for (let i = 0; i < PHYSICS_HZ / 4; i++) f.step();
+ const beforeTurnTick=f.tick;f.setOrientation(90,80);let turnPeak=0;for(let i=0;i<PHYSICS_HZ*2;i++){f.step();turnPeak=Math.max(turnPeak,f.state().moving);}
  const afterTurn = f.state();
- settle.push({ count, settledAfterSeconds: settledAt, restingState: { moving: rest.moving, energy: rest.energy, escaped: rest.escaped, sleeping }, positionsFrozenOneMoreSecond: stillFrozen, worldDidNotStepWhileFrozen, wakesOnShake: shakePeak > 0, movingPeakAfterShake: shakePeak, movingQuarterSecondAfterShake: afterShake.moving, wakesOnOrientation: afterTurn.moving > 0, escapedAfterWake: Math.max(afterShake.escaped, afterTurn.escaped) });
+ settle.push({ count, settledAfterSeconds: settledAt, restingState: { moving: rest.moving, energy: rest.energy, escaped: rest.escaped, sleeping }, positionsFrozenOneMoreSecond: stillFrozen, worldDidNotStepWhileFrozen, wakesOnShake: shakePeak > 0, movingPeakAfterShake: shakePeak, movingQuarterSecondAfterShake: afterShake.moving, wakesOnOrientation: turnPeak>0&&f.tick>beforeTurnTick, escapedAfterWake: Math.max(afterShake.escaped, afterTurn.escaped) });
 }
 let invalid = 0, maxBounces = 0;
 for (let x = -10; x <= 10; x++) for (let y = -10; y <= 10; y++) {
