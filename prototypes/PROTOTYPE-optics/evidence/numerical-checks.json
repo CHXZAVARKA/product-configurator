@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-11T13:46:25.164Z",
+  "generated": "2026-09-11T14:13:58.613Z",
   "physics": [
     {
       "count": 0,
@@ -13,6 +13,7 @@
         "escaped": 0,
         "tick": 7200,
         "paused": true,
+        "shaking": false,
         "roll": 300,
         "tilt": 150
       }
@@ -29,6 +30,7 @@
         "escaped": 0,
         "tick": 7200,
         "paused": true,
+        "shaking": false,
         "roll": 300,
         "tilt": 150
       }
@@ -41,10 +43,11 @@
       "state": {
         "count": 24,
         "moving": 0,
-        "energy": 0,
+        "energy": 2.2257708880395413e-9,
         "escaped": 0,
         "tick": 7200,
         "paused": true,
+        "shaking": false,
         "roll": 300,
         "tilt": 150
       }
@@ -57,10 +60,11 @@
       "state": {
         "count": 36,
         "moving": 0,
-        "energy": 0.0644683715918303,
+        "energy": 0,
         "escaped": 0,
         "tick": 7200,
         "paused": true,
+        "shaking": false,
         "roll": 300,
         "tilt": 150
       }
@@ -79,7 +83,7 @@
       "positionsFrozenOneMoreSecond": true,
       "wakesOnShake": true,
       "movingPeakAfterShake": 12,
-      "movingQuarterSecondAfterShake": 0,
+      "movingQuarterSecondAfterShake": 12,
       "wakesOnOrientation": true,
       "escapedAfterWake": 0
     },
@@ -95,7 +99,7 @@
       "positionsFrozenOneMoreSecond": true,
       "wakesOnShake": true,
       "movingPeakAfterShake": 24,
-      "movingQuarterSecondAfterShake": 2,
+      "movingQuarterSecondAfterShake": 24,
       "wakesOnOrientation": true,
       "escapedAfterWake": 0
     },
@@ -111,7 +115,7 @@
       "positionsFrozenOneMoreSecond": true,
       "wakesOnShake": true,
       "movingPeakAfterShake": 36,
-      "movingQuarterSecondAfterShake": 8,
+      "movingQuarterSecondAfterShake": 36,
       "wakesOnOrientation": true,
       "escapedAfterWake": 0
     }

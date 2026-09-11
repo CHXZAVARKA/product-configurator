@@ -2,6 +2,7 @@
 import * as C from 'cannon-es';
 export const OPTICS = Object.freeze({ inradius: 6.13952809568071, entryZ: 192, exitZ: 12, chamberRadius: 18.8, floorZ: 0, ceilingZ: 10 });
 export const NORMALS = [[0,-1],[Math.sqrt(3)/2,.5],[-Math.sqrt(3)/2,.5]];
+const SHAKE_TICKS = 360;
 export function mirrorRay(origin, direction, limit=64) {
  const p=[...origin], d=[...direction]; let bounces=0;
  for(let i=0;i<limit;i++) {
@@ -23,7 +24,7 @@ export function makeShard(sx,sy,h){
 export class Filling {
  constructor(count=24,seed=71){this.depth=10;this.reset(count,seed);}
  reset(count=24,seed=71){
-  this.seed=seed;this.tick=0;this.paused=false;this.roll=0;this.tilt=0;
+  this.seed=seed;this.tick=0;this.paused=false;this.roll=0;this.tilt=0;this.shakeLeft=0;this.shakePhase=[0,0,0];this.baseGravity=new C.Vec3(0,0,-981);
   this.world=new C.World({gravity:new C.Vec3(0,-981,0),allowSleep:true});
   this.world.solver.iterations=18;this.world.defaultContactMaterial.friction=.26;this.world.defaultContactMaterial.restitution=.13;
   this.world.defaultContactMaterial.contactEquationStiffness=1e7;
@@ -42,10 +43,20 @@ export class Filling {
   }
   this.setOrientation(0,0);
  }
- setOrientation(roll,tilt){this.roll=roll;this.tilt=tilt;const q=new C.Quaternion();q.setFromEuler((tilt-90)*Math.PI/180,0,roll*Math.PI/180,'XYZ');q.conjugate().vmult(new C.Vec3(0,-981,0),this.world.gravity);this.pieces.forEach(p=>{p.body.wakeUp();p.quiet=0;});}
- shake(){const rand=rng(this.seed+this.tick+313);this.pieces.forEach(p=>{const {body}=p;p.quiet=0;body.wakeUp();body.velocity.x+=(rand()-.5)*21;body.velocity.y+=(rand()-.5)*21;body.velocity.z+=(rand()-.5)*9.5;body.angularVelocity.set((rand()-.5)*20,(rand()-.5)*20,(rand()-.5)*20);});}
+ setOrientation(roll,tilt){this.roll=roll;this.tilt=tilt;const q=new C.Quaternion();q.setFromEuler((tilt-90)*Math.PI/180,0,roll*Math.PI/180,'XYZ');q.conjugate().vmult(new C.Vec3(0,-981,0),this.baseGravity);this.world.gravity.copy(this.baseGravity);this.pieces.forEach(p=>{p.body.wakeUp();p.quiet=0;});}
+ shake(){const rand=rng(this.seed+this.tick+313);this.shakeLeft=SHAKE_TICKS;this.shakePhase=[rand()*Math.PI*2,rand()*Math.PI*2,rand()*Math.PI*2];this.pieces.forEach(p=>{const {body}=p;p.quiet=0;body.wakeUp();body.velocity.x+=(rand()-.5)*21;body.velocity.y+=(rand()-.5)*21;body.velocity.z+=(rand()-.5)*9.5;body.angularVelocity.set((rand()-.5)*20,(rand()-.5)*20,(rand()-.5)*20);});}
+ shaking(){return this.shakeLeft>0;}
  step(){
   if(this.paused)return;
+  if(this.shakeLeft>0){
+   // In the chamber frame a shaken container is a fictitious force added to gravity. Tuned to reshuffle in place:
+   // ~0.6 g lateral at 12-16 Hz slides shards a few mm, ~1.5 g axial at 14 Hz makes them hop and flip; more lateral force
+   // throws the whole filling to the wall within one half-cycle. Fades out over the last eighth of a second.
+   const t=(SHAKE_TICKS-this.shakeLeft)/720,fade=Math.min(1,this.shakeLeft/90),a=600*fade,[p0,p1,p2]=this.shakePhase,g=this.baseGravity;
+   this.world.gravity.set(g.x+a*Math.sin(2*Math.PI*12*t+p0),g.y+a*Math.sin(2*Math.PI*15.6*t+p1),g.z+1500*fade*Math.sin(2*Math.PI*14*t+p2));
+   if(this.shakeLeft%60===0)this.pieces.forEach(p=>{p.quiet=0;p.body.wakeUp();});
+   if(--this.shakeLeft===0)this.world.gravity.copy(this.baseGravity);
+  }
   this.world.step(1/720);
   // Hard-wall stabilization after the iterative solver. Project actual vertices,
   // then remove outward velocity; this prevents thin fast shards tunnelling.
@@ -76,5 +87,5 @@ export class Filling {
    }
   }
  }
- state(){let moving=0,energy=0,escaped=0;for(const {body,sx,sy,h} of this.pieces){const v=body.velocity.length();if(v>.2)moving++;energy+=v*v;for(const vertex of body.shapes[0].vertices){const p=body.quaternion.vmult(vertex);p.vadd(body.position,p);if(p.z<-.045||p.z>this.depth/10+.045||Math.hypot(p.x,p.y)>1.93)escaped++;}}return {count:this.pieces.length,moving,energy,escaped,tick:this.tick,paused:this.paused,roll:this.roll,tilt:this.tilt};}
+ state(){let moving=0,energy=0,escaped=0;for(const {body,sx,sy,h} of this.pieces){const v=body.velocity.length();if(v>.2)moving++;energy+=v*v;for(const vertex of body.shapes[0].vertices){const p=body.quaternion.vmult(vertex);p.vadd(body.position,p);if(p.z<-.045||p.z>this.depth/10+.045||Math.hypot(p.x,p.y)>1.93)escaped++;}}return {count:this.pieces.length,moving,energy,escaped,tick:this.tick,paused:this.paused,shaking:this.shakeLeft>0,roll:this.roll,tilt:this.tilt};}
 }
