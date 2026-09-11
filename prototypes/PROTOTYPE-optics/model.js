@@ -4,6 +4,7 @@ import RAPIER from 'rapier';
 await RAPIER.init();
 export const OPTICS = Object.freeze({ inradius: 6.13952809568071, entryZ: 192, exitZ: 12, chamberRadius: 18.8, floorZ: 0, ceilingZ: 10 });
 export const NORMALS = [[0,-1],[Math.sqrt(3)/2,.5],[-Math.sqrt(3)/2,.5]];
+export const DEFAULT_FILL_COUNT = 64;
 export const PHYSICS_HZ = 240;
 export const FIXED_STEP = 1 / PHYSICS_HZ;
 const SHAKE_TICKS = PHYSICS_HZ * .5;
@@ -70,8 +71,8 @@ export function fracturedSurface(p,i){
 const rotation=(roll,tilt)=>{const q=new C.Quaternion();q.setFromEuler((tilt-90)*Math.PI/180,0,roll*Math.PI/180,'XYZ');return q;};
 const angleBetween=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w)/Math.sqrt((a.x*a.x+a.y*a.y+a.z*a.z+a.w*a.w)*(b.x*b.x+b.y*b.y+b.z*b.z+b.w*b.w))));
 export class Filling {
- constructor(count=96,seed=71){this.depth=10;this.reset(count,seed);}
- reset(count=96,seed=71){
+ constructor(count=DEFAULT_FILL_COUNT,seed=71){this.depth=10;this.reset(count,seed);}
+ reset(count=DEFAULT_FILL_COUNT,seed=71){
   if(!Number.isInteger(count)||count<0||count>96)throw Error('The 10 mm chamber supports 0–96 chips');
   this.world?.free();this.seed=seed;this.tick=0;this.paused=false;this.roll=0;this.tilt=0;this.shakeLeft=0;
   this.orientation=rotation(0,0);this.target=this.orientation.clone();this.center=new C.Vec3();

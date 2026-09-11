@@ -1,0 +1,29 @@
+[
+  {
+    "count": 64,
+    "seed": 71,
+    "settled": true,
+    "seconds": 1.25,
+    "penetrationMm": 0,
+    "stoppedWorld": true,
+    "stoppedPoses": true
+  },
+  {
+    "count": 64,
+    "seed": 107,
+    "settled": true,
+    "seconds": 1.25,
+    "penetrationMm": 0,
+    "stoppedWorld": true,
+    "stoppedPoses": true
+  },
+  {
+    "count": 64,
+    "seed": 213,
+    "settled": true,
+    "seconds": 1.25,
+    "penetrationMm": 0,
+    "stoppedWorld": true,
+    "stoppedPoses": true
+  }
+]

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { FastOptics, createGlassMesh, colourGlass, clarityGlass, lightGlass, disposeGlass } from 'fast-optics';
 import { OrbitControls } from 'orbit';
 import { HDRLoader } from 'hdr';
-import { Filling, FIXED_STEP, fracturedSurface } from 'model';
+import { Filling, DEFAULT_FILL_COUNT, FIXED_STEP, fracturedSurface } from 'model';
 const $=id=>document.getElementById(id);
 function fail(message){$('error').hidden=false;$('error').textContent=message;$('status').textContent='Не удалось запустить 3D';}
 window.addEventListener('error',e=>fail(e.message));
@@ -11,7 +11,7 @@ window.addEventListener('unhandledrejection',e=>fail(String(e.reason)));
 try{init();}catch(e){fail('Для просмотра нужен WebGL 2. '+e.message);}
 function init(){
  let dirty=true,sharpEnv=null,optics=null;
- const physics=new Filling(96);physics.shake();let mode='assembly',palette='jewel',fov=18,disposed=false;
+ const physics=new Filling(DEFAULT_FILL_COUNT);physics.shake();let mode='assembly',palette='jewel',fov=18,disposed=false;
  const palettes={jewel:['#164eac','#039ab3','#d626ad','#f3b925','#ad244d','#b6dadd','#c59a81','#219f4a'],forest:['#237947','#deb03b','#669bb3','#9bab4c','#37674b','#b6dadd','#97724b','#84c287'],berry:['#c61a8e','#6e41c1','#ef943c','#ce527c','#6b216e','#d2c6df','#b87a74','#5592b9']};
  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));renderer.setClearColor(0,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;$('model-view').append(renderer.domElement);
  const scene=new THREE.Scene(),root=new THREE.Group(),assembly=new THREE.Group();scene.add(root);root.add(assembly);assembly.position.z=-100;
@@ -68,7 +68,7 @@ function init(){
   const copy={assembly:['АВТОРСКИЙ / СОБРАННАЯ МОДЕЛЬ','Каждая деталь на своём месте'],inside:['ВНУТРЕННЯЯ СБОРКА / КОРПУС СКРЫТ','Три зеркала и камера со стёклышками'],chamber:['КАМЕРА НАСЫПКИ / УВЕЛИЧЕННЫЙ ВИД','Стёклышки, которые действительно движутся'],eye:['ВЗГЛЯД ЧЕРЕЗ ГЛАЗОК','Одна насыпка. Множество отражений.']}[mode];$('view-kicker').textContent=copy[0];$('view-title').textContent=copy[1];$('gesture').textContent=mode==='eye'?'Тяните по узору: вбок поворот, вверх-вниз наклон · или встряхните':'Тяните для вращения · колесо для приближения';updateUI();resize();
  }
  function updateUI(){const s=physics.state();$('roll').value=s.roll;$('tilt').value=s.tilt;$('roll-out').value=s.roll+'°';$('tilt-out').value=s.tilt+'°';$('fov-out').value=fov+'°';$('fov').value=fov;$('count').value=s.count;$('count-label').textContent=s.count+' шт.';$('pause').textContent=s.paused?'Продолжить':'Пауза';$('moving').textContent=s.paused?'На паузе':s.count===0?'Камера пуста':s.shaking?'Встряхивание…':s.moving>0?s.moving+' в движении':'Стёклышки улеглись';$('containment').textContent=s.escaped?'Есть выход за стенку':'Все внутри';$('status').textContent=s.paused?'Симуляция приостановлена':s.count===0?'Пустая камера · отражения работают':'Физика и оптика связаны';$('scenario-state').textContent=`${s.count} стёклышек · поворот ${s.roll}° · наклон ${s.tilt}° · ${s.paused?'пауза':'движение разрешено'}`;}
- function reset(count=96){$('backlight').value=1;$('elving-relief').value=.65;optics.setLight(1);optics.setRelief(.65);$('clarity').value=4;$('clarity-out').value='Витражное';physics.depth=10;physics.reset(count,71);updateDepth();palette='jewel';fov=18;optics.setFov(fov);document.querySelectorAll('[data-palette]').forEach(b=>b.classList.toggle('selected',b.dataset.palette===palette));clearLogo();rebuildShards();pose();updateUI();}
+ function reset(count=DEFAULT_FILL_COUNT){$('backlight').value=1;$('elving-relief').value=.65;optics.setLight(1);optics.setRelief(.65);$('clarity').value=4;$('clarity-out').value='Витражное';physics.depth=10;physics.reset(count,71);updateDepth();palette='jewel';fov=18;optics.setFov(fov);document.querySelectorAll('[data-palette]').forEach(b=>b.classList.toggle('selected',b.dataset.palette===palette));clearLogo();rebuildShards();pose();updateUI();}
  function orient(roll,tilt){invalidate();const offset=camera.position.clone().sub(controls.target).applyQuaternion(root.quaternion.clone().invert());physics.setOrientation(roll,tilt);pose();if(mode==='chamber'){const target=new THREE.Vector3(0,0,-95).applyQuaternion(root.quaternion);controls.target.copy(target);camera.position.copy(target).add(offset.applyQuaternion(root.quaternion));}updateUI();}
  function updateDepth(){chamberGroup.position.z=0;wall.scale.z=physics.depth;rings.forEach(r=>r.scale.z=physics.depth);}
 
