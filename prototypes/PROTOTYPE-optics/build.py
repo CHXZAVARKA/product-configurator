@@ -10,3 +10,8 @@ hdri='data:application/octet-stream;base64,'+base64.b64encode((p/'assets/studio_
 s=(p/'shell.html').read_text().replace('<!-- IMPORTS -->','<script type="importmap">'+json.dumps({'imports':imports})+'</script>').replace('/* CAD */','const CAD = '+(p/'assets/cad.json').read_text()+';').replace('/* HDRI */','const HDRI = '+json.dumps(hdri)+';').replace('/* APP */',(p/'app.js').read_text()).replace('/* STYLE */',(p/'style.css').read_text())
 (p/'PROTOTYPE-viewer.html').write_text(s)
 print('Built',len(s.encode()),'bytes, offline HTML')
+
+photo='data:image/png;base64,'+base64.b64encode((p/'assets/glass-photo.png').read_bytes()).decode()
+photo_page=(p/'photo-shell.html').read_text().replace('/* PHOTO */','const PHOTO = '+json.dumps(photo)+';').replace('/* PHOTO_APP */',(p/'photo.js').read_text())
+(p/'PROTOTYPE-photo.html').write_text(photo_page)
+print('Built photo prototype',len(photo_page.encode()),'bytes')
