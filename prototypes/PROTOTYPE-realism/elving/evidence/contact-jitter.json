@@ -26,8 +26,8 @@
     {
       "action": "shake",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.034708327552503616,
-      "initialTravelMm": 9.844685235683963,
+      "maxFrameDeltaMm": 0.25025857628186804,
+      "initialTravelMm": 617.8928347123075,
       "settleSeconds": 2.308333333333328
     }
   ]

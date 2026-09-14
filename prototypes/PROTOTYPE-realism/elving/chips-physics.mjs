@@ -87,7 +87,16 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   world.gravity={x:Math.sin(r)*Math.cos(t)*9810,y:-Math.cos(r)*Math.cos(t)*9810,z:-Math.sin(t)*9810};wake();return true;
  }
  function shake() {
-  wake();for(const b of bodies){b.setLinvel({x:(random()-.5)*240,y:(random()-.5)*240,z:(random()-.5)*160},true);b.setAngvel({x:(random()-.5)*14,y:(random()-.5)*14,z:(random()-.5)*14},true);}return true;
+  wake();
+  // Lift the settled pile against gravity before scattering it. The previous
+  // random 120 mm/s kick rose less than a millimetre and died in contacts.
+  const g=world.gravity,length=Math.hypot(g.x,g.y,g.z)||1;
+  for(const b of bodies){
+   const lift=420+random()*180;
+   b.setLinvel({x:-g.x/length*lift+(random()-.5)*600,y:-g.y/length*lift+(random()-.5)*600,z:-g.z/length*lift+(random()-.5)*400},true);
+   b.setAngvel({x:(random()-.5)*32,y:(random()-.5)*32,z:(random()-.5)*32},true);
+  }
+  return true;
  }
  // A hard unilateral boundary projection supplements CCD at this display-rate timestep.
  // It uses every rendered hull vertex, removes outward linear velocity, and never teleports

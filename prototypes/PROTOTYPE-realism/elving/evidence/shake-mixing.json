@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "roll": 0,
+      "tilt": 0,
+      "movedOver2Mm": 19,
+      "meanMm": 3.1084397830093673,
+      "sleeping": 36
+    },
+    {
+      "roll": 120,
+      "tilt": 35,
+      "movedOver2Mm": 22,
+      "meanMm": 2.7877913090131314,
+      "sleeping": 36
+    },
+    {
+      "roll": -90,
+      "tilt": -70,
+      "movedOver2Mm": 19,
+      "meanMm": 2.7523164056698293,
+      "sleeping": 36
+    }
+  ]
+}
