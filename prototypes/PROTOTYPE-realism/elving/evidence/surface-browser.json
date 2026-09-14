@@ -1,0 +1,107 @@
+{
+  "generated": "2026-09-14T14:56:32.186Z",
+  "checks": [
+    {
+      "name": "roll-and-tilt-change-HDRI-with-fixed-physics",
+      "passed": true
+    },
+    {
+      "name": "detailed-surface-and-low-poly-collision-share-poses",
+      "passed": true
+    },
+    {
+      "name": "auto-roll-redraws-world-while-physics-paused",
+      "passed": true,
+      "frames": 67
+    },
+    {
+      "name": "high-poly-and-physics-full-frame-under33ms",
+      "passed": true
+    },
+    {
+      "name": "local-image-upload-updates-refracted-prism",
+      "passed": true
+    },
+    {
+      "name": "mobile-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "current-3039-serves-filling-view",
+      "passed": true
+    }
+  ],
+  "geometry": {
+    "count": 124,
+    "visualTriangles": 228608,
+    "collisionTriangles": 3572,
+    "maxDeviationMm": 0.12000000000000025
+  },
+  "performance": {
+    "sourceSize": 192,
+    "outputSize": [
+      830,
+      830
+    ],
+    "samples": 40,
+    "p95Ms": 9.700000002980232,
+    "meanMs": 8.01749999858439,
+    "method": "Rapier + moving source + HDR PBR + bloom + mirrors, gl.finish",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+    "mode": "prism",
+    "smooth": true,
+    "filling": true,
+    "elving": false,
+    "lightAuto": true,
+    "glow": 0.65,
+    "cadPasses": 0,
+    "count": 124,
+    "physics": {
+      "moving": true,
+      "sleeping": 0,
+      "steps": 129,
+      "count": 124,
+      "rollDeg": 0,
+      "tiltDeg": 0,
+      "fixedDtSeconds": 0.008333333333333333,
+      "maxCatchupSteps": 4,
+      "stableForSeconds": 0,
+      "smoothedRmsLinearMmPerSecond": 5.141412261559597,
+      "smoothedRmsAngularRadPerSecond": 1.8961966197325382,
+      "actionAgeSeconds": 0.7749999999999997,
+      "freezeReason": null,
+      "lastRmsLinearMmPerSecond": 11.91279295015813,
+      "lastRmsAngularRadPerSecond": 3.6104646218242564,
+      "boundaryCorrections": 1485,
+      "maxBoundaryCorrectionMm": 1.1278848663390901,
+      "hardBoundaryProjection": true,
+      "settlePolicy": {
+        "minActionAgeSeconds": 1.5,
+        "sustainedSeconds": 0.8,
+        "smoothedRmsLinearLimitMmPerSecond": 8,
+        "smoothedRmsAngularLimitRadPerSecond": 3,
+        "linearDamping": 3,
+        "angularDamping": 35
+      },
+      "solidVolumeMm3": 3928.423056875904,
+      "nominalSolidFraction": 0.3298922911402665,
+      "chamberAudit": {
+        "radiusMm": 18.999993668083157,
+        "floorEnvelopeMm": -0.5,
+        "ceilingMm": 10,
+        "wallSegments": 32,
+        "solverWallApothemMm": 18.749273949077256,
+        "solverFloorMm": -0.33999999999999997,
+        "solverCeilingMm": 9.84,
+        "clearanceMm": 0.16,
+        "hardProjectionWallApothemMm": 18.898551658078084,
+        "hardProjectionFloorMm": -0.49,
+        "hardProjectionCeilingMm": 9.99,
+        "approximation": "Conservative 32-sided inscribed cylinder and planar maximum-z CAD floor envelope. Actual Elving recesses and surface facets do not participate in chip contacts.",
+        "nominalVolumeMm3": 11908.199016404364
+      }
+    }
+  },
+  "errors": [],
+  "passed": true
+}
