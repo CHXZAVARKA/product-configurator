@@ -1,0 +1,60 @@
+{
+  "spec_fixed_point": "83a9d8db68754f8bcf778c1488402f4ad4d0be32",
+  "spec_content_sha": "5b245bbfc93a32824e05b9bf57db18ff158f5e15",
+  "source_baseline": "c151ba70b67183d4b47b0a2fdb1114c46182315c",
+  "branch": "spec/kaleidoscope-realism",
+  "delivery": "local only",
+  "status": "RUNNING",
+  "worker_model": "gpt-5.6-sol",
+  "worker_reasoning": "high",
+  "frontier": [
+    "01"
+  ],
+  "tickets": {
+    "01": {
+      "file": ".scratch/kaleidoscope-realism/issues/01-free-chip-motion.md",
+      "blocked_by": [],
+      "state": "PENDING"
+    },
+    "02": {
+      "file": ".scratch/kaleidoscope-realism/issues/02-glass-transmission.md",
+      "blocked_by": [
+        "01"
+      ],
+      "state": "PENDING"
+    },
+    "03": {
+      "file": ".scratch/kaleidoscope-realism/issues/03-cad-elving.md",
+      "blocked_by": [
+        "01"
+      ],
+      "state": "PENDING"
+    },
+    "04": {
+      "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
+      "blocked_by": [
+        "01"
+      ],
+      "state": "PENDING"
+    },
+    "05": {
+      "file": ".scratch/kaleidoscope-realism/issues/05-integrated-eye.md",
+      "blocked_by": [
+        "02",
+        "03",
+        "04"
+      ],
+      "state": "PENDING"
+    },
+    "06": {
+      "file": ".scratch/kaleidoscope-realism/issues/06-real-sample-comparison.md",
+      "blocked_by": [
+        "05"
+      ],
+      "state": "PENDING"
+    }
+  },
+  "external_requirements": {
+    "06": "Real reference video absent as of run start. Complete software preparation but mark INCOMPLETE if reference remains absent."
+  }
+}
