@@ -1,0 +1,146 @@
+{
+  "generated": "2026-09-14T13:53:25.579Z",
+  "checks": [
+    {
+      "name": "offline-GPU-image-and-default-prism",
+      "passed": true,
+      "initial": {
+        "state": {
+          "mode": "prism",
+          "turn": 0,
+          "tilt": 0,
+          "light": 0,
+          "intensity": 1.2,
+          "fov": 38,
+          "smooth": true,
+          "auto": false,
+          "quality": "auto",
+          "background": "color",
+          "resolution": 256
+        },
+        "frames": 11,
+        "sourcePasses": 11,
+        "measuring": false,
+        "lastBenchmark": {
+          "sourceSize": 256,
+          "outputSize": [
+            830,
+            830
+          ],
+          "samples": 8,
+          "p95Ms": 29,
+          "meanMs": 17.987500002607703,
+          "method": "GPU glass + mirror compositor, CPU submission and gl.finish completion",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+          "mode": "prism",
+          "smooth": true
+        },
+        "prism": {
+          "planes": [
+            {
+              "normal": [
+                -0.8660254658817872,
+                0.4999998924442219
+              ],
+              "offset": 6.139526581539853
+            },
+            {
+              "normal": [
+                0,
+                -1
+              ],
+              "offset": 6.13953
+            },
+            {
+              "normal": [
+                0.8660254658817872,
+                0.4999998924442219
+              ],
+              "offset": 6.139526581539852
+            }
+          ],
+          "nearZ": 192,
+          "farZ": 12,
+          "eyeZ": 208.1
+        },
+        "geometry": {
+          "file": "glazok - elving.step",
+          "stepSHA256": "2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0",
+          "units": "mm",
+          "vertices": 10468,
+          "triangles": 20932,
+          "boundsMm": {
+            "min": [
+              -20.7793,
+              -20.75,
+              -17.65371
+            ],
+            "max": [
+              20.91319,
+              20.75,
+              -0.5
+            ]
+          },
+          "signedVolumeMm3": 16478.45189947426,
+          "edges": 31398,
+          "nonManifoldEdges": 0,
+          "inconsistentEdges": 0,
+          "weldedShadingVertices": 10468,
+          "bvhNodes": 8191,
+          "leafMaximum": 6,
+          "smoothCreaseAngleDeg": 45,
+          "positionChanges": 0
+        }
+      }
+    },
+    {
+      "name": "idle-stops-both-render-passes",
+      "passed": true
+    },
+    {
+      "name": "smooth-toggle-and-shared-source-prism",
+      "passed": true
+    },
+    {
+      "name": "input-event-updates-before-slider-release",
+      "passed": true
+    },
+    {
+      "name": "actual-rotation-and-demand-render-stop",
+      "passed": true,
+      "framesDuring1_2s": 61
+    },
+    {
+      "name": "combined-GPU-completion-p95-under-33ms",
+      "passed": true
+    },
+    {
+      "name": "local-image-upload-updates-refracted-prism",
+      "passed": true
+    },
+    {
+      "name": "mobile-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "current-3039-serves-new-realtime-view",
+      "passed": true
+    }
+  ],
+  "performance": {
+    "sourceSize": 256,
+    "outputSize": [
+      830,
+      830
+    ],
+    "samples": 40,
+    "p95Ms": 24.299999997019768,
+    "meanMs": 18.955000000819563,
+    "method": "GPU glass + mirror compositor, CPU submission and gl.finish completion",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+    "mode": "prism",
+    "smooth": true
+  },
+  "errors": [],
+  "passed": true
+}
