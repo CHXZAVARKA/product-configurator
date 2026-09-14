@@ -7,9 +7,7 @@
   "status": "INCOMPLETE",
   "worker_model": "gpt-5.6-sol",
   "worker_reasoning": "high",
-  "frontier": [
-    "03"
-  ],
+  "frontier": [],
   "tickets": {
     "01": {
       "file": ".scratch/kaleidoscope-realism/issues/01-free-chip-motion.md",
@@ -67,7 +65,7 @@
       "blocked_by": [
         "01"
       ],
-      "state": "RUNNING",
+      "state": "CANDIDATE",
       "base_integration_sha": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03-orientation",
       "owner": "realism_03",
@@ -84,7 +82,14 @@
           "integration_check": "node elving/evidence/check.mjs PASS; elving build PASS"
         }
       ],
-      "reason": "Correct assembly viewing direction: glazok z195..208; prizma12..192; chips\u2212.5..10; elving\u221217.65..\u2212.5. Eye rays travel from+Z to\u2212Z. Initial orchestration assumption was reversed."
+      "reason": "Correct assembly viewing direction: glazok z195..208; prizma12..192; chips\u2212.5..10; elving\u221217.65..\u2212.5. Eye rays travel from+Z to\u2212Z. Initial orchestration assumption was reversed.",
+      "candidate_sha": "4a797413d1ebb1d122bfefff8245dd14f883c656",
+      "ticket_fixed_point": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
+      "checks": [
+        "prototypes/PROTOTYPE-realism/elving/evidence/checks.json",
+        "prototypes/PROTOTYPE-realism/elving/evidence/browser.json"
+      ],
+      "candidate_verified_clean": true
     },
     "04": {
       "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
