@@ -65,7 +65,7 @@
       "blocked_by": [
         "01"
       ],
-      "state": "CANDIDATE",
+      "state": "INTEGRATED",
       "base_integration_sha": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03-orientation",
       "owner": "realism_03",
@@ -89,7 +89,9 @@
         "prototypes/PROTOTYPE-realism/elving/evidence/checks.json",
         "prototypes/PROTOTYPE-realism/elving/evidence/browser.json"
       ],
-      "candidate_verified_clean": true
+      "candidate_verified_clean": true,
+      "integration_sha": "8ab8616e453e64ad254e6a9ba49c18b441282d9a",
+      "integration_check": "Current CAD assembly order, negative-Z viewing, shards-first composition and cache invalidation node checks PASS; elving build PASS"
     },
     "04": {
       "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
@@ -131,6 +133,30 @@
   "external_requirements": {
     "06": "Real reference video absent as of run start. Complete software preparation but mark INCOMPLETE if reference remains absent."
   },
-  "last_code_integration_sha": "0c9cb1a671f4dff952ec4cc5bdf212ef90fdf780",
-  "aggregate_closeout": "not entered: ticket04 INCOMPLETE"
+  "last_code_integration_sha": "8ab8616e453e64ad254e6a9ba49c18b441282d9a",
+  "aggregate_closeout": "not entered: ticket04 INCOMPLETE",
+  "review_candidate": null,
+  "delivery_state": "Local partial implementation; no aggregate closeout, no remote publication",
+  "assembly_orientation": {
+    "source": "prototypes/PROTOTYPE-optics/assets/cad.json",
+    "eye_glazok_z_mm": [
+      195,
+      208
+    ],
+    "prism_z_mm": [
+      12,
+      192
+    ],
+    "chip_chamber_nominal_z_mm": [
+      -0.5,
+      10
+    ],
+    "elving_z_mm": [
+      -17.65371,
+      -0.5
+    ],
+    "view_ray_direction": "negative Z",
+    "order": "eye, protective glass/prism/disk, shards, elving, backlight",
+    "cache_limit": "CAD field is exact only for identical incoming rays; refraction by moving shards invalidates its incoming ray key."
+  }
 }
