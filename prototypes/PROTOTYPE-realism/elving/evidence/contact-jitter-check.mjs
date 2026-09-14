@@ -6,7 +6,7 @@ const {default:RAPIER}=await import(`data:text/javascript;base64,${vendor.toStri
 const cad=JSON.parse(fs.readFileSync(new URL('../../../PROTOTYPE-optics/assets/cad.json',import.meta.url)));
 const results=[];
 for(const action of ['initial','turn','reverse','shake']){
- const sim=createChipPhysics(RAPIER,cad,{count:124});
+ const sim=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.5});
  if(action!=='initial')for(let i=0;i<180;i++)sim.step(1/60);
  if(action==='turn')sim.orient(317,70);
  if(action==='reverse')sim.orient(120,-65);

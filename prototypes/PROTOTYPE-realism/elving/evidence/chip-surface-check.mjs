@@ -23,9 +23,9 @@ function undisplacedSubdivision(chip) {
  }
  return vertices;
 }
-const sim=createChipPhysics(RAPIER,cad,{count:124});
+const sim=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.5});
 const colliderBefore=digest(sim.chips),posesBefore=digest(sim.poses()),uniqueMeshes=new Set(),uniqueMaterials=new Set();
-const report={method:'Exact browser vendor Rapier injection and createChipPhysics(count=124), closed high-poly visual skin only; independent triangle, hull-plane and edge topology checks.',chips:[],totalTriangles:0,maxOutsideHullMm:0,maxDeviationMm:0,maxColliderSupportGapMm:0,minTriangleAreaMm2:Infinity,minOutwardDot:Infinity};
+const report={method:'Exact browser vendor Rapier injection and createChipPhysics(count=36,sizeScale=1.5), closed high-poly visual skin only; independent triangle, hull-plane and edge topology checks.',chips:[],totalTriangles:0,maxOutsideHullMm:0,maxDeviationMm:0,maxColliderSupportGapMm:0,minTriangleAreaMm2:Infinity,minOutwardDot:Infinity};
 const started=performance.now();
 for(const chip of sim.chips) {
  const before=JSON.stringify(chip),surface=buildChipSurface(chip);
@@ -61,13 +61,13 @@ for(const chip of sim.chips) {
  report.totalTriangles+=surface.indices.length/3;report.maxOutsideHullMm=Math.max(report.maxOutsideHullMm,maxOutside);report.maxDeviationMm=Math.max(report.maxDeviationMm,surface.audit.maxDeviationMm);report.maxColliderSupportGapMm=Math.max(report.maxColliderSupportGapMm,maxSupportGap);report.minTriangleAreaMm2=Math.min(report.minTriangleAreaMm2,minArea);report.minOutwardDot=Math.min(report.minOutwardDot,minOutward);
  report.chips.push({id:chip.id,...surface.audit,independentMaxDeviationMm:maxMeasuredDeviation,maxLongestEdgeToAltitudeRatio:maxAspect,maxBoundaryDistanceMm:maxBoundaryDistance,maxColliderSupportGapMm:maxSupportGap,signedVolumeMm3:signedVolume,materialVariation:surface.materialVariation,meshSha256:digest(surface.vertices)});
 }
-assert.ok(report.totalTriangles<=250000,'124-chip visual budget <=250k triangles');
-assert.equal(uniqueMeshes.size,124,'every shard has a unique surface');assert.equal(uniqueMaterials.size,124,'every shard has unique material variation');
+assert.ok(report.totalTriangles<=250000,'36-chip visual budget <=250k triangles');
+assert.equal(uniqueMeshes.size,36,'every shard has a unique surface');assert.equal(uniqueMaterials.size,36,'every shard has unique material variation');
 assert.equal(digest(sim.chips),colliderBefore,'all low-poly colliders remain byte-for-byte unchanged');assert.equal(digest(sim.poses()),posesBefore,'visual generation does not advance physical state');
 const first=sim.chips[0],sameShapeNewId={...first,id:1000},newCoordinates={...first,vertices:first.vertices.map((v,i)=>v.map((x,k)=>x+(i===0&&k===0?.001:0)))};
 assert.notEqual(digest(buildChipSurface(first).vertices),digest(buildChipSurface(sameShapeNewId).vertices),'id participates in deterministic seed');
 assert.notEqual(buildChipSurface(first).audit.seed,buildChipSurface(newCoordinates).audit.seed,'actual coordinates participate in deterministic seed');
-sim.reset(124);assert.equal(digest(sim.chips),colliderBefore,'reset preserves source collider inputs');assert.equal(digest(buildChipSurface(sim.chips[0])),digest(buildChipSurface(first)),'reset reproduces visual geometry');sim.dispose();
+sim.reset(36);assert.equal(digest(sim.chips),colliderBefore,'reset preserves source collider inputs');assert.equal(digest(buildChipSurface(sim.chips[0])),digest(buildChipSurface(first)),'reset reproduces visual geometry');sim.dispose();
 report.buildAndCheckMs=performance.now()-started;report.uniqueMeshes=uniqueMeshes.size;report.uniqueMaterialVariations=uniqueMaterials.size;report.colliderInputUnchanged=true;report.watertight=true;report.outwardWinding=true;report.deterministic=true;
 fs.writeFileSync(new URL('./chip-surface.json',import.meta.url),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({...report,chips:report.chips.length},null,2));

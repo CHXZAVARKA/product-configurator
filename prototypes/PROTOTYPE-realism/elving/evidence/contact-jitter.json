@@ -5,29 +5,29 @@
     {
       "action": "initial",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.058889333611079286,
-      "initialTravelMm": 1600.9198024449747,
+      "maxFrameDeltaMm": 0.08000701066195054,
+      "initialTravelMm": 478.6318240254002,
       "settleSeconds": 2.308333333333328
     },
     {
       "action": "turn",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.028387923054446356,
-      "initialTravelMm": 254.47757950854358,
-      "settleSeconds": 2.308333333333328
+      "maxFrameDeltaMm": 0.015258712598862394,
+      "initialTravelMm": 43.31599509984771,
+      "settleSeconds": 2.099999999999995
     },
     {
       "action": "reverse",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.14154820925135142,
-      "initialTravelMm": 1485.9199313614158,
+      "maxFrameDeltaMm": 0.03740135134770586,
+      "initialTravelMm": 433.02986703186116,
       "settleSeconds": 2.308333333333328
     },
     {
       "action": "shake",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.04958730882513224,
-      "initialTravelMm": 81.86131329320222,
+      "maxFrameDeltaMm": 0.20287193164120507,
+      "initialTravelMm": 27.131756798943893,
       "settleSeconds": 2.308333333333328
     }
   ]
