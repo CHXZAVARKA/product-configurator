@@ -32,7 +32,7 @@
       "blocked_by": [
         "01"
       ],
-      "state": "CANDIDATE",
+      "state": "INTEGRATED",
       "base_integration_sha": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-02-orientation",
       "owner": "realism_02",
@@ -58,7 +58,9 @@
         "prototypes/PROTOTYPE-realism/optical/evidence/browser.json",
         "prototypes/PROTOTYPE-realism/optical/evidence/convergence.json"
       ],
-      "candidate_verified_clean": true
+      "candidate_verified_clean": true,
+      "integration_sha": "0c9cb1a671f4dff952ec4cc5bdf212ef90fdf780",
+      "integration_check": "Current negative-Z and generic bidirectional transport node check PASS; optical build PASS"
     },
     "03": {
       "file": ".scratch/kaleidoscope-realism/issues/03-cad-elving.md",
@@ -124,6 +126,6 @@
   "external_requirements": {
     "06": "Real reference video absent as of run start. Complete software preparation but mark INCOMPLETE if reference remains absent."
   },
-  "last_code_integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa",
+  "last_code_integration_sha": "0c9cb1a671f4dff952ec4cc5bdf212ef90fdf780",
   "aggregate_closeout": "not entered: ticket04 INCOMPLETE"
 }
