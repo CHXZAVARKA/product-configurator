@@ -102,7 +102,7 @@ try {
  $('animate').onclick=()=>set({auto:!state.auto});$('quality').onchange=e=>set({quality:e.target.value});$('background').onchange=e=>set({background:e.target.value});
  $('reset').onclick=()=>set({turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:38,smooth:true,auto:false,paused:false,count:state.count,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0});
  $('show-colliders').onchange=e=>set({showColliders:e.target.checked});$('elving').onchange=e=>set({elving:e.target.checked});$('filling').onchange=e=>set({filling:e.target.checked});$('count').onchange=e=>set({count:Number(e.target.value)});$('count').oninput=e=>$('count-value').textContent=e.target.value+' шт.';
- $('shake').onclick=()=>{if(state.mode==='study')set({mode:'glass'});set({paused:false,filling:true});physics.orient(state.turn,state.tilt);physics.shake();requestDraw(false);};$('pause').onclick=()=>set({paused:!state.paused});$('measure').onclick=()=>benchmark();
+ $('shake-viewer').onclick=$('shake').onclick=()=>{if(state.mode==='study')set({mode:'glass'});set({paused:false,filling:true});physics.orient(state.turn,state.tilt);physics.shake();requestDraw(false);};$('pause').onclick=()=>set({paused:!state.paused});$('measure').onclick=()=>benchmark();
  $('upload').onchange=async e=>{
   const file=e.target.files[0];if(!file)return;
   try{const next=await createImageBitmap(file);uploadImage?.close();uploadImage=next;$('background').querySelector('[value=upload]').disabled=false;state.background='upload';updateBackground();controls();requestDraw();$('error').hidden=true;}
