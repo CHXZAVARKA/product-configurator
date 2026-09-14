@@ -4,11 +4,12 @@
   "source_baseline": "c151ba70b67183d4b47b0a2fdb1114c46182315c",
   "branch": "spec/kaleidoscope-realism",
   "delivery": "local only",
-  "status": "RUNNING",
+  "status": "INCOMPLETE",
   "worker_model": "gpt-5.6-sol",
   "worker_reasoning": "high",
   "frontier": [
-    "04"
+    "02",
+    "03"
   ],
   "tickets": {
     "01": {
@@ -32,52 +33,65 @@
       "blocked_by": [
         "01"
       ],
-      "state": "INTEGRATED",
-      "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
-      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-02",
+      "state": "RUNNING",
+      "base_integration_sha": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
+      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-02-orientation",
       "owner": "realism_02",
       "edit_scope": "prototypes/PROTOTYPE-realism/optical/ and own ticket only",
-      "candidate_sha": "b821ac029d923c3897274bf54aa28eeb350e9a69",
-      "ticket_fixed_point": "056ff8ecec0d2fb359f3d371107495d1902effec",
-      "checks": [
-        "prototypes/PROTOTYPE-realism/optical/evidence/checks.json",
-        "prototypes/PROTOTYPE-realism/optical/evidence/browser.json",
-        "prototypes/PROTOTYPE-realism/optical/evidence/convergence.json"
+      "integration_history": [
+        {
+          "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
+          "candidate_sha": "b821ac029d923c3897274bf54aa28eeb350e9a69",
+          "integration_sha": "d6e30dad5e6943697e9e5020e625c58a7f12d6f5",
+          "checks": [
+            "prototypes/PROTOTYPE-realism/optical/evidence/checks.json",
+            "prototypes/PROTOTYPE-realism/optical/evidence/browser.json",
+            "prototypes/PROTOTYPE-realism/optical/evidence/convergence.json"
+          ],
+          "integration_check": "node optical/evidence/check.mjs PASS; optical build PASS"
+        }
       ],
-      "candidate_verified_clean": true,
-      "integration_sha": "d6e30dad5e6943697e9e5020e625c58a7f12d6f5",
-      "integration_check": "node optical/evidence/check.mjs PASS; optical build PASS"
+      "reason": "Correct assembly viewing direction: glazok z195..208; prizma12..192; chips\u2212.5..10; elving\u221217.65..\u2212.5. Eye rays travel from+Z to\u2212Z. Initial orchestration assumption was reversed."
     },
     "03": {
       "file": ".scratch/kaleidoscope-realism/issues/03-cad-elving.md",
       "blocked_by": [
         "01"
       ],
-      "state": "INTEGRATED",
-      "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
-      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03",
+      "state": "RUNNING",
+      "base_integration_sha": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
+      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03-orientation",
       "owner": "realism_03",
       "edit_scope": "prototypes/PROTOTYPE-realism/elving/ and own ticket only",
-      "candidate_sha": "a4527d224127192eb739b277f4ff22218c0b2709",
-      "ticket_fixed_point": "056ff8ecec0d2fb359f3d371107495d1902effec",
-      "checks": [
-        "prototypes/PROTOTYPE-realism/elving/evidence/checks.json",
-        "prototypes/PROTOTYPE-realism/elving/evidence/browser.json"
+      "integration_history": [
+        {
+          "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
+          "candidate_sha": "a4527d224127192eb739b277f4ff22218c0b2709",
+          "integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa",
+          "checks": [
+            "prototypes/PROTOTYPE-realism/elving/evidence/checks.json",
+            "prototypes/PROTOTYPE-realism/elving/evidence/browser.json"
+          ],
+          "integration_check": "node elving/evidence/check.mjs PASS; elving build PASS"
+        }
       ],
-      "candidate_verified_clean": true,
-      "integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa",
-      "integration_check": "node elving/evidence/check.mjs PASS; elving build PASS"
+      "reason": "Correct assembly viewing direction: glazok z195..208; prizma12..192; chips\u2212.5..10; elving\u221217.65..\u2212.5. Eye rays travel from+Z to\u2212Z. Initial orchestration assumption was reversed."
     },
     "04": {
       "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
       "blocked_by": [
         "01"
       ],
-      "state": "RUNNING",
+      "state": "INCOMPLETE",
       "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-04",
       "owner": "realism_04",
-      "edit_scope": "prototypes/PROTOTYPE-realism/filling/ and own ticket only"
+      "edit_scope": "prototypes/PROTOTYPE-realism/filling/ and own ticket only",
+      "evidence": {
+        "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-04",
+        "check": "prototypes/PROTOTYPE-realism/filling/evidence/checks.json",
+        "failure": "Uniform1mm profile dense41 frame3 t0.05s pair53/83 fresh native0.229084849mm and SAT0.229085175mm exceed unchanged0.2mm; no coherent validated profile. Evidence commit pending worker handoff."
+      }
     },
     "05": {
       "file": ".scratch/kaleidoscope-realism/issues/05-integrated-eye.md",
@@ -99,5 +113,6 @@
   "external_requirements": {
     "06": "Real reference video absent as of run start. Complete software preparation but mark INCOMPLETE if reference remains absent."
   },
-  "last_code_integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa"
+  "last_code_integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa",
+  "aggregate_closeout": "not entered: ticket04 INCOMPLETE"
 }
