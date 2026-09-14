@@ -1,0 +1,47 @@
+{
+  "file": "glazok - elving.step",
+  "stepSHA256": "2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0",
+  "units": "mm",
+  "vertices": 10468,
+  "triangles": 20932,
+  "boundsMm": {
+    "min": [
+      -20.7793,
+      -20.75,
+      -17.65371
+    ],
+    "max": [
+      20.91319,
+      20.75,
+      -0.5
+    ]
+  },
+  "signedVolumeMm3": 16478.45189947426,
+  "edges": 31398,
+  "nonManifoldEdges": 0,
+  "inconsistentEdges": 0,
+  "weldedShadingVertices": 10468,
+  "bvhNodes": 8191,
+  "leafMaximum": 6,
+  "smoothCreaseAngleDeg": 45,
+  "positionChanges": 0,
+  "packedFloat32VersusDoubleReference": {
+    "rays": 2523,
+    "hits": 1301,
+    "maxDistanceDifferenceMm": 0.000004556873506089687
+  },
+  "smoothNormals": {
+    "angleWeighted": true,
+    "creaseAngleDeg": 45,
+    "cornerNormalsDifferingMoreThanOneDegree": 27412,
+    "maxNormalDeviationDeg": 30.611087546824095
+  },
+  "renderContract": {
+    "gpuTriangles": 20932,
+    "perFrameCpuIntersections": 0,
+    "maxInternalReflections": 4,
+    "shaderSurface": "immutable CAD triangles",
+    "entryExitOrientation": "geometric normals",
+    "snellFresnelShading": "interpolated welded normals with geometric hemisphere fallback"
+  }
+}
