@@ -1,7 +1,7 @@
 // The solver keeps its convex low-poly hull. This independently generated skin
 // rounds contacts and adds shallow fracture relief inside that exact envelope.
 const SUBDIVISIONS = 3;
-const MAX_DEVIATION_MM = .12;
+const MAX_DEVIATION_MM = .30;
 const sub = (a,b) => a.map((v,k)=>v-b[k]);
 const dot = (a,b) => a.reduce((s,v,k)=>s+v*b[k],0);
 const cross = (a,b) => [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
@@ -47,7 +47,7 @@ export function buildChipSurface(chip) {
  for(let i=0;i<indices.length;i+=3){const [a,b,c]=indices.slice(i,i+3);neighbors[a].add(b).add(c);neighbors[b].add(a).add(c);neighbors[c].add(a).add(b);}
  const phase=Array.from({length:6},()=>random()*Math.PI*2);
  const waveScale=.85+random()*.6,wearScale=.8+random()*.4;
- const fractures=Array.from({length:9},()=>({x:(random()-.5)*4.1,y:(random()-.5)*4.1,radius:.28+random()*.63,depth:.014+random()*.027,aspect:.55+random()*.65,angle:random()*Math.PI*2,face:random()<.5?-1:1}));
+ const fractures=Array.from({length:9},()=>({x:(random()-.5)*4.1,y:(random()-.5)*4.1,radius:.65+random()*1.1,depth:.035+random()*.095,aspect:.55+random()*.65,angle:random()*Math.PI*2,face:random()<.5?-1:1}));
  let maxDeviationMm=0,sumDeviationMm=0,maxOutsideHullMm=0,minTriangleAreaMm2=Infinity,minOutwardDot=Infinity;
  vertices=reference.map((original,index)=>{
   const distances=planes.map(p=>p.offset-dot(p.normal,original)).sort((a,b)=>a-b);
@@ -60,9 +60,9 @@ export function buildChipSurface(chip) {
   const broadFace=smooth((Math.abs(z-center[2])/(chip.thicknessMm/2)-.24)/.65);
   // Incommensurate waves and rotated, asymmetric pits avoid a visible subdivision grid.
   const waves=(Math.sin(x*2.7*waveScale+y*.83+phase[0])+Math.sin(y*3.6*waveScale-x*1.19+phase[1])+Math.sin(x*5.2-y*4.1+phase[2])*.35)/2.35;
-  let relief=.022+.012*(waves+1)/2;
-  for(const fracture of fractures)if(fracture.face===face){const dx=x-fracture.x,dy=y-fracture.y,c=Math.cos(fracture.angle),s=Math.sin(fracture.angle),u=(dx*c+dy*s)/fracture.radius,v=(-dx*s+dy*c)/(fracture.radius*fracture.aspect);relief+=fracture.depth*Math.exp(-(u*u+v*v)*1.8)*(1+.17*Math.sin(u*4+phase[3]));}
-  const edgeRelief=.018+.009*(1+Math.sin(x*4.8+y*5.7+z*3.1+phase[4]))/2;
+  let relief=.018+.008*(waves+1)/2;
+  for(const fracture of fractures)if(fracture.face===face){const dx=x-fracture.x,dy=y-fracture.y,c=Math.cos(fracture.angle),s=Math.sin(fracture.angle),u=(dx*c+dy*s)/fracture.radius,v=(-dx*s+dy*c)/(fracture.radius*fracture.aspect);const r=Math.hypot(u,v);relief+=fracture.depth*Math.exp(-r*r*1.4)*(1+.32*Math.sin(r*11+phase[3]));}
+  const edgeRelief=.015+.025*Math.pow((1+Math.sin(x*4.8+y*5.7+z*3.1+phase[4]))/2,3);
   const inwardMm=edgeRelief*(1-broadFace)+relief*broadFace;
   const inward=sub(center,rounded),inwardLength=Math.hypot(...inward);
   let result=mix(rounded,center,inwardMm/inwardLength);
@@ -76,7 +76,7 @@ export function buildChipSurface(chip) {
  for(let i=0;i<indices.length;i+=3){const [a,b,c]=indices.slice(i,i+3).map(j=>vertices[j]),normal=cross(sub(b,a),sub(c,a)),triangleCenter=a.map((v,k)=>(v+b[k]+c[k])/3);minTriangleAreaMm2=Math.min(minTriangleAreaMm2,Math.hypot(...normal)/2);minOutwardDot=Math.min(minOutwardDot,dot(normal,sub(triangleCenter,center)));}
  return {
   vertices,indices,
-  audit:{seed,subdivisions:SUBDIVISIONS,sourceVertices:chip.vertices.length,sourceTriangles:chip.indices.length/3,visualVertices:vertices.length,visualTriangles:indices.length/3,triangleRatio:indices.length/chip.indices.length,maxDeviationMm,meanDeviationMm:sumDeviationMm/vertices.length,deviationLimitMm:MAX_DEVIATION_MM,maxOutsideHullMm,minTriangleAreaMm2,minOutwardDot,fractureCount:fractures.length,colliderUnchanged:true,method:'Shared indexed subdivision, local convex-combination edge rounding, coordinate-seeded shallow fracture pits and waves; inward displacement capped at 0.12 mm.'},
+  audit:{seed,subdivisions:SUBDIVISIONS,sourceVertices:chip.vertices.length,sourceTriangles:chip.indices.length/3,visualVertices:vertices.length,visualTriangles:indices.length/3,triangleRatio:indices.length/chip.indices.length,maxDeviationMm,meanDeviationMm:sumDeviationMm/vertices.length,deviationLimitMm:MAX_DEVIATION_MM,maxOutsideHullMm,minTriangleAreaMm2,minOutwardDot,fractureCount:fractures.length,colliderUnchanged:true,method:'Shared indexed subdivision, local convex-combination edge rounding, coordinate-seeded conchoidal fracture scoops and arrest ridges; inward displacement capped at 0.30 mm.'},
   materialVariation:{roughness:.13+random()*.13,bumpScale:.022+random()*.025,tintScale:.88+random()*.24}
  };
 }

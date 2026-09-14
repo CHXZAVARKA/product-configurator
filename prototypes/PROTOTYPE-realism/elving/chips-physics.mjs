@@ -1,4 +1,5 @@
-import { chamberFromCAD, volumeMm3 } from '../geometry.mjs';
+import {makeBrokenChip} from './broken-chip.mjs';
+import { chamberFromCAD } from '../geometry.mjs';
 
 const FIXED_DT = 1 / 120;
 const MAX_COUNT = 140;
@@ -6,24 +7,6 @@ const WALLS = 32;
 const CLEARANCE = .16;
 const DENSITY_KG_MM3 = 2.5e-6;
 const randomFrom = seed => { let n = seed >>> 0; return () => { n += 0x6d2b79f5; let t = Math.imul(n ^ n >>> 15, 1 | n); t ^= t + Math.imul(t ^ t >>> 7, 61 | t); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
-const colors = [[.02,.68,.72],[.86,.04,.51],[.035,.18,.77],[1,.43,.025],[.42,.08,.68],[.025,.56,.13]];
-
-function makeConvexChip(id, random, thin) {
- const n = 5 + Math.floor(random() * 2), contour = [];
- const radius = 2.73 + random() * .07;
- // Irregular angular spacing on one ellipse stays strictly convex.
- const ellipse = .94 + random() * .06;
- for (let i = 0; i < n; i++) { const a = (i + (random() - .5) * .8) * Math.PI * 2 / n; contour.push([Math.cos(a)*radius, Math.sin(a)*radius*ellipse]); }
- const thicknessMm = thin ? 1.68 + random()*.08 : 1.94 + random()*.14;
- const slopeX = (random()-.5)*.028, slopeY = (random()-.5)*.028;
- const vertices = [];
- for (const [scale,z] of [[.92,-thicknessMm/2],[1,0],[.92,thicknessMm/2]]) for (const [x,y] of contour) vertices.push([x*scale,y*scale,z+slopeX*x*scale+slopeY*y*scale]);
- const indices = [];
- for (let i=1;i<n-1;i++) { indices.push(0,i+1,i); indices.push(2*n,2*n+i,2*n+i+1); }
- for (let ring=0;ring<2;ring++) for (let i=0;i<n;i++) { const j=(i+1)%n,a=ring*n+i,b=ring*n+j,c=(ring+1)*n+j,d=(ring+1)*n+i; indices.push(a,b,c,a,c,d); }
- return {id,vertices,indices,color:[...colors[id%colors.length]],thicknessMm,volumeMm3:volumeMm3(vertices,indices),provenance:'Procedural loose glass hypothesis: convex beveled 5–6 mm shards, glass density 2500 kg/m³; not measured STEP parts.'};
-}
-
 export function chipChamberAudit(cad) {
  const c=chamberFromCAD(cad), radiusMm=c.radiusMm-CLEARANCE;
  return Object.freeze({radiusMm:c.radiusMm,floorEnvelopeMm:c.floorEnvelopeMm,ceilingMm:c.ceilingMm,wallSegments:WALLS,solverWallApothemMm:radiusMm*Math.cos(Math.PI/WALLS),solverFloorMm:c.floorEnvelopeMm+CLEARANCE,solverCeilingMm:c.ceilingMm-CLEARANCE,clearanceMm:CLEARANCE,hardProjectionWallApothemMm:(c.radiusMm-.01)*Math.cos(Math.PI/WALLS),hardProjectionFloorMm:c.floorEnvelopeMm+.01,hardProjectionCeilingMm:c.ceilingMm-.01,approximation:'Conservative 32-sided inscribed cylinder and planar maximum-z CAD floor envelope. Actual Elving recesses and surface facets do not participate in chip contacts.',nominalVolumeMm3:Math.PI*c.radiusMm**2*c.nominalGapMm});
@@ -35,7 +18,9 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9}={}) {
  const p=world.integrationParameters;
  p.lengthUnit=10;
  p.normalizedAllowedLinearError=.0004;
- p.numSolverIterations=3;
+ // Three iterations left dense contacts visibly reversing every frame. Eight
+ // removes that jitter without suppressing gravity, tumbling or user motion.
+ p.numSolverIterations=8;
  p.contact_natural_frequency=120;
  p.numInternalPgsIterations=1;
  p.maxCcdSubsteps=1;
@@ -63,7 +48,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9}={}) {
   slots.sort((a,b)=>Math.hypot(...a)-Math.hypot(...b));
   const layers=count>124?5:4, pitch=layers===5?1.91:2.35;
   for(let i=0;i<count;i++) {
-   const chip=makeConvexChip(i,random,layers===5),xy=slots[i%slots.length],layer=Math.floor(i/slots.length),a=random()*Math.PI*2,z=4.75+(layer-(layers-1)/2)*pitch;
+   const chip=makeBrokenChip(i,random,layers===5),xy=slots[i%slots.length],layer=Math.floor(i/slots.length),a=random()*Math.PI*2,z=4.75+(layer-(layers-1)/2)*pitch;
    const body=world.createRigidBody(R.RigidBodyDesc.dynamic().setTranslation(xy[0],xy[1],z).setRotation({x:0,y:0,z:Math.sin(a/2),w:Math.cos(a/2)}).setCcdEnabled(true).setLinearDamping(3).setAngularDamping(35).setCanSleep(true));
    const hull=R.ColliderDesc.convexHull(new Float32Array(chip.vertices.flat()));
    if(!hull)throw Error('Invalid convex chip hull');
