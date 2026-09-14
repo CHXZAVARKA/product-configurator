@@ -25,10 +25,10 @@
     },
     {
       "action": "shake",
-      "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.25025857628186804,
-      "initialTravelMm": 617.8928347123075,
-      "settleSeconds": 2.308333333333328
+      "reversalsBetween1And2Seconds": 1,
+      "maxFrameDeltaMm": 1.5619146570430762,
+      "initialTravelMm": 3524.9711490703003,
+      "settleSeconds": 2.3249999999999944
     }
   ]
 }

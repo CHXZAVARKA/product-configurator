@@ -35,7 +35,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
  }
  for(const z of [chamber.solverFloorMm-2,chamber.solverCeilingMm+2]) world.createCollider(R.ColliderDesc.cuboid(23,23,2).setTranslation(0,0,z).setFriction(.3).setRestitution(.015),wallBody);
  let chips=[],bodies=[],colliders=[],accumulator=0,steps=0,roll=0,tilt=0,moving=true,stableFor=0,actionAge=0,lastRmsLinear=0,lastRmsAngular=0,smoothLinear=0,smoothAngular=0,freezeReason=null,disposed=false,boundaryCorrections=0,maxBoundaryCorrectionMm=0;
- let random=randomFrom(seed);
+ let random=randomFrom(seed),shakeMotion=null;
  const api={get chips(){return chips;},chamberAudit:chamber,poses,step,orient,shake,reset,snapshot,dispose};
  function wake() { for(const b of bodies)b.wakeUp(); moving=true;stableFor=0;actionAge=0;smoothLinear=0;smoothAngular=0;freezeReason=null; }
  function reset(nextCount=count,shape={}) {
@@ -45,7 +45,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   const layerCapacity=enlarged?Math.floor((chamber.solverCeilingMm-chamber.solverFloorMm+.03)/layerPitch):0;
   const capacity=enlarged?Math.min(MAX_COUNT,13*layerCapacity):MAX_COUNT;
   count=Math.max(0,Math.min(capacity,Math.round(Number(nextCount)||0)));
-  random=randomFrom(seed);
+  random=randomFrom(seed);shakeMotion=null;
   for(const b of bodies)world.removeRigidBody(b);
   bodies=[];colliders=[];chips=[];accumulator=0;
   const slots=[];
@@ -87,16 +87,33 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   world.gravity={x:Math.sin(r)*Math.cos(t)*9810,y:-Math.cos(r)*Math.cos(t)*9810,z:-Math.sin(t)*9810};wake();return true;
  }
  function shake() {
-  wake();
-  // Lift the settled pile against gravity before scattering it. The previous
-  // random 120 mm/s kick rose less than a millimetre and died in contacts.
+  wake();shakeMotion={elapsed:0,pulse:-1,kicks:[]};return true;
+ }
+ function advanceShake(dt) {
+  if(!shakeMotion)return;
+  // Three finite hand-like strokes, integrated by the physics clock. Pausing
+  // pauses the stroke too; repeated clicks restart it without stacking timers.
+  const motion=shakeMotion,spacing=.30,duration=.14,pulse=Math.floor(motion.elapsed/spacing);
+  if(pulse>=3){shakeMotion=null;return;}
   const g=world.gravity,length=Math.hypot(g.x,g.y,g.z)||1;
-  for(const b of bodies){
-   const lift=420+random()*180;
-   b.setLinvel({x:-g.x/length*lift+(random()-.5)*600,y:-g.y/length*lift+(random()-.5)*600,z:-g.z/length*lift+(random()-.5)*400},true);
-   b.setAngvel({x:(random()-.5)*32,y:(random()-.5)*32,z:(random()-.5)*32},true);
+  if(pulse!==motion.pulse){
+   motion.pulse=pulse;
+   motion.kicks=bodies.map(()=>{
+    const lift=420+random()*180;
+    return {v:[-g.x/length*lift+(random()-.5)*600,-g.y/length*lift+(random()-.5)*600,-g.z/length*lift+(random()-.5)*400],w:[(random()-.5)*32,(random()-.5)*32,(random()-.5)*32]};
+   });
   }
-  return true;
+  const phase=motion.elapsed-pulse*spacing;
+  if(phase<duration){
+   const end=Math.min(duration,phase+dt),portion=(Math.cos(Math.PI*phase/duration)-Math.cos(Math.PI*end/duration))/2;
+   for(let i=0;i<bodies.length;i++){
+    const body=bodies[i],v=body.linvel(),w=body.angvel(),kick=motion.kicks[i];
+    body.setLinvel({x:v.x+kick.v[0]*portion-g.x*(end-phase),y:v.y+kick.v[1]*portion-g.y*(end-phase),z:v.z+kick.v[2]*portion-g.z*(end-phase)},true);
+    body.setAngvel({x:w.x+kick.w[0]*portion,y:w.y+kick.w[1]*portion,z:w.z+kick.w[2]*portion},true);
+   }
+  }
+  motion.elapsed+=dt;
+  if(motion.elapsed>=2*spacing+duration)shakeMotion=null;
  }
  // A hard unilateral boundary projection supplements CCD at this display-rate timestep.
  // It uses every rendered hull vertex, removes outward linear velocity, and never teleports
@@ -122,7 +139,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   accumulator+=Math.max(0,Math.min(Number(dtSeconds)||0,1/30));
   let moved=false,taken=0;
   while(accumulator>=FIXED_DT&&taken<4&&moving) {
-   world.step();enforceBoundary();steps++;taken++;accumulator-=FIXED_DT;actionAge+=FIXED_DT;moved=true;
+   advanceShake(FIXED_DT);world.step();enforceBoundary();steps++;taken++;accumulator-=FIXED_DT;actionAge+=FIXED_DT;moved=true;
    let linearEnergy=0,angularEnergy=0,awake=0;
    for(const b of bodies){if(b.isSleeping())continue;awake++;const v=b.linvel(),w=b.angvel();linearEnergy+=v.x*v.x+v.y*v.y+v.z*v.z;angularEnergy+=w.x*w.x+w.y*w.y+w.z*w.z;}
    const rmsLinear=Math.sqrt(linearEnergy/Math.max(1,bodies.length)),rmsAngular=Math.sqrt(angularEnergy/Math.max(1,bodies.length));lastRmsLinear=rmsLinear;lastRmsAngular=rmsAngular;
@@ -132,11 +149,11 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
    // one120Hz step of a5.6mm shard then moves less than~0.14mm (below a256²/44mm pixel).
    smoothLinear+=(rmsLinear-smoothLinear)*.04;smoothAngular+=(rmsAngular-smoothAngular)*.04;
    stableFor=actionAge>1.5&&smoothLinear<8&&smoothAngular<3?stableFor+FIXED_DT:0;
-   if(awake===0||stableFor>.8){if(awake){for(const b of bodies)b.sleep();freezeReason='stable-subpixel-contact-jitter';}else freezeReason='rapier-sleep';moving=false;accumulator=0;}
+   if(!shakeMotion&&(awake===0||stableFor>.8)){if(awake){for(const b of bodies)b.sleep();freezeReason='stable-subpixel-contact-jitter';}else freezeReason='rapier-sleep';moving=false;accumulator=0;}
   }
   return moved;
  }
- function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0);return {moving,sleeping,steps,count:chips.length,sizeScale,bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:.8,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
+ function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0);return {moving,sleeping,steps,shaking:shakeMotion!==null,count:chips.length,sizeScale,bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:.8,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
  function dispose(){if(!disposed){world.free();disposed=true;moving=false;}}
  reset(count);return api;
 }

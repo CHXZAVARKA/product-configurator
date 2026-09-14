@@ -4,22 +4,25 @@
     {
       "roll": 0,
       "tilt": 0,
-      "movedOver2Mm": 19,
-      "meanMm": 3.1084397830093673,
+      "lateMeanTravelMm": 30.21193043062499,
+      "movedOver2Mm": 35,
+      "meanMm": 5.708104931995954,
       "sleeping": 36
     },
     {
       "roll": 120,
       "tilt": 35,
-      "movedOver2Mm": 22,
-      "meanMm": 2.7877913090131314,
+      "lateMeanTravelMm": 29.929886923002357,
+      "movedOver2Mm": 35,
+      "meanMm": 7.02696655260726,
       "sleeping": 36
     },
     {
       "roll": -90,
       "tilt": -70,
-      "movedOver2Mm": 19,
-      "meanMm": 2.7523164056698293,
+      "lateMeanTravelMm": 13.76775753358568,
+      "movedOver2Mm": 34,
+      "meanMm": 4.554771315148042,
       "sleeping": 36
     }
   ]
