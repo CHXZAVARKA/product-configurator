@@ -1,0 +1,69 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:04:23.208Z",
+  "thresholdMm": 0.2,
+  "runs": [
+    {
+      "seed": 93,
+      "level": "dense",
+      "count": 109,
+      "fill": {
+        "attempts": 39432,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 2157,
+          "emptyAccessibleCells": 9083,
+          "freeAccessibleFraction": 0.8080960854092527
+        },
+        "visibleVolumeMm3": 2144.9074273481533,
+        "physicalVolumeMm3": 2144.9074082374573,
+        "visibleFraction": 0.18012022005959052,
+        "physicalFraction": 0.1801202184547554,
+        "unoccupiedNominalFraction": 0.8198797815452445,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 316.875292,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.045655257958841844,
+      "maxIndependentPairMm": 0.12237949207241261,
+      "maxNativePenetrationMm": 0.1562485694885254,
+      "integration": {
+        "timestep": 0.0010416667209938169,
+        "numSolverIterations": 24
+      },
+      "maxSampledSpeedMmS": 171.53121322900105,
+      "maxSampledSweepMm": 0.17867835643234475,
+      "initialFreeSpace": {
+        "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+        "spacingMm": 1,
+        "nominalCells": 11240,
+        "cadBlockedCells": 0,
+        "accessibleCells": 11240,
+        "occupiedCells": 2157,
+        "emptyAccessibleCells": 9083,
+        "freeAccessibleFraction": 0.8080960854092527
+      },
+      "redistributionMm": 21.326391830798336,
+      "orientationChangeRad": 2.853574478990822,
+      "normalFlipCount": 24,
+      "recordedFrames": 121,
+      "activeFrameP95Ms": 197.3610000000008,
+      "activeCpuMsPerSimulatedSecond": 10743.690753500006
+    }
+  ],
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.7.0"
+  },
+  "note": "16 substeps are exactly 16.667ms simulated time; no artificial simulation slowdown. Concurrent worker load can affect measurements.",
+  "passed": true
+}

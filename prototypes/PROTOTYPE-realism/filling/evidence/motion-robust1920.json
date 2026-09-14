@@ -1,0 +1,47 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:02:34.055Z",
+  "thresholdMm": 0.2,
+  "runs": [
+    {
+      "seed": 93,
+      "level": "dense",
+      "count": 109,
+      "fill": {
+        "attempts": 39432,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "visibleVolumeMm3": 2144.9074273481533,
+        "physicalVolumeMm3": 2144.9074082374573,
+        "visibleFraction": 0.18012022005959052,
+        "physicalFraction": 0.1801202184547554,
+        "unoccupiedNominalFraction": 0.8198797815452445,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 266.813583,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.017973450706765703,
+      "maxIndependentPairMm": 0.14316749161913034,
+      "maxNativePenetrationMm": 0.17156434059143066,
+      "integration": {
+        "timestep": 0.0010416667209938169,
+        "numSolverIterations": 96
+      },
+      "redistributionMm": 23.099778300897288,
+      "orientationChangeRad": 3.1031487087184937,
+      "normalFlipCount": 23,
+      "recordedFrames": 121,
+      "activeFrameP95Ms": 298.50458399999843,
+      "activeCpuMsPerSimulatedSecond": 16808.781956000003
+    }
+  ],
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.7.0"
+  },
+  "note": "16 substeps are exactly 16.667ms simulated time; no artificial simulation slowdown. Concurrent worker load can affect measurements.",
+  "passed": true
+}

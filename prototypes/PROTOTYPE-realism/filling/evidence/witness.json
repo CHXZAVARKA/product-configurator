@@ -1,0 +1,16 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:28:47.925Z",
+  "seed": 41,
+  "level": "dense",
+  "count": 114,
+  "pair": [
+    53,
+    83
+  ],
+  "thresholdMm": 0.2,
+  "freshNativeMm": 0.22908473014831543,
+  "independentSATMm": 0.2290851753631138,
+  "solverSteps": 0,
+  "failedGeometryReproduced": true
+}

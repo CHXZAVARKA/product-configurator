@@ -1,0 +1,54 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:01:21.298Z",
+  "thresholdMm": 0.2,
+  "runs": [
+    {
+      "seed": 41,
+      "level": "dense",
+      "count": 114,
+      "fill": {
+        "attempts": 103191,
+        "rejectedShapes": 2,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "visibleVolumeMm3": 2150.7581779856305,
+        "physicalVolumeMm3": 2150.7581486701965,
+        "visibleFraction": 0.18061154126016982,
+        "physicalFraction": 0.18061153879838412,
+        "unoccupiedNominalFraction": 0.8193884612016159,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 650.7195830000001,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.05134731462783648,
+      "maxIndependentPairMm": 0.2681237203225457,
+      "maxNativePenetrationMm": 0.2614912986755371,
+      "activeFrameMs": [
+        117.00379199999998,
+        89.94833299999993,
+        169.58741699999996,
+        187.79666699999984,
+        133.57745799999998,
+        128.4621669999999,
+        136.19891699999994,
+        132.53887499999996,
+        139.5947910000002
+      ],
+      "sleepFrameMs": [],
+      "integration": {
+        "timestep": 0.0010416667209938169,
+        "numSolverIterations": 24
+      }
+    }
+  ],
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.7.0"
+  },
+  "note": "16 substeps are exactly 16.667ms simulated time; no artificial simulation slowdown. Concurrent worker load can affect measurements.",
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Independent convex penetration: 0.2681237203225457\n    at sample (file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:8:84)\n    at file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:11:200"
+}

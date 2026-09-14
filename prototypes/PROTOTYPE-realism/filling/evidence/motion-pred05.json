@@ -1,0 +1,74 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:03:55.351Z",
+  "thresholdMm": 0.2,
+  "runs": [
+    {
+      "seed": 93,
+      "level": "dense",
+      "count": 109,
+      "fill": {
+        "attempts": 39432,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 2157,
+          "emptyAccessibleCells": 9083,
+          "freeAccessibleFraction": 0.8080960854092527
+        },
+        "visibleVolumeMm3": 2144.9074273481533,
+        "physicalVolumeMm3": 2144.9074082374573,
+        "visibleFraction": 0.18012022005959052,
+        "physicalFraction": 0.1801202184547554,
+        "unoccupiedNominalFraction": 0.8198797815452445,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 317.464875,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.08930819575201099,
+      "maxIndependentPairMm": 0.396624098564061,
+      "maxNativePenetrationMm": 0.3836137354373932,
+      "activeFrameMs": [
+        128.631709,
+        128.42733299999998,
+        164.520125,
+        210.20520799999997,
+        178.33175000000006,
+        172.2442920000001,
+        169.79483299999993,
+        177.14487499999996,
+        170.0731249999999
+      ],
+      "sleepFrameMs": [],
+      "integration": {
+        "timestep": 0.0010416667209938169,
+        "numSolverIterations": 24
+      },
+      "initialFreeSpace": {
+        "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+        "spacingMm": 1,
+        "nominalCells": 11240,
+        "cadBlockedCells": 0,
+        "accessibleCells": 11240,
+        "occupiedCells": 2157,
+        "emptyAccessibleCells": 9083,
+        "freeAccessibleFraction": 0.8080960854092527
+      }
+    }
+  ],
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.7.0"
+  },
+  "note": "16 substeps are exactly 16.667ms simulated time; no artificial simulation slowdown. Concurrent worker load can affect measurements.",
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Independent convex penetration: 0.396624098564061\n    at sample (file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:8:84)\n    at file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:11:200"
+}
