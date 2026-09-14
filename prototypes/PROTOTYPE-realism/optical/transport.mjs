@@ -1,5 +1,5 @@
 import {makeChip, transformVertices} from '../geometry.mjs';
-export const FIXED_BASE='056ff8ecec0d2fb359f3d371107495d1902effec';
+export const FIXED_BASE='0d51e61579e1a49aff5c4811ab2ce1b48c712ed6';
 export const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
 export const add=(a,b)=>a.map((v,i)=>v+b[i]);
 export const scale=(a,s)=>a.map(v=>v*s);
@@ -22,7 +22,7 @@ export function fresnel(direction,normal,from,to){const c=Math.abs(dot(direction
 export const beer=(absorption,length)=>absorption.map(a=>Math.exp(-a*length));
 export function background(point){const [x,y]=point,grid=Math.min(Math.abs(x-Math.round(x)),Math.abs(y-Math.round(y)));if(grid<.045)return [.06,.09,.14];if(Math.abs(x)<.055||Math.abs(y)<.055)return [.15,.25,.65];return ((Math.floor(x/2)+Math.floor(y/2))%2===0)?[1,.97,.88]:[.83,.87,.92];}
 export function nearestInterface(o,d,scene){let result;for(let index=0;index<scene.length;index++){const h=intersectSolid(o,d,scene[index]);if(h&&(!result||h.t<result.t))result={...h,index};}return result;}
-export function transmittedRay(origin,direction,scene,{backgroundZ=18,maxInterfaces=16}={}){let o=[...origin],d=unit(direction),inside=scene.findIndex(s=>s.planes.every(p=>dot(p.normal,origin)<p.offset-1e-6)),weight=[1,1,1],lengths=scene.map(()=>0),interfaces=0;
+export function transmittedRay(origin,direction,scene,{backgroundZ=-18,maxInterfaces=16}={}){let o=[...origin],d=unit(direction),inside=scene.findIndex(s=>s.planes.every(p=>dot(p.normal,origin)<p.offset-1e-6)),weight=[1,1,1],lengths=scene.map(()=>0),interfaces=0;
  for(let bounce=0;bounce<maxInterfaces;bounce++){const hit=nearestInterface(o,d,scene),tb=(backgroundZ-o[2])/d[2];if(!hit||(tb>0&&tb<hit.t)){if(tb>0&&Number.isFinite(tb))return {point:add(o,scale(d,tb)),ray:{origin:o,direction:d},weight,lengths,interfaces};return {point:null,ray:{origin:o,direction:d},weight,lengths,interfaces,status:'environment'};}
  if(inside>=0){lengths[inside]+=hit.t;const a=beer(scene[inside].absorption,hit.t);weight=weight.map((v,i)=>v*a[i]);}
  const s=scene[hit.index],from=inside<0?1:scene[inside].ior,to=hit.entering?s.ior:1,F=fresnel(d,hit.normal,from,to),next=refract(d,hit.normal,from,to);const point=add(o,scale(d,hit.t));if(!next){d=unit(add(d,scale(hit.normal,-2*dot(d,hit.normal))));o=add(point,scale(d,1e-4));interfaces++;continue;}weight=weight.map(v=>v*(1-F));inside=hit.entering?hit.index:-1;d=next;o=add(point,scale(d,1e-4));
@@ -31,9 +31,9 @@ export function transmittedRay(origin,direction,scene,{backgroundZ=18,maxInterfa
  return {point:null,weight:[0,0,0],lengths,interfaces};}
 // Monte Carlo delta-dielectric path sampling, luminous calibrated grid + broad environment lamps.
 // Russian roulette on Fresnel chooses real reflected paths; max depth is a convergence limit.
-export function traceSample(origin,direction,scene,random=Math.random,maxDepth=24,backgroundZ=18){let o=[...origin],d=unit(direction),inside=scene.findIndex(s=>s.planes.every(p=>dot(p.normal,origin)<p.offset-1e-6)),weight=[1,1,1];
+export function traceSample(origin,direction,scene,random=Math.random,maxDepth=24,backgroundZ=-18){let o=[...origin],d=unit(direction),inside=scene.findIndex(s=>s.planes.every(p=>dot(p.normal,origin)<p.offset-1e-6)),weight=[1,1,1];
  for(let b=0;b<maxDepth;b++){const h=nearestInterface(o,d,scene),tb=(backgroundZ-o[2])/d[2];
- if(!h||(tb>0&&tb<h.t)){let light;if(tb>0&&Number.isFinite(tb))light=background(add(o,scale(d,tb)));else {const lamp=dot(d,unit([-.4,.5,1]));light=lamp>.94?[3,2.9,2.7]:[.14,.18,.24];}return weight.map((v,i)=>v*light[i]);}
+ if(!h||(tb>0&&tb<h.t)){let light;if(tb>0&&Number.isFinite(tb))light=background(add(o,scale(d,tb)));else {const lamp=dot(d,unit([-.4,.5,-1]));light=lamp>.94?[3,2.9,2.7]:[.14,.18,.24];}return weight.map((v,i)=>v*light[i]);}
  if(inside>=0){const a=beer(scene[inside].absorption,h.t);weight=weight.map((v,i)=>v*a[i]);}
  const s=scene[h.index],from=inside<0?1:scene[inside].ior,to=h.entering?s.ior:1,F=fresnel(d,h.normal,from,to),point=add(o,scale(d,h.t));
  if(random()<F)d=unit(add(d,scale(h.normal,-2*dot(d,h.normal))));else{d=refract(d,h.normal,from,to);inside=h.entering?h.index:-1;}
@@ -41,4 +41,4 @@ export function traceSample(origin,direction,scene,random=Math.random,maxDepth=2
  }return [0,0,0];
 }
 export function seededRandom(seed=1){return ()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
-export function cameraRay(x,y,width,height,jitter=[.5,.5],angle=0){const dir=unit([Math.sin(angle),0,Math.cos(angle)]);return {origin:[((x+jitter[0])/width-.5)*16, (.5-(y+jitter[1])/height)*16*height/width,-18],direction:dir};}
+export function cameraRay(x,y,width,height,jitter=[.5,.5],angle=0){const dir=unit([Math.sin(angle),0,-Math.cos(angle)]);return {origin:[((x+jitter[0])/width-.5)*16, (.5-(y+jitter[1])/height)*16*height/width,18],direction:dir};}

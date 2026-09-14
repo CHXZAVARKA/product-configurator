@@ -9,7 +9,7 @@ const port=9348,profile=mkdtempSync(join(tmpdir(),'realism-02-')),chrome=spawn('
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));let ws,id=0;const pending=new Map(),errors=[],requests=[];
 const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});ws.send(JSON.stringify({id:n,method,params}));});
 const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
-const results={fixedBase:'056ff8ecec0d2fb359f3d371107495d1902effec',generated:new Date().toISOString(),checks:[]};
+const results={fixedBase:'0d51e61579e1a49aff5c4811ab2ce1b48c712ed6',generated:new Date().toISOString(),checks:[]};
 const server=spawn('python3',['-m','http.server','3038','--bind','127.0.0.1','--directory',new URL('..',import.meta.url).pathname],{stdio:'ignore'});
 try{
  for(let i=0;i<80;i++){try{await fetch(`http://127.0.0.1:${port}/json/version`);break;}catch{await sleep(100);}}
@@ -22,8 +22,8 @@ try{
  results.benchmark=await evaluate('OPTICAL.benchmark()');
  assert(await evaluate(`(()=>{try{OPTICAL.fast.render(new Array(3).fill({}));return false;}catch(e){return e.message.includes('at most two');}})()`));results.checks.push({name:'fast-more-than-two-solids-rejected-explicitly',passed:true});
  for(const count of [1,2]){
- await evaluate(`OPTICAL.setCount(${count})`);const before=await evaluate('OPTICAL.snapshot()');
- const method=await evaluate('OPTICAL.trace(64)');const after=await evaluate('OPTICAL.snapshot()');assert.deepEqual(before.poses,after.poses);assert.equal(after.traceResult.spp,64);assert.equal(after.center.interfaces,count*2);
+ await evaluate(`OPTICAL.setCount(${count})`);const before=await evaluate('OPTICAL.snapshot()');assert.equal(before.orientation.eyeZ,18);assert.equal(before.orientation.backgroundZ,-18);assert(before.orientation.direction[2]<0);
+ const method=await evaluate('OPTICAL.trace(64)');const after=await evaluate('OPTICAL.snapshot()');assert.deepEqual(before.poses,after.poses);assert.equal(after.traceResult.spp,64);assert.equal(after.center.interfaces,count*2);assert.equal(after.center.point[2],-18);assert(after.center.ray.direction[2]<0);assert.deepEqual(after.traceResult.orientation,before.orientation);
  results.checks.push({name:`${count}-layer-control-same-frozen-poses`,passed:true,method,center:after.center});
  const probes=[];for(const [x,y] of [[118,122],[128,127],[140,137]]){const ray=cameraRay(x,y,256,256),t=transmittedRay(ray.origin,ray.direction,frozenScene(count));assert(t.point);const expected=background(t.point).map((v,j)=>Math.round(255*Math.min(1,v*t.weight[j])**(1/2.2)));const actual=await evaluate(`(()=>{const gl=OPTICAL.fast.gl,p=new Uint8Array(4);gl.readPixels(${x},${255-y},1,1,gl.RGBA,gl.UNSIGNED_BYTE,p);return [...p];})()`);assert(expected.every((v,j)=>Math.abs(v-actual[j])<=2),JSON.stringify({x,y,expected,actual}));probes.push({x,y,expected,actual,backgroundPointMm:t.point});}results.checks.push({name:`${count}-layer-GPU-pixels-match-independent-CPU-ray`,passed:true,probes});
 
