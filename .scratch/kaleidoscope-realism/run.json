@@ -14,7 +14,10 @@
     "01": {
       "file": ".scratch/kaleidoscope-realism/issues/01-free-chip-motion.md",
       "blocked_by": [],
-      "state": "PENDING"
+      "state": "RUNNING",
+      "base_integration_sha": "10ebf5f9eeaa6702811882f495b12b14d0611f49",
+      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-01",
+      "owner": "worker-realism-01"
     },
     "02": {
       "file": ".scratch/kaleidoscope-realism/issues/02-glass-transmission.md",
