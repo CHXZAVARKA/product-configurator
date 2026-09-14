@@ -1,18 +1,21 @@
-import {add,sub,scale,dot,normalize,reflect} from './cad-solid.mjs';
-export const BACKGROUND_Z_MM=28;
+import {add,sub,scale} from './cad-solid.mjs';
+export const BACKGROUND_Z_MM=-28;
+export const BACKLIGHT_Z_MM=-46;
+export const DEMO_EYE_Z_MM=45;
 export function viewingRay(x,y,viewDeg=0) {
- const angle=viewDeg*Math.PI/180,direction=[Math.sin(angle),0,Math.cos(angle)],right=[Math.cos(angle),0,-Math.sin(angle)];
- const target=add([-0,0,-9.076855],add(scale(right,-x),[0,y,0]));
- return {origin:sub(target,scale(direction,48)),direction};
+ const angle=viewDeg*Math.PI/180,direction=[Math.sin(angle),0,-Math.cos(angle)],right=[Math.cos(angle),0,Math.sin(angle)];
+ const target=add([0,0,-9.076855],add(scale(right,x),[0,y,0]));
+ return {origin:sub(target,scale(direction,DEMO_EYE_Z_MM+9.076855)),direction};
 }
 export const RAY_STATUS=Object.freeze({miss:0,transmitted:1,'reflection-limit':2,'open-path':3,'invalid-orientation':4,'origin-inside-unsupported':5});
 const STATUS_NAME=Object.fromEntries(Object.entries(RAY_STATUS).map(([name,id])=>[id,name]));
 // Packed, cacheable eye -> CAD exit rays. Light, image and Beer absorption are
-// deliberately absent from the key: moving shards consume the same exit field.
+// deliberately absent from the key. Incoming rays MUST stay identical; moving
+// refractive shards BEFORE the CAD generally invalidate the field.
 export class CADRayFieldCache {
  constructor(solid,{capacity=2}={}){this.solid=solid;this.capacity=capacity;this.fields=new Map();this.builds=0;}
  get({size=256,halfSizeMm=22,viewDeg=0,pose={},ior=1.5,maxInternalReflections=4,rayForPixel=null,rayKey=null}={}) {
-  if(rayForPixel&&!(typeof rayKey==='string'&&rayKey.length))throw Error('Custom rays require a stable rayKey that changes with the camera');
+  if(rayForPixel&&!(typeof rayKey==='string'&&rayKey.length))throw Error('Custom rays require a rayKey that changes with every incoming ray change, including shards');
   const canonical={size,halfSizeMm,viewDeg,pose:{rotationDeg:pose.rotationDeg||[0,0,0],translationMm:pose.translationMm||[0,0,0]},ior,maxInternalReflections,rayKey:rayForPixel?rayKey:null},key=JSON.stringify(canonical);
   if(this.fields.has(key)){const field=this.fields.get(key);this.fields.delete(key);this.fields.set(key,field);return field;}
   if(!Number.isInteger(size)||size<1||size>2048||halfSizeMm<=0)throw Error('Invalid ray field size');
@@ -39,16 +42,17 @@ export function planePoint(ray,z=BACKGROUND_Z_MM) {
  const t=(z-ray.origin[2])/ray.direction[2];
  return t>0 ? add(ray.origin,scale(ray.direction,t)) : null;
 }
-// A fixed emitting grid plane plus a controllable front environment lamp.
-// Environment reflection is local, no multi-bounce caustic illumination solver.
+// A printed backlit grid at -28, point light behind it at -46. Moving the light
+// changes background irradiance, not geometry. Fixed front ambient reflection
+// is local, no multi-bounce caustic illumination solver.
 export function shadeTransmission(trace,sample,{lightDeg=0,intensity=1}={}) {
- const p=planePoint(trace.ray),base=p?sample(p[0],p[1]):[.09,.12,.16];
+ const p=planePoint(trace.ray),a=lightDeg*Math.PI/180,depth=BACKGROUND_Z_MM-BACKLIGHT_Z_MM,lightX=Math.tan(a)*depth;
+ const irradiance=p?(1+((p[0]-lightX)**2+p[1]**2)/depth**2)**-1.5:.1;
+ const base=(p?sample(p[0],p[1]):[.09,.12,.16]).map(v=>v*irradiance);
  if(trace.status==='miss')return base.map(v=>v*intensity);
  if(trace.status!=='transmitted')return [.025,.032,.042];
- const a=lightDeg*Math.PI/180,lamp=normalize([Math.sin(a),.3,-Math.cos(a)]),first=trace.interfaces[0];
- const reflected=reflect(first.incident,first.normal),alignment=Math.max(0,dot(reflected,lamp));
- const environment=.11+.95*Math.pow(alignment,45);
- // Single local specular approximation. Transmission itself follows exact mesh faces.
+ const environment=.11;
+ // Fixed local ambient approximation. Transmission follows exact mesh faces.
  return base.map((v,i)=>v*trace.transmittance[i]*intensity+trace.reflectance*environment*intensity);
 }
 export function renderFrame(solid,sample,{size=256,enabled=true,rotationDeg=0,viewDeg=0,lightDeg=0,intensity=1,absorption=[.006,.003,.002]}={}) {

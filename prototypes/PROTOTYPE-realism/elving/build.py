@@ -7,7 +7,8 @@ imports={}
 imports['elving-solid']=uri((p/'cad-solid.mjs').read_text())
 imports['elving-render']=uri((p/'render.mjs').read_text().replace("'./cad-solid.mjs'","'elving-solid'"))
 app=(p/'app.mjs').read_text().replace("'./cad-solid.mjs'","'elving-solid'").replace("'./render.mjs'","'elving-render'")
-cad=json.loads((p.parents[1]/'PROTOTYPE-optics/assets/cad.json').read_text())['elving']
-page=(p/'shell.html').read_text().replace('<!-- IMPORTS -->','<script type="importmap">'+json.dumps({'imports':imports})+'</script>').replace('/* CAD */','const CAD='+json.dumps(cad)+';').replace('/* APP */',app)
+full_cad=json.loads((p.parents[1]/'PROTOTYPE-optics/assets/cad.json').read_text());cad=full_cad['elving']
+assembly={'partZRangesMm':{name:[min(full_cad[name]['positions'][2::3]),max(full_cad[name]['positions'][2::3])] for name in ['glazok','prizma','steklo','nasipka','elving']},'eyeSide':'+Z','rayDirection':[0,0,-1]}
+page=(p/'shell.html').read_text().replace('<!-- IMPORTS -->','<script type="importmap">'+json.dumps({'imports':imports})+'</script>').replace('/* CAD */','const CAD='+json.dumps(cad)+';const ASSEMBLY='+json.dumps(assembly)+';').replace('/* APP */',app)
 (p/'PROTOTYPE-elving.html').write_text(page)
 print(f'Built offline CAD elving: {len(page.encode())} bytes')
