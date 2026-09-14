@@ -8,8 +8,8 @@ const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]
 const dot=(a,b)=>a.reduce((sum,v,k)=>sum+v*b[k],0);
 const reports=[];
 for(const thin of [false,true]) {
- const random=randomFrom(0x4e17a9),repeat=randomFrom(0x4e17a9),chips=[],signatures=new Set(),families=new Set();
- let maxAspect=0,maxSurfaceAspect=0,minVolume=Infinity,maxVolume=0,maxRadius=0,maxZ=0,sumBroadFaceAngle=0,irregularEdgeCount=0;
+ const random=randomFrom(0x4e17a9),repeat=randomFrom(0x4e17a9),chips=[],signatures=new Set(),families=new Set(),familyCounts={};
+ let maxAspect=0,maxSurfaceAspect=0,minVolume=Infinity,maxVolume=0,maxRadius=0,maxZ=0,sumBroadFaceAngle=0,irregularEdgeCount=0,sumCornerCuts=0,minPlanarAspect=Infinity,maxPlanarAspect=0;
  for(let id=0;id<512;id++) {
   const chip=makeBrokenChip(id,random,thin);
   assert.deepEqual(chip,makeBrokenChip(id,repeat,thin),'Seed reproducibility');
@@ -35,7 +35,9 @@ for(const thin of [false,true]) {
   assert(!planes.some((n,i)=>planes.slice(i+1).some(m=>dot(n,m)<-1+1e-10)),'No parallel duplicated slab faces');
   const top=planes.reduce((a,b)=>a[2]>b[2]?a:b),bottom=planes.reduce((a,b)=>a[2]<b[2]?a:b);sumBroadFaceAngle+=Math.acos(Math.max(-1,Math.min(1,-dot(top,bottom))));
   const lengths=[...edges.values()].map(e=>Math.hypot(...sub(vertices[e[0][0]],vertices[e[0][1]])));if(Math.max(...lengths)/Math.min(...lengths)>1.6)irregularEdgeCount++;assert(chip.color.every(c=>c>=0&&c<=1));
-  signatures.add(JSON.stringify(vertices));families.add(chip.shapeAudit.family);chips.push(chip);
+  const xx=vertices.reduce((s,p)=>s+(p[0]-center[0])**2,0),yy=vertices.reduce((s,p)=>s+(p[1]-center[1])**2,0),xy=vertices.reduce((s,p)=>s+(p[0]-center[0])*(p[1]-center[1]),0),spread=Math.hypot(xx-yy,2*xy);
+  const planarAspect=Math.sqrt((xx+yy+spread)/(xx+yy-spread));minPlanarAspect=Math.min(minPlanarAspect,planarAspect);maxPlanarAspect=Math.max(maxPlanarAspect,planarAspect);
+  signatures.add(JSON.stringify(vertices));families.add(chip.shapeAudit.family);familyCounts[chip.shapeAudit.family]=(familyCounts[chip.shapeAudit.family]||0)+1;sumCornerCuts+=chip.shapeAudit.cornerCutCount;chips.push(chip);
   if(id<96) {
    const skin=buildChipSurface(chip);
    assert(skin.audit.maxOutsideHullMm<1e-8,'Surface stays in collision envelope');
@@ -47,7 +49,9 @@ for(const thin of [false,true]) {
  assert(maxRadius<=2.800000001);assert(maxZ<=(thin?.8975000001:1.0975000001));assert(maxVolume/minVolume>(thin?1.2:1.7),'Meaningful volume variation');assert(maxAspect<25);
  assert(sumBroadFaceAngle/chips.length>.055,'Independent broad planes have visible angular separation');assert(irregularEdgeCount>chips.length*.9,'Substantially unequal edge lengths dominate the population');
  const meanVolume=chips.reduce((s,c)=>s+c.volumeMm3,0)/chips.length;assert(meanVolume>(thin?18:24),'Retain useful packing volume');
- reports.push({thin,count:chips.length,unique:signatures.size,shapeFamilies:[...families].sort(),maxRadiusMm:maxRadius,maxAbsZMm:maxZ,volumeRangeMm3:[minVolume,maxVolume],meanVolumeMm3:chips.reduce((s,c)=>s+c.volumeMm3,0)/chips.length,maxHullTriangleAspect:maxAspect,maxSurfaceTriangleAspect:maxSurfaceAspect,meanBroadFaceAngleDeg:sumBroadFaceAngle/chips.length*180/Math.PI,irregularEdgeCount});
+ assert(sumCornerCuts/chips.length>1.8,'Multiple independent corner cuts remain real hull faces');
+ if(!thin){assert(familyCounts.short<chips.length*.65&&familyCounts.splinter>chips.length*.08&&familyCounts.flake>chips.length*.04,'Population includes noticeably more narrow fragments and flakes');assert(maxPlanarAspect/minPlanarAspect>1.7,'Population has distinct width/length proportions');}
+ reports.push({thin,count:chips.length,unique:signatures.size,shapeFamilies:[...families].sort(),familyCounts,meanCornerCutCount:sumCornerCuts/chips.length,planarAspectRange:[minPlanarAspect,maxPlanarAspect],maxRadiusMm:maxRadius,maxAbsZMm:maxZ,volumeRangeMm3:[minVolume,maxVolume],meanVolumeMm3:meanVolume,maxHullTriangleAspect:maxAspect,maxSurfaceTriangleAspect:maxSurfaceAspect,meanBroadFaceAngleDeg:sumBroadFaceAngle/chips.length*180/Math.PI,irregularEdgeCount});
 }
 const sample=makeBrokenChip(17,randomFrom(872));
 assert.notDeepEqual(makeBrokenChip(17,randomFrom(872),false,{bulk:0}).vertices,makeBrokenChip(17,randomFrom(872),false,{bulk:1}).vertices,'Bulk changes the 3D solid');

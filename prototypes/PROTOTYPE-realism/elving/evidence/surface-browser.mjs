@@ -42,6 +42,12 @@ try{
  await evaluate("window.REALTIME.set({auto:false,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyMaterial:'glass',studyTurn:0,studyTilt:0,paused:true})");await sleep(120);
  const skin=(await snapshot()).surface;assert(skin.perChip.every(c=>c.maxOpticalThicknessMm>c.minOpticalThicknessMm+.1));
  results.checks.push({name:'study-rotation-clay-backlight-shape-controls-and-local-thickness',passed:true});
+ assert(await evaluate("(()=>{const button=document.getElementById('shake');return !button.disabled&&!button.hidden&&button.getBoundingClientRect().height>0;})()"),'Shake must remain visible and enabled in samples');
+ const preShakeSteps=(await snapshot()).physics.steps,preShakePoses=await evaluate('window.REALTIME.physics.poses().map(p=>p.positionMm)');
+ await evaluate("document.getElementById('shake').click()");await sleep(250);
+ const shaken=await snapshot();assert.equal(shaken.state.mode,'glass');assert.equal(shaken.state.paused,false);assert.equal(shaken.state.filling,true);assert(shaken.physics.steps>preShakeSteps);assert.notDeepEqual(await evaluate('window.REALTIME.physics.poses().map(p=>p.positionMm)'),preShakePoses);
+ results.checks.push({name:'visible-shake-in-samples-opens-moving-filling',passed:true});
+
  await evaluate("window.REALTIME.set({paused:true,filling:false,mode:'glass',turn:0,tilt:0})");await sleep(150);
  const poses=await evaluate('window.REALTIME.physics.poses().map(({id,positionMm,rotation})=>({id,positionMm,rotation}))');const original=await evaluate('window.REALTIME.hash()');
  await evaluate("window.REALTIME.set({turn:90})");await sleep(150);assert.notEqual(await evaluate('window.REALTIME.hash()'),original);const rolled=await evaluate('window.REALTIME.hash()');

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-14T15:46:14.611Z",
+  "generated": "2026-09-14T16:18:05.497Z",
   "checks": [
     {
       "name": "settled-prism-no-jitter-or-flicker",
@@ -7,6 +7,10 @@
     },
     {
       "name": "study-rotation-clay-backlight-shape-controls-and-local-thickness",
+      "passed": true
+    },
+    {
+      "name": "visible-shake-in-samples-opens-moving-filling",
       "passed": true
     },
     {
@@ -41,8 +45,8 @@
   ],
   "geometry": {
     "count": 36,
-    "visualTriangles": 46592,
-    "collisionTriangles": 728,
+    "visualTriangles": 52736,
+    "collisionTriangles": 824,
     "maxDeviationMm": 0.55
   },
   "performance": {
@@ -52,8 +56,8 @@
       830
     ],
     "samples": 40,
-    "p95Ms": 4,
-    "meanMs": 3.172500000149012,
+    "p95Ms": 4.299999997019768,
+    "meanMs": 3.1600000001490116,
     "method": "Rapier + moving source + HDR PBR + bloom + mirrors, gl.finish",
     "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
     "mode": "prism",
@@ -67,7 +71,7 @@
     "physics": {
       "moving": true,
       "sleeping": 0,
-      "steps": 372,
+      "steps": 405,
       "count": 36,
       "sizeScale": 1.5,
       "bulk": 0.65,
@@ -76,14 +80,14 @@
       "fixedDtSeconds": 0.008333333333333333,
       "maxCatchupSteps": 4,
       "stableForSeconds": 0,
-      "smoothedRmsLinearMmPerSecond": 11.415307787128027,
-      "smoothedRmsAngularRadPerSecond": 3.780620542186618,
-      "actionAgeSeconds": 0.7916666666666663,
+      "smoothedRmsLinearMmPerSecond": 0.6120327839250269,
+      "smoothedRmsAngularRadPerSecond": 0.29061528405200127,
+      "actionAgeSeconds": 0.7999999999999996,
       "freezeReason": null,
-      "lastRmsLinearMmPerSecond": 15.867622514756762,
-      "lastRmsAngularRadPerSecond": 6.119997497259608,
-      "boundaryCorrections": 1115,
-      "maxBoundaryCorrectionMm": 1.1841039904580517,
+      "lastRmsLinearMmPerSecond": 0.26624504664664866,
+      "lastRmsAngularRadPerSecond": 0.0705994300622222,
+      "boundaryCorrections": 588,
+      "maxBoundaryCorrectionMm": 1.3065415871909938,
       "hardBoundaryProjection": true,
       "settlePolicy": {
         "minActionAgeSeconds": 1.5,
@@ -93,8 +97,8 @@
         "linearDamping": 3,
         "angularDamping": 35
       },
-      "solidVolumeMm3": 2969.710947630784,
-      "nominalSolidFraction": 0.24938371818776314,
+      "solidVolumeMm3": 3094.6948375271886,
+      "nominalSolidFraction": 0.2598793346721896,
       "chamberAudit": {
         "radiusMm": 18.999993668083157,
         "floorEnvelopeMm": -0.5,

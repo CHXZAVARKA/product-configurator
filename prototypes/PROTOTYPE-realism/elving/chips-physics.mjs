@@ -19,9 +19,9 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
  const p=world.integrationParameters;
  p.lengthUnit=10;
  p.normalizedAllowedLinearError=.0004;
- // Three iterations left dense contacts visibly reversing every frame. Eight
- // removes that jitter without suppressing gravity, tumbling or user motion.
- p.numSolverIterations=8;
+ // Sixteen iterations keep the more irregular corner-cut fragments stable
+ // under steep gravity changes, without suppressing tumbling or user motion.
+ p.numSolverIterations=16;
  p.contact_natural_frequency=120;
  p.numInternalPgsIterations=1;
  p.maxCcdSubsteps=1;

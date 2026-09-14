@@ -45,14 +45,18 @@ export function buildChipSurface(chip,options={}) {
   const origin=faceCenter.map((x,k)=>x+u[k]*extentU*(random()-.5)*.20+v[k]*extentV*(random()-.5)*.16);
   return {...p,origin,u,v,radiusU:extentU*(.92+random()*.22),radiusV:extentV*(1.0+random()*.24),amplitude:(.40+random()*.18)*scale,phase:random()*6.283,arcAngle:random()*6.283};
  });
- const edgeCenters=[];
+ const edgeCandidates=[];
  const seen=new Set();
  for(let i=0;i<chip.indices.length;i+=3)for(let k=0;k<3;k++) {
   const a=chip.indices[i+k],b=chip.indices[i+(k+1)%3],key=a<b?`${a}:${b}`:`${b}:${a}`;
   if(seen.has(key))continue;seen.add(key);
   const p=mix(chip.vertices[a],chip.vertices[b],.25+random()*.5);
-  if(planes.filter(q=>Math.abs(q.offset-dot(q.normal,p))<1e-7).length>=2&&random()<.35)edgeCenters.push({p,radius:(.18+random()*.18)*scale});
+  const length=Math.hypot(...sub(chip.vertices[a],chip.vertices[b]));
+  if(length>.8*scale&&planes.filter(q=>Math.abs(q.offset-dot(q.normal,p))<1e-7).length>=2)edgeCandidates.push({p,radius:(.44+random()*.23)*scale,amplitude:(.13+random()*.07)*scale,score:random(),step:.45+random()*.20});
  }
+ // A few local ledges cross actual hull edges. Their inner shelf is stepped,
+ // while the outer ramp and untouched corners keep the radial skin stable.
+ const edgeCenters=edgeCandidates.sort((a,b)=>b.score-a.score).slice(0,2+Math.floor(random()*3));
  let maxDeviationMm=0,sumDeviationMm=0,maxOutsideHullMm=0,minRadialFactor=1,minTriangleAreaMm2=Infinity,minOutwardDot=Infinity;
  vertices=reference.map((original,index)=>{
   if(index<chip.vertices.length)return [...original]; // Collider support anchors.
@@ -70,7 +74,7 @@ export function buildChipSurface(chip,options={}) {
    const arcs=.018*scale*detail*Math.sin(r*24+f.phase+.35*Math.sin(angle*3))*arcWindow*bowl;
    relief=Math.max(relief,Math.max(0,f.amplitude*depth*bowl+arcs)*faceWeight);
   }
-  for(const e of edgeCenters){const r=Math.hypot(...sub(original,e.p))/e.radius;if(r<1)relief+=.12*scale*edgeChips*(1-r*r)**2;}
+  for(const e of edgeCenters){const r=Math.hypot(...sub(original,e.p))/e.radius;if(r<1)relief+=e.amplitude*edgeChips*(.55*smooth((1-r)/.42)+.45*smooth((e.step-r)/.26));}
   const micro=.0015*scale*detail*(1+Math.sin(dot(original,[7.1,-4.3,5.7])/scale+seed%37));
   const inward=Math.min(MAX_DEVIATION_MM,.30*radius,(relief+micro)*pinWeight),factor=1-inward/radius;
   const result=center.map((v,k)=>v+ray[k]*factor);minRadialFactor=Math.min(minRadialFactor,factor);
@@ -81,5 +85,5 @@ export function buildChipSurface(chip,options={}) {
  let maxColliderSupportGapMm=0;
  for(const p of planes)maxColliderSupportGapMm=Math.max(maxColliderSupportGapMm,p.offset-Math.max(...vertices.map(v=>dot(p.normal,v))));
  for(let i=0;i<indices.length;i+=3){const [a,b,c]=indices.slice(i,i+3).map(j=>vertices[j]),normal=cross(sub(b,a),sub(c,a)),triangleCenter=a.map((v,k)=>(v+b[k]+c[k])/3);minTriangleAreaMm2=Math.min(minTriangleAreaMm2,Math.hypot(...normal)/2);minOutwardDot=Math.min(minOutwardDot,dot(normal,sub(triangleCenter,center)));}
- return {vertices,indices,audit:{seed,subdivisions,sourceVertices:chip.vertices.length,sourceTriangles:chip.indices.length/3,visualVertices:vertices.length,visualTriangles:indices.length/3,triangleRatio:indices.length/chip.indices.length,maxDeviationMm,meanDeviationMm:sumDeviationMm/vertices.length,deviationLimitMm:MAX_DEVIATION_MM,maxOutsideHullMm,maxColliderSupportGapMm,minTriangleAreaMm2,minOutwardDot,minRadialFactor,fractureCount,depth,edgeChips,detail,colliderUnchanged:true,starShaped:true,method:'Independent face-local elliptical concave breaks and interrupted arrest arcs; shared indexed topology with positive radial factors. Original hull corners remain support anchors. Conservative local displacement <=0.55 mm; zero face support gap.'},materialVariation:{roughness:.10+random()*.09+detail*.03,bumpScale:(.010+random()*.016)*detail,tintScale:.88+random()*.24}};
+ return {vertices,indices,audit:{seed,subdivisions,sourceVertices:chip.vertices.length,sourceTriangles:chip.indices.length/3,visualVertices:vertices.length,visualTriangles:indices.length/3,triangleRatio:indices.length/chip.indices.length,maxDeviationMm,meanDeviationMm:sumDeviationMm/vertices.length,deviationLimitMm:MAX_DEVIATION_MM,maxOutsideHullMm,maxColliderSupportGapMm,minTriangleAreaMm2,minOutwardDot,minRadialFactor,fractureCount,edgeChipCount:edgeCenters.length,depth,edgeChips,detail,colliderUnchanged:true,starShaped:true,method:'Independent face-local elliptical concave breaks, interrupted arrest arcs and selected stepped edge chips; shared indexed topology with positive radial factors. Original hull corners remain support anchors. Conservative local displacement <=0.55 mm; zero face support gap.'},materialVariation:{roughness:.10+random()*.09+detail*.03,bumpScale:(.010+random()*.016)*detail,tintScale:.88+random()*.24}};
 }

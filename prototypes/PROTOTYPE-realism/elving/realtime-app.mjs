@@ -42,8 +42,8 @@ try {
   $('smooth').checked=state.smooth;$('quality').value=state.quality;$('background').value=state.background;
   for(const key of ['bulk','depth','edgeChips','detail']){$(key).value=state[key];$(key+'-value').textContent=Math.round(state[key]*100)+'%';}
   $('study').setAttribute('aria-pressed',String(state.mode==='study'));$('study-material-control').hidden=state.mode!=='study';$('study-material').value=state.studyMaterial;
-  for(const key of ['shake','pause','filling','count'])$(key).disabled=state.mode==='study';
-  for(const key of ['shake','pause'])$(key).hidden=state.mode==='study';
+  for(const key of ['pause','filling','count'])$(key).disabled=state.mode==='study';
+  $('pause').hidden=state.mode==='study';
   for(const key of ['count','turn','tilt','fov','filling'])$(key).closest('label').hidden=state.mode==='study';
   $('prism').setAttribute('aria-pressed',String(state.mode==='prism'));$('glass').setAttribute('aria-pressed',String(state.mode==='glass'));$('stage').classList.toggle('direct',state.mode!=='prism');
   $('animate-light').textContent=state.lightAuto?'Остановить свет':'Вращать HDRI';$('animate-light').setAttribute('aria-pressed',String(state.lightAuto));
@@ -102,7 +102,7 @@ try {
  $('animate').onclick=()=>set({auto:!state.auto});$('quality').onchange=e=>set({quality:e.target.value});$('background').onchange=e=>set({background:e.target.value});
  $('reset').onclick=()=>set({turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:38,smooth:true,auto:false,paused:false,count:state.count,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0});
  $('show-colliders').onchange=e=>set({showColliders:e.target.checked});$('elving').onchange=e=>set({elving:e.target.checked});$('filling').onchange=e=>set({filling:e.target.checked});$('count').onchange=e=>set({count:Number(e.target.value)});$('count').oninput=e=>$('count-value').textContent=e.target.value+' шт.';
- $('shake').onclick=()=>{physics.shake();state.paused=false;controls();requestDraw(false);};$('pause').onclick=()=>set({paused:!state.paused});$('measure').onclick=()=>benchmark();
+ $('shake').onclick=()=>{if(state.mode==='study')set({mode:'glass'});set({paused:false,filling:true});physics.orient(state.turn,state.tilt);physics.shake();requestDraw(false);};$('pause').onclick=()=>set({paused:!state.paused});$('measure').onclick=()=>benchmark();
  $('upload').onchange=async e=>{
   const file=e.target.files[0];if(!file)return;
   try{const next=await createImageBitmap(file);uploadImage?.close();uploadImage=next;$('background').querySelector('[value=upload]').disabled=false;state.background='upload';updateBackground();controls();requestDraw();$('error').hidden=true;}
