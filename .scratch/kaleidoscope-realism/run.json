@@ -8,7 +8,6 @@
   "worker_model": "gpt-5.6-sol",
   "worker_reasoning": "high",
   "frontier": [
-    "03",
     "04"
   ],
   "tickets": {
@@ -54,11 +53,18 @@
       "blocked_by": [
         "01"
       ],
-      "state": "RUNNING",
+      "state": "CANDIDATE",
       "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03",
       "owner": "realism_03",
-      "edit_scope": "prototypes/PROTOTYPE-realism/elving/ and own ticket only"
+      "edit_scope": "prototypes/PROTOTYPE-realism/elving/ and own ticket only",
+      "candidate_sha": "a4527d224127192eb739b277f4ff22218c0b2709",
+      "ticket_fixed_point": "056ff8ecec0d2fb359f3d371107495d1902effec",
+      "checks": [
+        "prototypes/PROTOTYPE-realism/elving/evidence/checks.json",
+        "prototypes/PROTOTYPE-realism/elving/evidence/browser.json"
+      ],
+      "candidate_verified_clean": true
     },
     "04": {
       "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
