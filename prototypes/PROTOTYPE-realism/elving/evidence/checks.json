@@ -1,6 +1,6 @@
 {
   "baseSHA": "056ff8ecec0d2fb359f3d371107495d1902effec",
-  "generated": "2026-09-14T12:58:22.389Z",
+  "generated": "2026-09-14T13:01:10.033Z",
   "passed": true,
   "checks": [
     {
@@ -93,7 +93,7 @@
       "builds": 3,
       "capacity": 2,
       "packedPixels": 1024,
-      "geometryMilliseconds": 45.967833000000155,
+      "geometryMilliseconds": 33.632124999999974,
       "reuseReturnsIdenticalObject": true
     }
   ],

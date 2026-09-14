@@ -53,7 +53,7 @@
       "blocked_by": [
         "01"
       ],
-      "state": "CANDIDATE",
+      "state": "INTEGRATED",
       "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03",
       "owner": "realism_03",
@@ -64,7 +64,9 @@
         "prototypes/PROTOTYPE-realism/elving/evidence/checks.json",
         "prototypes/PROTOTYPE-realism/elving/evidence/browser.json"
       ],
-      "candidate_verified_clean": true
+      "candidate_verified_clean": true,
+      "integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa",
+      "integration_check": "node elving/evidence/check.mjs PASS; elving build PASS"
     },
     "04": {
       "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
@@ -97,5 +99,5 @@
   "external_requirements": {
     "06": "Real reference video absent as of run start. Complete software preparation but mark INCOMPLETE if reference remains absent."
   },
-  "last_code_integration_sha": "d6e30dad5e6943697e9e5020e625c58a7f12d6f5"
+  "last_code_integration_sha": "d9bb8b690d804cb57eda8ab6ac601d9726d8d1aa"
 }
