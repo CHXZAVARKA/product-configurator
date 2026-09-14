@@ -8,7 +8,6 @@
   "worker_model": "gpt-5.6-sol",
   "worker_reasoning": "high",
   "frontier": [
-    "02",
     "03"
   ],
   "tickets": {
@@ -33,7 +32,7 @@
       "blocked_by": [
         "01"
       ],
-      "state": "RUNNING",
+      "state": "CANDIDATE",
       "base_integration_sha": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-02-orientation",
       "owner": "realism_02",
@@ -51,7 +50,15 @@
           "integration_check": "node optical/evidence/check.mjs PASS; optical build PASS"
         }
       ],
-      "reason": "Correct assembly viewing direction: glazok z195..208; prizma12..192; chips\u2212.5..10; elving\u221217.65..\u2212.5. Eye rays travel from+Z to\u2212Z. Initial orchestration assumption was reversed."
+      "reason": "Correct assembly viewing direction: glazok z195..208; prizma12..192; chips\u2212.5..10; elving\u221217.65..\u2212.5. Eye rays travel from+Z to\u2212Z. Initial orchestration assumption was reversed.",
+      "candidate_sha": "579eba3571bc133af144fb2447d7df8867afc9d9",
+      "ticket_fixed_point": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
+      "checks": [
+        "prototypes/PROTOTYPE-realism/optical/evidence/checks.json",
+        "prototypes/PROTOTYPE-realism/optical/evidence/browser.json",
+        "prototypes/PROTOTYPE-realism/optical/evidence/convergence.json"
+      ],
+      "candidate_verified_clean": true
     },
     "03": {
       "file": ".scratch/kaleidoscope-realism/issues/03-cad-elving.md",
@@ -90,7 +97,11 @@
       "evidence": {
         "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-04",
         "check": "prototypes/PROTOTYPE-realism/filling/evidence/checks.json",
-        "failure": "Uniform1mm profile dense41 frame3 t0.05s pair53/83 fresh native0.229084849mm and SAT0.229085175mm exceed unchanged0.2mm; no coherent validated profile. Evidence commit pending worker handoff."
+        "failure": "Uniform1mm profile dense41 frame3 t0.05s pair53/83 fresh native0.229084849mm and SAT0.229085175mm exceed unchanged0.2mm.",
+        "commit": "e83213bddc0df398f1d5054817aa9213208ca13e",
+        "clean_worktree": true,
+        "parent_verification": "witness.mjs reproduced from frozen poses with0solversteps: fresh0.22908473014831543mm, SAT0.2290851753631138mm; no solver proxy ambiguity.",
+        "performance": "Dense93 p95 268.90ms for16substeps=16.667ms simulated time, 14.74CPU s/sim s. 33ms target not met."
       }
     },
     "05": {
