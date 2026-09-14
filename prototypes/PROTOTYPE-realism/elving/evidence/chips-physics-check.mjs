@@ -33,8 +33,8 @@ for(let i=0;i<39;i++){
  }
 }
 report.initialization={sizeScale:1.5,capacity:39,minimumSeparatingGapMm:capacityGap,defaultGeometryPreserved:true};scaled.dispose();
-for(const count of [18,30,36]) {
- const sim=createChipPhysics(RAPIER,cad,{count,sizeScale:1.5}),initial=sim.poses();
+for(const [count,bulk] of [[18,.65],[30,.65],[36,.65],[36,0],[36,1]]) {
+ const sim=createChipPhysics(RAPIER,cad,{count,sizeScale:1.5,bulk}),initial=sim.poses();
  let minInitialClearance=Infinity,convexityWorst=0;
  for(const chip of sim.chips){assert.ok(signedVolume(chip)>0,'outward winding');for(let i=0;i<chip.indices.length;i+=3){const [a,b,c]=chip.indices.slice(i,i+3).map(j=>chip.vertices[j]);const ab=b.map((v,k)=>v-a[k]),ac=c.map((v,k)=>v-a[k]),normal=[ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]],length=Math.hypot(...normal);for(const vertex of chip.vertices){const side=vertex.reduce((sum,v,k)=>sum+(v-a[k])*normal[k]/length,0);convexityWorst=Math.max(convexityWorst,side);assert.ok(side<1e-8,'render hull must be convex');}}}
  const initialWorld=sim.chips.map((c,i)=>transformVertices(c,initial[i]));
@@ -58,7 +58,7 @@ for(const count of [18,30,36]) {
  sim.shake();assert.equal(sim.snapshot().sleeping,0,'shake wakes assembly');run(8);assert.equal(sim.snapshot().moving,false,'shake must settle');
  sim.step(10);checkBounds();
  assert.ok(maxLeakMm<.02,`transformed convex vertices leaked ${maxLeakMm}mm`);
- const result={count,initialSeparatingGapMm:minInitialClearance,convexityWorstMm:convexityWorst,maxGravityTranslationMm:maxDelta,maxTumbleDegrees:maxRotation,maxBoundaryLeakMm:maxLeakMm,activeFrameCpu:{samples:activeTimings.length,meanMs:activeTimings.reduce((s,v)=>s+v,0)/activeTimings.length,p95Ms:p95(activeTimings),maxMs:Math.max(...activeTimings)},frameCpu:{samples:timings.length,meanMs:timings.reduce((s,v)=>s+v,0)/timings.length,p95Ms:p95(timings),maxMs:Math.max(...timings)},firstSettleSeconds:firstSettle.actionAgeSeconds,snapshot:sim.snapshot()};report.scenarios.push(result);sim.reset(0);assert.equal(sim.chips.length,0);assert.equal(sim.snapshot().moving,false);sim.reset(3);assert.equal(sim.chips.length,3);assert.equal(sim.snapshot().moving,true);const beforeHighRefresh=sim.snapshot().steps;for(let frame=0;frame<144;frame++){sim.orient(frame,0);sim.step(1/144);}assert.ok(sim.snapshot().steps-beforeHighRefresh>=119,'orientation must preserve accumulator at144Hz');sim.dispose();
+ const result={count,bulk,initialSeparatingGapMm:minInitialClearance,convexityWorstMm:convexityWorst,maxGravityTranslationMm:maxDelta,maxTumbleDegrees:maxRotation,maxBoundaryLeakMm:maxLeakMm,activeFrameCpu:{samples:activeTimings.length,meanMs:activeTimings.reduce((s,v)=>s+v,0)/activeTimings.length,p95Ms:p95(activeTimings),maxMs:Math.max(...activeTimings)},frameCpu:{samples:timings.length,meanMs:timings.reduce((s,v)=>s+v,0)/timings.length,p95Ms:p95(timings),maxMs:Math.max(...timings)},firstSettleSeconds:firstSettle.actionAgeSeconds,snapshot:sim.snapshot()};report.scenarios.push(result);sim.reset(0);assert.equal(sim.chips.length,0);assert.equal(sim.snapshot().moving,false);sim.reset(3);assert.equal(sim.chips.length,3);assert.equal(sim.snapshot().moving,true);const beforeHighRefresh=sim.snapshot().steps;for(let frame=0;frame<144;frame++){sim.orient(frame,0);sim.step(1/144);}assert.ok(sim.snapshot().steps-beforeHighRefresh>=119,'orientation must preserve accumulator at144Hz');sim.dispose();
 }
 fs.writeFileSync(new URL('./chips-physics.json',import.meta.url),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({hardware:report.hardware,scenarios:report.scenarios.map(s=>({count:s.count,solidFraction:s.snapshot.nominalSolidFraction,activeCpu:s.activeFrameCpu,boundaryLeakMm:s.maxBoundaryLeakMm,initialGapMm:s.initialSeparatingGapMm,settleSeconds:s.firstSettleSeconds}))},null,2));

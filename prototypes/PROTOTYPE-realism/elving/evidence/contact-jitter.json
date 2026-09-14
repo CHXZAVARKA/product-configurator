@@ -5,29 +5,29 @@
     {
       "action": "initial",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.08000701066195054,
-      "initialTravelMm": 478.6318240254002,
+      "maxFrameDeltaMm": 0.2119113597606459,
+      "initialTravelMm": 421.54027747860584,
       "settleSeconds": 2.308333333333328
     },
     {
       "action": "turn",
-      "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.015258712598862394,
-      "initialTravelMm": 43.31599509984771,
-      "settleSeconds": 2.099999999999995
+      "reversalsBetween1And2Seconds": 2,
+      "maxFrameDeltaMm": 0.2725727250012176,
+      "initialTravelMm": 65.15886486898032,
+      "settleSeconds": 2.308333333333328
     },
     {
       "action": "reverse",
-      "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.03740135134770586,
-      "initialTravelMm": 433.02986703186116,
+      "reversalsBetween1And2Seconds": 1,
+      "maxFrameDeltaMm": 1.3410415057079266,
+      "initialTravelMm": 283.57311226980346,
       "settleSeconds": 2.308333333333328
     },
     {
       "action": "shake",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.20287193164120507,
-      "initialTravelMm": 27.131756798943893,
+      "maxFrameDeltaMm": 0.04317312588333009,
+      "initialTravelMm": 16.705335059797793,
       "settleSeconds": 2.308333333333328
     }
   ]

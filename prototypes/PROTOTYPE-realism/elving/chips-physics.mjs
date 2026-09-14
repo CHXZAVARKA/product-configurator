@@ -12,7 +12,7 @@ export function chipChamberAudit(cad) {
  return Object.freeze({radiusMm:c.radiusMm,floorEnvelopeMm:c.floorEnvelopeMm,ceilingMm:c.ceilingMm,wallSegments:WALLS,solverWallApothemMm:radiusMm*Math.cos(Math.PI/WALLS),solverFloorMm:c.floorEnvelopeMm+CLEARANCE,solverCeilingMm:c.ceilingMm-CLEARANCE,clearanceMm:CLEARANCE,hardProjectionWallApothemMm:(c.radiusMm-.01)*Math.cos(Math.PI/WALLS),hardProjectionFloorMm:c.floorEnvelopeMm+.01,hardProjectionCeilingMm:c.ceilingMm-.01,approximation:'Conservative 32-sided inscribed cylinder and planar maximum-z CAD floor envelope. Actual Elving recesses and surface facets do not participate in chip contacts.',nominalVolumeMm3:Math.PI*c.radiusMm**2*c.nominalGapMm});
 }
 
-export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=1}={}) {
+export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=1,bulk=.65}={}) {
  if(!Number.isFinite(sizeScale)||sizeScale<=0)throw Error('Chip sizeScale must be a positive finite number');
  const chamber=chipChamberAudit(cad), world=new RAPIER.World({x:0,y:-9810,z:0});
  world.timestep=FIXED_DT;
@@ -38,7 +38,8 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
  let random=randomFrom(seed);
  const api={get chips(){return chips;},chamberAudit:chamber,poses,step,orient,shake,reset,snapshot,dispose};
  function wake() { for(const b of bodies)b.wakeUp(); moving=true;stableFor=0;actionAge=0;smoothLinear=0;smoothAngular=0;freezeReason=null; }
- function reset(nextCount=count) {
+ function reset(nextCount=count,shape={}) {
+  if(shape.bulk!==undefined)bulk=Math.max(0,Math.min(1,Number(shape.bulk)||0));
   if(disposed)throw Error('Chip physics is disposed');
   const enlarged=sizeScale>1,layerPitch=2.195*sizeScale+.03;
   const layerCapacity=enlarged?Math.floor((chamber.solverCeilingMm-chamber.solverFloorMm+.03)/layerPitch):0;
@@ -53,7 +54,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   slots.sort((a,b)=>Math.hypot(...a)-Math.hypot(...b));
   const layers=enlarged?layerCapacity:count>124?5:4, pitch=enlarged?layerPitch:layers===5?1.91:2.35;
   for(let i=0;i<count;i++) {
-   const chip=makeBrokenChip(i,random,!enlarged&&layers===5),xy=slots[i%slots.length],layer=Math.floor(i/slots.length);
+   const chip=makeBrokenChip(i,random,!enlarged&&layers===5,{bulk}),xy=slots[i%slots.length],layer=Math.floor(i/slots.length);
    if(sizeScale!==1){chip.vertices=chip.vertices.map(p=>p.map(v=>v*sizeScale));chip.thicknessMm*=sizeScale;chip.volumeMm3*=sizeScale**3;}
    chip.boundingRadiusMm=Math.max(...chip.vertices.map(v=>Math.hypot(...v)));
    let a=random()*Math.PI*2;
@@ -126,7 +127,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   }
   return moved;
  }
- function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0);return {moving,sleeping,steps,count:chips.length,sizeScale,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:.8,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
+ function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0);return {moving,sleeping,steps,count:chips.length,sizeScale,bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:.8,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
  function dispose(){if(!disposed){world.free();disposed=true;moving=false;}}
  reset(count);return api;
 }

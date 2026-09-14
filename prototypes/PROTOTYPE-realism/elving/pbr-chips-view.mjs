@@ -1,3 +1,4 @@
+import {vertexThickness} from './chip-optics.mjs';
 import {buildChipSurface} from './chip-surface.mjs';
 import {viewOrientation,rotateVector} from './view-orientation.mjs';
 import * as THREE from 'three';
@@ -17,9 +18,8 @@ function fractureTexture() {
  return texture;
 }
 
-// Average only faces within 40 degrees at the same original hull vertex.
-// Cap-to-bevel and adjacent polygon facets remain sharp; the shallow meeting
-// of the two bevel rings can catch a continuous polished highlight.
+// Smooth the curved fracture patches while retaining normal discontinuities
+// where neighbouring triangles meet at more than 40 degrees.
 function polishedNormals(chip) {
  const neighbours=Array.from({length:chip.vertices.length},()=>[]),faces=[];
  for(let i=0;i<chip.indices.length;i+=3){
@@ -46,7 +46,7 @@ function polishedNormals(chip) {
 // not recursive refraction or ray-traced interreflection.
 export async function createPBRChipView(gl, {environmentBytes} = {}) {
  const renderer = new THREE.WebGLRenderer({canvas:gl.canvas,context:gl,antialias:false,alpha:false});
- renderer.autoClear = true;
+ renderer.autoClear = true;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
  renderer.toneMapping = THREE.NoToneMapping;
  // Refraction capture is slightly smaller than the output; sharp HDR specular
@@ -71,21 +71,23 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
   hdr.dispose();generator.dispose();
  }
  const key = new THREE.DirectionalLight(0xfff8ec,2.6);
- key.position.set(-12,20,35);scene.add(key);
+ key.position.set(-12,20,35);scene.add(key);key.shadow.mapSize.set(512,512);Object.assign(key.shadow.camera,{left:-22,right:22,top:22,bottom:-22,near:1,far:100});key.shadow.bias=-.001;key.shadow.normalBias=.04;
  const rim = new THREE.DirectionalLight(0xcce6ff,.8);
  rim.position.set(24,-10,18);scene.add(rim);
  const external = new THREE.ExternalTexture();
  const fracture=fractureTexture();
  const plateMaterial = new THREE.ShaderMaterial({
-  uniforms:{image:{value:external},decodeSRGB:{value:true},hasImage:{value:false}},
+  uniforms:{image:{value:external},decodeSRGB:{value:true},hasImage:{value:false},studyBackground:{value:0}},
   vertexShader:'varying vec2 uvImage;void main(){uvImage=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-  fragmentShader:`uniform sampler2D image;uniform bool decodeSRGB,hasImage;varying vec2 uvImage;
+  fragmentShader:`uniform sampler2D image;uniform bool decodeSRGB,hasImage;uniform int studyBackground;varying vec2 uvImage;
    vec3 linearize(vec3 c){return mix(c/12.92,pow((c+.055)/1.055,vec3(2.4)),step(vec3(.04045),c));}
-   void main(){vec3 c=hasImage?texture2D(image,uvImage).rgb:vec3(.37,.43,.42);if(decodeSRGB&&hasImage)c=linearize(c);gl_FragColor=vec4(c,1.);}`,
+   void main(){vec3 c=hasImage?texture2D(image,uvImage).rgb:vec3(.37,.43,.42);if(decodeSRGB&&hasImage)c=linearize(c);if(studyBackground>0){float grain=fract(sin(dot(floor(uvImage*1100.),vec2(12.9898,78.233)))*43758.5453);c=studyBackground==2?vec3(1.8):vec3(.27,.255,.23)*(1.-.2*distance(uvImage,vec2(.5)))+vec3((grain-.5)*.023);}gl_FragColor=vec4(c,1.);}`,
   depthTest:false,depthWrite:false,toneMapped:false
  });
  const plateGeometry = new THREE.PlaneGeometry(44,44),plate = new THREE.Mesh(plateGeometry,plateMaterial);
  plate.position.z=-20;plate.frustumCulled=false;plate.renderOrder=-100;scene.add(plate);
+ const shadowMaterial=new THREE.ShadowMaterial({opacity:.16,depthWrite:false});
+ const shadowFloor=new THREE.Mesh(plateGeometry,shadowMaterial);shadowFloor.position.z=.8;shadowFloor.receiveShadow=true;shadowFloor.renderOrder=-90;scene.add(shadowFloor);
  const targetOptions={type:THREE.HalfFloatType,minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:true,stencilBuffer:false};
  const targets=[new THREE.WebGLRenderTarget(1,1,targetOptions),new THREE.WebGLRenderTarget(1,1,targetOptions)];
  const output = new THREE.WebGLRenderTarget(1,1,{type:THREE.UnsignedByteType,depthBuffer:false});
@@ -109,17 +111,19 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
  finalScene.add(new THREE.Mesh(finalGeometry,finalMaterial));
  let meshes=[],size=0,disposed=false,lastCalls=0;
  const audit=()=>({count:meshes.length,visualTriangles:meshes.reduce((n,m)=>n+m.userData.surfaceAudit.visualTriangles,0),collisionTriangles:meshes.reduce((n,m)=>n+m.userData.surfaceAudit.sourceTriangles,0),maxDeviationMm:Math.max(0,...meshes.map(m=>m.userData.surfaceAudit.maxDeviationMm)),perChip:meshes.map(m=>m.userData.surfaceAudit)});
- function disposeMesh(mesh){mesh.userData.visualGeometry.dispose();mesh.userData.collisionGeometry.dispose();mesh.userData.glassMaterial.dispose();mesh.userData.wireMaterial.dispose();}
- function setGeometry(chips) {
+ function disposeMesh(mesh){mesh.userData.visualGeometry.dispose();mesh.userData.collisionGeometry.dispose();mesh.userData.glassMaterial.dispose();mesh.userData.wireMaterial.dispose();mesh.userData.clayMaterial.dispose();}
+ function setGeometry(chips, options={}) {
   if(disposed)throw Error('PBR chip view is disposed');
   for(const mesh of meshes){group.remove(mesh);disposeMesh(mesh);}
   meshes=chips.map(chip=>{
-   const surface=buildChipSurface(chip),variation=surface.materialVariation;
+   const surface=buildChipSurface(chip,options),variation=surface.materialVariation;
    const collisionGeometry=new THREE.BufferGeometry();collisionGeometry.setAttribute('position',new THREE.Float32BufferAttribute(chip.vertices.flat(),3));collisionGeometry.setIndex(chip.indices);
    const indexed=new THREE.BufferGeometry();
    indexed.setAttribute('position',new THREE.Float32BufferAttribute(surface.vertices.flat(),3));indexed.setIndex(surface.indices);
    const geometry=indexed.toNonIndexed();indexed.dispose();geometry.computeVertexNormals();
    geometry.setAttribute('uv',new THREE.Float32BufferAttribute(surface.indices.flatMap(j=>[surface.vertices[j][0]/6+.5,surface.vertices[j][1]/6+.5]),2));
+   const thickness=vertexThickness(chip,surface);
+   geometry.setAttribute('glassThickness',new THREE.Float32BufferAttribute(surface.indices.map(j=>thickness[j]),1));
    const flatNormals=geometry.getAttribute('normal'),smoothNormals=polishedNormals(surface);
    geometry.setAttribute('normal',smoothNormals.clone());
    const tint=new THREE.Color().setRGB(...chip.color.map(v=>Math.min(1,v*variation.tintScale)),THREE.SRGBColorSpace);
@@ -127,37 +131,47 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
     color:0xffffff,metalness:0,roughness:variation.roughness*.45,transmission:1,ior:1.5,
     thickness:chip.thicknessMm,attenuationColor:tint,attenuationDistance:3.8,
     envMapIntensity:1.15,specularIntensity:1,side:THREE.FrontSide,
-    transparent:false,depthWrite:true,bumpMap:fracture,bumpScale:variation.bumpScale*.5
+    transparent:false,depthWrite:true,bumpMap:fracture,bumpScale:variation.bumpScale*.5*(options.detail??.4)
    });
-   const mesh=new THREE.Mesh(geometry,material);mesh.userData={flatNormals,smoothNormals,lastSmooth:true,visualGeometry:geometry,collisionGeometry,glassMaterial:material,wireMaterial:new THREE.MeshBasicMaterial({color:0xffcf79,wireframe:true}),surfaceAudit:surface.audit};mesh.frustumCulled=false;group.add(mesh);return mesh;
+   material.onBeforeCompile=shader=>{
+    shader.vertexShader='attribute float glassThickness;varying float vGlassThickness;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvGlassThickness=glassThickness;');
+    shader.fragmentShader='varying float vGlassThickness;\n'+shader.fragmentShader.replace('#include <transmission_fragment>',THREE.ShaderChunk.transmission_fragment.replace('material.thickness = thickness;','material.thickness = vGlassThickness;'));
+   };
+   material.customProgramCacheKey=()=> 'glass-local-normal-thickness-v1';
+   const mesh=new THREE.Mesh(geometry,material);mesh.userData={flatNormals,smoothNormals,lastSmooth:true,visualGeometry:geometry,collisionGeometry,glassMaterial:material,wireMaterial:new THREE.MeshBasicMaterial({color:0xffcf79,wireframe:true}),clayMaterial:new THREE.MeshStandardMaterial({color:0x92908a,roughness:.55}),supportVertices:chip.vertices,shapeFamily:chip.shapeAudit?.family,surfaceAudit:{...surface.audit,minOpticalThicknessMm:Math.min(...thickness),maxOpticalThicknessMm:Math.max(...thickness)}};mesh.frustumCulled=false;group.add(mesh);return mesh;
   });
  }
- function render(sourceTexture,poses,{size:next=512,rollDeg=0,tiltDeg=0,lightDeg=0,intensity=1,smooth=true,layers=4,exposure=1,sourceLinear=false,glow=.65,showColliders=false}={}) {
+ function render(sourceTexture,poses,{size:next=512,rollDeg=0,tiltDeg=0,lightDeg=0,intensity=1,smooth=true,layers=4,exposure=1,sourceLinear=false,glow=.65,showColliders=false,study=false,studyTurn=0,studyTilt=0,studyMaterial='glass'}={}) {
   if(disposed)throw Error('PBR chip view is disposed');
   if(poses.length!==meshes.length)throw Error('Every PBR chip requires its rigid-body pose');
   next=Math.max(32,Math.min(1024,Math.round(next)));
   if(next!==size){size=next;for(const target of [...targets,output])target.setSize(size,size);}
   renderer.resetState();
   renderer.setViewport(0,0,size,size);renderer.setScissorTest(false);
-  group.rotation.set(0,0,0);
+  group.rotation.set(0,0,0);key.castShadow=study;shadowFloor.visible=study&&studyMaterial!=='backlit';
+  const span=study?16:22;camera.left=-span;camera.right=span;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix();
+  plateMaterial.uniforms.studyBackground.value=study?(studyMaterial==='backlit'?2:1):0;
   const orientation=viewOrientation(rollDeg,tiltDeg,lightDeg);
     key.position.fromArray(rotateVector(orientation.environmentToView,[-12,20,35]));
   rim.position.fromArray(rotateVector(orientation.environmentToView,[24,-10,18]));
-  key.intensity=2.6*intensity;rim.intensity=.8*intensity;
+  key.intensity=(study?1.2:2.6)*intensity;rim.intensity=.8*intensity;
   scene.environmentIntensity=1.1*intensity;
   // Same yaw as the photographed HDRI background. Object rotation changes reflections itself.
   scene.environmentRotation.setFromRotationMatrix(new THREE.Matrix4().setFromMatrix3(new THREE.Matrix3().fromArray(orientation.environmentToView)));
+  const sampleIndices=[];for(const family of ['short','wedge','splinter','flake']){const index=meshes.findIndex(m=>m.userData.shapeFamily===family);if(index>=0&&!sampleIndices.includes(index))sampleIndices.push(index);}
+  for(let i=0;sampleIndices.length<Math.min(6,meshes.length);i++)if(!sampleIndices.includes(i))sampleIndices.push(i);
   for(let i=0;i<meshes.length;i++){
-   const mesh=meshes[i],pose=poses[i];mesh.position.fromArray(pose.positionMm);mesh.quaternion.fromArray(pose.rotation);
+   const mesh=meshes[i],pose=poses[i];mesh.castShadow=study;mesh.position.fromArray(pose.positionMm);mesh.quaternion.fromArray(pose.rotation);
+   if(study){const slot=sampleIndices.indexOf(i);mesh.position.set((slot%3-1)*10,(slot<3?1:-1)*5.3,3);mesh.quaternion.setFromEuler(new THREE.Euler(.50+(slot%2)*.22+studyTilt*Math.PI/180,studyTurn*Math.PI/180+(slot%3-1)*.20,(slot%3-1)*.65));const lowest=Math.min(...mesh.userData.supportVertices.map(v=>new THREE.Vector3(...v).applyQuaternion(mesh.quaternion).z));mesh.position.z=.82-lowest;}
    if(mesh.userData.lastSmooth!==smooth){
     const normal=mesh.userData.visualGeometry.getAttribute('normal');
     normal.array.set((smooth?mesh.userData.smoothNormals:mesh.userData.flatNormals).array);
     normal.needsUpdate=true;mesh.userData.lastSmooth=smooth;
    }
-   mesh.geometry=showColliders?mesh.userData.collisionGeometry:mesh.userData.visualGeometry;mesh.material=showColliders?mesh.userData.wireMaterial:mesh.userData.glassMaterial;mesh.visible=false;
+   mesh.geometry=showColliders?mesh.userData.collisionGeometry:mesh.userData.visualGeometry;mesh.material=showColliders?mesh.userData.wireMaterial:study&&studyMaterial==='clay'?mesh.userData.clayMaterial:mesh.userData.glassMaterial;mesh.visible=false;
   }
-  const sorted=meshes.map((mesh,index)=>({mesh,z:poses[index].positionMm[2]})).sort((a,b)=>a.z-b.z);
-  const slices=Math.max(1,Math.min(8,Math.round(layers))),stride=Math.max(1,Math.ceil(sorted.length/slices));
+  const sorted=(study?sampleIndices.map(i=>meshes[i]):meshes).map(mesh=>({mesh,z:mesh.position.z})).sort((a,b)=>a.z-b.z);
+  const slices=Math.max(1,Math.min(8,Math.round(study?1:layers))),stride=Math.max(1,Math.ceil(sorted.length/slices));
   external.sourceTexture=sourceTexture||null;
   plateMaterial.uniforms.image.value=external;plateMaterial.uniforms.decodeSRGB.value=!sourceLinear;plateMaterial.uniforms.hasImage.value=!!sourceTexture;
   renderer.info.autoReset=false;renderer.info.reset();
@@ -186,7 +200,7 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
   for(const mesh of meshes)disposeMesh(mesh);
   for(const target of [...targets,output])target.dispose();
   plateGeometry.dispose();plateMaterial.dispose();finalGeometry.dispose();finalMaterial.dispose();
-  fracture.dispose();environmentTarget?.dispose();renderer.dispose();
+  shadowMaterial.dispose();fracture.dispose();environmentTarget?.dispose();renderer.dispose();
   // ExternalTexture is caller-owned: its raw source must never be deleted here.
  }
  renderer.resetState();
