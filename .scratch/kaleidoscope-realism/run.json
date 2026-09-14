@@ -34,21 +34,33 @@
       "blocked_by": [
         "01"
       ],
-      "state": "PENDING"
+      "state": "RUNNING",
+      "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
+      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-02",
+      "owner": "realism_02",
+      "edit_scope": "prototypes/PROTOTYPE-realism/optical/ and own ticket only"
     },
     "03": {
       "file": ".scratch/kaleidoscope-realism/issues/03-cad-elving.md",
       "blocked_by": [
         "01"
       ],
-      "state": "PENDING"
+      "state": "RUNNING",
+      "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
+      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-03",
+      "owner": "realism_03",
+      "edit_scope": "prototypes/PROTOTYPE-realism/elving/ and own ticket only"
     },
     "04": {
       "file": ".scratch/kaleidoscope-realism/issues/04-filling-motion.md",
       "blocked_by": [
         "01"
       ],
-      "state": "PENDING"
+      "state": "RUNNING",
+      "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
+      "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-04",
+      "owner": "realism_04",
+      "edit_scope": "prototypes/PROTOTYPE-realism/filling/ and own ticket only"
     },
     "05": {
       "file": ".scratch/kaleidoscope-realism/issues/05-integrated-eye.md",
