@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-14T16:18:05.497Z",
+  "generated": "2026-09-14T16:42:03.408Z",
   "checks": [
     {
       "name": "settled-prism-no-jitter-or-flicker",
@@ -14,7 +14,11 @@
       "passed": true
     },
     {
-      "name": "roll-and-tilt-change-HDRI-with-fixed-physics",
+      "name": "body-roll-and-tilt-keep-HDRI-fixed",
+      "passed": true
+    },
+    {
+      "name": "circular-pointer-roll-wrap-direction-and-center-dead-zone",
       "passed": true
     },
     {
@@ -22,7 +26,7 @@
       "passed": true
     },
     {
-      "name": "auto-roll-redraws-world-while-physics-paused",
+      "name": "auto-roll-rotates-glass-with-fixed-world-while-physics-paused",
       "passed": true,
       "frames": 67
     },
@@ -56,8 +60,8 @@
       830
     ],
     "samples": 40,
-    "p95Ms": 4.299999997019768,
-    "meanMs": 3.1600000001490116,
+    "p95Ms": 8.700000002980232,
+    "meanMs": 4.532500001043081,
     "method": "Rapier + moving source + HDR PBR + bloom + mirrors, gl.finish",
     "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
     "mode": "prism",
@@ -71,7 +75,8 @@
     "physics": {
       "moving": true,
       "sleeping": 0,
-      "steps": 405,
+      "steps": 403,
+      "shaking": false,
       "count": 36,
       "sizeScale": 1.5,
       "bulk": 0.65,
@@ -80,14 +85,14 @@
       "fixedDtSeconds": 0.008333333333333333,
       "maxCatchupSteps": 4,
       "stableForSeconds": 0,
-      "smoothedRmsLinearMmPerSecond": 0.6120327839250269,
-      "smoothedRmsAngularRadPerSecond": 0.29061528405200127,
-      "actionAgeSeconds": 0.7999999999999996,
+      "smoothedRmsLinearMmPerSecond": 153.4134097675834,
+      "smoothedRmsAngularRadPerSecond": 10.250882155999317,
+      "actionAgeSeconds": 0.783333333333333,
       "freezeReason": null,
-      "lastRmsLinearMmPerSecond": 0.26624504664664866,
-      "lastRmsAngularRadPerSecond": 0.0705994300622222,
-      "boundaryCorrections": 588,
-      "maxBoundaryCorrectionMm": 1.3065415871909938,
+      "lastRmsLinearMmPerSecond": 380.2152355424253,
+      "lastRmsAngularRadPerSecond": 6.591608273940421,
+      "boundaryCorrections": 1116,
+      "maxBoundaryCorrectionMm": 1.5364460567567146,
       "hardBoundaryProjection": true,
       "settlePolicy": {
         "minActionAgeSeconds": 1.5,

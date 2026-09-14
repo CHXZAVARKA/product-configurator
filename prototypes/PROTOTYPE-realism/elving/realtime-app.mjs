@@ -50,14 +50,14 @@ try {
   $('animate').textContent=state.auto?'Остановить':'Вращать';$('animate').setAttribute('aria-pressed',String(state.auto));
  }
  function draw(forceSource=false){
-  if(sourceDirty||forceSource||!lastSource){if(state.elving){if(!glass){glass=createRealtimeGlass(gl,CAD);glass.setBackground(background);}cadPasses++;lastSource=glass.render({rotationDeg:[0,state.filling?0:state.tilt,state.turn],viewDeg:0,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,size:state.resolution});}else lastSource=backdrop.render({world:state.background==='world',linearOutput:state.filling&&state.background==='world',yawDeg:state.light,rollDeg:state.turn,tiltDeg:state.tilt,intensity:state.intensity,size:512});sourceDirty=false;sourcePasses++;chipDirty=true;}
+  if(sourceDirty||forceSource||!lastSource){if(state.elving){if(!glass){glass=createRealtimeGlass(gl,CAD);glass.setBackground(background);}cadPasses++;lastSource=glass.render({rotationDeg:[0,state.filling?0:state.tilt,state.turn],viewDeg:0,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,size:state.resolution});}else lastSource=backdrop.render({world:state.background==='world',linearOutput:state.filling&&state.background==='world',yawDeg:state.light,rollDeg:0,tiltDeg:0,intensity:state.intensity,size:512});sourceDirty=false;sourcePasses++;chipDirty=true;}
   if((state.filling||state.mode==='study')&&(chipDirty||forceSource||!lastChips)){lastChips=chipView.render(lastSource.texture,physics.poses(),{size:state.mode==='study'?768:512,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,rollDeg:state.turn,tiltDeg:state.tilt,sourceLinear:!state.elving&&state.background==='world',glow:state.glow,showColliders:state.showColliders,study:state.mode==='study',studyTurn:state.studyTurn,studyTilt:state.studyTilt,studyMaterial:state.studyMaterial});chipDirty=false;}
-  view.draw(state.filling||state.mode==='study'?lastChips.texture:lastSource.texture,{mode:state.mode,fovDeg:state.fov});frames++;
+  view.draw(state.filling||state.mode==='study'?lastChips.texture:lastSource.texture,{mode:state.mode,fovDeg:state.fov,rollDeg:state.turn});frames++;
  }
  function requestDraw(changed=true){if(changed)sourceDirty=true;if(raf===null&&!measuring)raf=requestAnimationFrame(frame);}
  function frame(now){
   raf=null;if(document.hidden){lastTime=0;return;}
-  if(state.auto&&lastTime){const dt=Math.min((now-lastTime)/1000,.1);if(state.mode==='study')state.studyTurn=(state.studyTurn+dt*24)%360;else{state.turn=(state.turn+dt*14)%360;sourceDirty=true;}chipDirty=true;lastFrameMs=now-lastTime;}
+  if(state.auto&&lastTime){const dt=Math.min((now-lastTime)/1000,.1);if(state.mode==='study')state.studyTurn=(state.studyTurn+dt*24)%360;else{state.turn=(state.turn+dt*14)%360;if(state.elving)sourceDirty=true;}chipDirty=true;lastFrameMs=now-lastTime;}
   const dt=lastTime?Math.min((now-lastTime)/1000,1/30):1/60;
   if(state.lightAuto){state.light=(state.light+dt*22)%360;sourceDirty=true;chipDirty=true;lastFrameMs=lastTime?now-lastTime:0;}
   if(state.mode!=='study')physics.orient(state.turn,state.tilt);
@@ -93,7 +93,7 @@ try {
   if(newBodies||['depth','edgeChips','detail'].some(k=>options[k]!==undefined))chipView.setGeometry(physics.chips,{depth:state.depth,edgeChips:state.edgeChips,detail:state.detail});
   if(state.mode!=='study'&&(options.turn!==undefined||options.tilt!==undefined))physics.orient(state.turn,state.tilt);
   if(options.mode!==undefined){state.auto=false;if(state.mode==='study')$('shape-settings').open=true;lastTime=0;}
-  chipDirty=true;controls();requestDraw(Object.keys(options).some(k=>!['auto','lightAuto','mode','fov','glow','studyTurn','studyTilt','studyMaterial','detail','depth','edgeChips'].includes(k)));
+  chipDirty=true;controls();requestDraw(state.elving||Object.keys(options).some(k=>!['turn','tilt','auto','lightAuto','mode','fov','glow','studyTurn','studyTilt','studyMaterial','detail','depth','edgeChips'].includes(k)));
  }
  for(const key of ['turn','tilt','light','intensity','glow','fov'])$(key).addEventListener('input',e=>set({[key]:Number(e.target.value)}));
  $('smooth').onchange=e=>set({smooth:e.target.checked});$('prism').onclick=()=>set({mode:'prism'});$('glass').onclick=()=>set({mode:'glass'});$('study').onclick=()=>set({mode:'study'});$('study-material').onchange=e=>set({studyMaterial:e.target.value});
@@ -109,9 +109,30 @@ try {
   catch{$('error').textContent='Не удалось открыть изображение. Попробуйте PNG, JPEG или WebP.';$('error').hidden=false;}
  };
  let drag=null;
- canvas.onpointerdown=e=>{canvas.setPointerCapture(e.pointerId);drag={x:e.clientX,y:e.clientY,turn:state.mode==='study'?state.studyTurn:state.turn,tilt:state.mode==='study'?state.studyTilt:state.tilt};set({auto:false});};
- canvas.onpointermove=e=>{if(drag){const turn=(drag.turn+(e.clientX-drag.x)*.55+720)%360,tilt=Math.max(-70,Math.min(70,drag.tilt+(e.clientY-drag.y)*.2));set(state.mode==='study'?{studyTurn:turn,studyTilt:tilt}:{turn,tilt});}};
- canvas.onpointerup=canvas.onpointercancel=()=>{drag=null;};
+ const pointerAngle=e=>{
+  const bounds=canvas.getBoundingClientRect(),x=e.clientX-bounds.left-bounds.width/2,y=e.clientY-bounds.top-bounds.height/2;
+  return Math.hypot(x,y)<Math.max(18,bounds.width*.04)?null:Math.atan2(y,x);
+ };
+ canvas.onpointerdown=e=>{
+  if(e.button!==0||drag)return;
+  canvas.setPointerCapture(e.pointerId);
+  drag={pointerId:e.pointerId,mode:state.mode,x:e.clientX,y:e.clientY,turn:state.studyTurn,tilt:state.studyTilt,angle:pointerAngle(e)};
+  set(state.mode==='study'?{auto:false}:{auto:false,lightAuto:false});
+ };
+ canvas.onpointermove=e=>{
+  if(!drag||drag.pointerId!==e.pointerId)return;
+  if(drag.mode==='study'){
+   set({studyTurn:(drag.turn+(e.clientX-drag.x)*.55+720)%360,studyTilt:Math.max(-70,Math.min(70,drag.tilt+(e.clientY-drag.y)*.2))});return;
+  }
+  const angle=pointerAngle(e);
+  if(angle!==null&&drag.angle!==null){
+   const delta=Math.atan2(Math.sin(angle-drag.angle),Math.cos(angle-drag.angle));
+   set({turn:(state.turn+delta*180/Math.PI+360)%360});
+  }
+  drag.angle=angle;
+ };
+ const releaseDrag=e=>{if(drag?.pointerId===e.pointerId)drag=null;};
+ canvas.onpointerup=canvas.onpointercancel=canvas.onlostpointercapture=releaseDrag;
  canvas.onkeydown=e=>{const actions={ArrowLeft:{turn:(state.turn+356)%360},ArrowRight:{turn:(state.turn+4)%360},ArrowUp:{tilt:Math.max(-70,state.tilt-2)},ArrowDown:{tilt:Math.min(70,state.tilt+2)},' ':{auto:!state.auto}};if(actions[e.key]){e.preventDefault();const action=actions[e.key];if(state.mode==='study'&&e.key.startsWith('Arrow'))set({studyTurn:state.studyTurn+(e.key==='ArrowLeft'?-4:e.key==='ArrowRight'?4:0),studyTilt:Math.max(-70,Math.min(70,state.studyTilt+(e.key==='ArrowUp'?-2:e.key==='ArrowDown'?2:0)))});else set(action);}};
  window.addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{lastTime=0;if(!document.hidden)requestDraw(false);});
  const pixels=()=>{const data=new Uint8Array(canvas.width*canvas.height*4);gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,data);return data;};

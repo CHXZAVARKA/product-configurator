@@ -148,10 +148,12 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
   if(next!==size){size=next;for(const target of [...targets,output])target.setSize(size,size);}
   renderer.resetState();
   renderer.setViewport(0,0,size,size);renderer.setScissorTest(false);
-  group.rotation.set(0,0,0);key.castShadow=study;shadowFloor.visible=study&&studyMaterial!=='backlit';
+  group.rotation.set(0,0,study?0:-rollDeg*Math.PI/180);key.castShadow=study;shadowFloor.visible=study&&studyMaterial!=='backlit';
   const span=study?16:22;camera.left=-span;camera.right=span;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix();
   plateMaterial.uniforms.studyBackground.value=study?(studyMaterial==='backlit'?2:1):0;
-  const orientation=viewOrientation(rollDeg,tiltDeg,lightDeg);
+  // Fixed eye and world light. Physics poses live in the rotating chamber;
+  // the inverse axial rotation puts them back into the stationary eye frame.
+  const orientation=viewOrientation(0,0,lightDeg);
     key.position.fromArray(rotateVector(orientation.environmentToView,[-12,20,35]));
   rim.position.fromArray(rotateVector(orientation.environmentToView,[24,-10,18]));
   key.intensity=(study?1.2:2.6)*intensity;rim.intensity=.8*intensity;

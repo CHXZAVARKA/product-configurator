@@ -17,13 +17,19 @@ export function prismFromCAD(cad) {
  const zs=vertices.map(p=>p[2]),eyeZ=Math.max(...cad.glazok.positions.filter((_,i)=>i%3===2))+.1;
  return {planes,nearZ:Math.max(...zs),farZ:Math.min(...zs),eyeZ};
 }
-export function tracePrism(prism,screenX,screenY,fovDeg=38) {
+// Clockwise screen roll is negative rotation in the world XY plane.
+export function rolledPrismPlanes(prism,rollDeg=0){
+ const angle=-rollDeg*Math.PI/180,c=Math.cos(angle),s=Math.sin(angle);
+ return prism.planes.map(({normal:[x,y],offset})=>({normal:[c*x-s*y,s*x+c*y],offset}));
+}
+export function tracePrism(prism,screenX,screenY,fovDeg=38,rollDeg=0) {
+ const planes=rolledPrismPlanes(prism,rollDeg);
  const fov=Math.tan(fovDeg*Math.PI/360),direction=[screenX*fov,screenY*fov,-1];
  const p=[direction[0]*(prism.eyeZ-prism.nearZ),direction[1]*(prism.eyeZ-prism.nearZ),prism.nearZ-1e-4];
- if(prism.planes.some(({normal:n,offset})=>n[0]*p[0]+n[1]*p[1]>offset))return {status:'aperture'};
+ if(planes.some(({normal:n,offset})=>n[0]*p[0]+n[1]*p[1]>offset))return {status:'aperture'};
  for(let bounce=0;bounce<64;bounce++){
   let distance=(prism.farZ-p[2])/direction[2],wall=null;
-  for(const plane of prism.planes){const n=plane.normal,den=n[0]*direction[0]+n[1]*direction[1];if(den<=1e-8)continue;const t=(plane.offset-n[0]*p[0]-n[1]*p[1])/den;if(t>=-1e-4&&t<distance){distance=Math.max(0,t);wall=n;}}
+  for(const plane of planes){const n=plane.normal,den=n[0]*direction[0]+n[1]*direction[1];if(den<=1e-8)continue;const t=(plane.offset-n[0]*p[0]-n[1]*p[1])/den;if(t>=-1e-4&&t<distance){distance=Math.max(0,t);wall=n;}}
   for(let k=0;k<3;k++)p[k]+=direction[k]*distance;
   if(!wall)return {status:'exit',point:p,direction,bounces:bounce};
   const dot=wall[0]*direction[0]+wall[1]*direction[1];direction[0]-=2*dot*wall[0];direction[1]-=2*dot*wall[1];
@@ -51,8 +57,8 @@ export function createPrismView(gl,prism) {
  const program=gl.createProgram();gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);
  if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));
  const vao=gl.createVertexArray(),locations=Object.fromEntries(['source','eye','fov','nearZ','farZ','eyeZ','planes[0]'].map(k=>[k,gl.getUniformLocation(program,k)]));
- return {draw(texture,{mode='prism',fovDeg=38,width=gl.canvas.width,height=gl.canvas.height}={}){
+ return {draw(texture,{mode='prism',fovDeg=38,rollDeg=0,width=gl.canvas.width,height=gl.canvas.height}={}){
   gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,width,height);gl.disable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.useProgram(program);gl.bindVertexArray(vao);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);
-  gl.uniform1i(locations.source,0);gl.uniform1i(locations.eye,mode==='prism'?1:0);gl.uniform1f(locations.fov,Math.tan(fovDeg*Math.PI/360));gl.uniform1f(locations.nearZ,prism.nearZ);gl.uniform1f(locations.farZ,prism.farZ);gl.uniform1f(locations.eyeZ,prism.eyeZ);gl.uniform3fv(locations['planes[0]'],prism.planes.flatMap(p=>[...p.normal,p.offset]));gl.drawArrays(gl.TRIANGLES,0,3);
+  gl.uniform1i(locations.source,0);gl.uniform1i(locations.eye,mode==='prism'?1:0);gl.uniform1f(locations.fov,Math.tan(fovDeg*Math.PI/360));gl.uniform1f(locations.nearZ,prism.nearZ);gl.uniform1f(locations.farZ,prism.farZ);gl.uniform1f(locations.eyeZ,prism.eyeZ);gl.uniform3fv(locations['planes[0]'],rolledPrismPlanes(prism,rollDeg).flatMap(p=>[...p.normal,p.offset]));gl.drawArrays(gl.TRIANGLES,0,3);
  },dispose(){gl.deleteVertexArray(vao);gl.deleteProgram(program);gl.deleteShader(vertex);gl.deleteShader(fragment);}};
 }
