@@ -60,6 +60,7 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
   const parsed = new HDRLoader().parse(environmentBytes);
   const hdr = new THREE.DataTexture(parsed.data,parsed.width,parsed.height,THREE.RGBAFormat,parsed.type);
   hdr.colorSpace = THREE.LinearSRGBColorSpace;
+  hdr.flipY = parsed.flipY;
   hdr.mapping = THREE.EquirectangularReflectionMapping;
   hdr.minFilter = hdr.magFilter = THREE.LinearFilter;hdr.needsUpdate = true;
   const generator = new THREE.PMREMGenerator(renderer);
@@ -87,11 +88,19 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
  const targets=[new THREE.WebGLRenderTarget(1,1,targetOptions),new THREE.WebGLRenderTarget(1,1,targetOptions)];
  const output = new THREE.WebGLRenderTarget(1,1,{type:THREE.UnsignedByteType,depthBuffer:false});
  const finalMaterial = new THREE.ShaderMaterial({
-  uniforms:{image:{value:null},exposure:{value:1}},depthTest:false,depthWrite:false,toneMapped:false,
+  uniforms:{image:{value:null},exposure:{value:1},glow:{value:.65},pixel:{value:new THREE.Vector2(1/512,1/512)}},depthTest:false,depthWrite:false,toneMapped:false,
   vertexShader:'varying vec2 uvImage;void main(){uvImage=uv;gl_Position=vec4(position.xy,0.,1.);}',
-  fragmentShader:`uniform sampler2D image;uniform float exposure;varying vec2 uvImage;
+  fragmentShader:`uniform sampler2D image;uniform float exposure,glow;uniform vec2 pixel;varying vec2 uvImage;
    vec3 srgb(vec3 c){return mix(c*12.92,1.055*pow(c,vec3(1./2.4))-.055,step(vec3(.0031308),c));}
+   vec3 bright(vec2 uv){vec3 c=max(texture2D(image,clamp(uv,vec2(0.),vec2(1.))).rgb*exposure,vec3(0.));
+    float peak=max(max(c.r,c.g),c.b);return min(c,vec3(12.))*max(peak-1.2,0.)/max(peak,.0001);}
    void main(){vec3 c=max(texture2D(image,uvImage).rgb*exposure,vec3(0.));
+    // Local photographic bloom from HDR radiance only. The glass emits no light.
+    if(glow>0.){vec3 halo=bright(uvImage)*.16;
+     for(int i=1;i<=3;i++){vec2 d=pixel*float(i)*2.;float w=i==1?.11:(i==2?.065:.035);
+      halo+=w*(bright(uvImage+vec2(d.x,0.))+bright(uvImage-vec2(d.x,0.))+bright(uvImage+vec2(0.,d.y))+bright(uvImage-vec2(0.,d.y)));}
+     c+=halo*glow;
+    }
     c=clamp((c*(2.51*c+.03))/(c*(2.43*c+.59)+.14),0.,1.);gl_FragColor=vec4(srgb(c),1.);}`
  });
  const finalGeometry=new THREE.PlaneGeometry(2,2),finalScene=new THREE.Scene();
@@ -110,14 +119,14 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
    const tint=new THREE.Color().setRGB(...chip.color,THREE.SRGBColorSpace);
    const material=new THREE.MeshPhysicalMaterial({
     color:0xffffff,metalness:0,roughness:.065,transmission:1,ior:1.5,
-    thickness:chip.thicknessMm,attenuationColor:tint,attenuationDistance:2.8,
+    thickness:chip.thicknessMm,attenuationColor:tint,attenuationDistance:3.8,
     envMapIntensity:1.15,specularIntensity:1,side:THREE.FrontSide,
     transparent:false,depthWrite:true,bumpMap:fracture,bumpScale:.023
    });
    const mesh=new THREE.Mesh(geometry,material);mesh.userData={flatNormals,smoothNormals,lastSmooth:true};mesh.frustumCulled=false;group.add(mesh);return mesh;
   });
  }
- function render(sourceTexture,poses,{size:next=512,rollDeg=0,lightDeg=0,intensity=1,smooth=true,layers=4,exposure=1,sourceLinear=false}={}) {
+ function render(sourceTexture,poses,{size:next=512,rollDeg=0,lightDeg=0,intensity=1,smooth=true,layers=4,exposure=1,sourceLinear=false,glow=.65}={}) {
   if(disposed)throw Error('PBR chip view is disposed');
   if(poses.length!==meshes.length)throw Error('Every PBR chip requires its rigid-body pose');
   next=Math.max(32,Math.min(1024,Math.round(next)));
@@ -129,7 +138,8 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
   key.position.set(Math.sin(angle)*28,17,Math.cos(angle)*28+16);
   key.intensity=2.6*intensity;rim.intensity=.8*intensity;
   scene.environmentIntensity=1.1*intensity;
-  scene.environmentRotation.set(0,angle*.65,rollDeg*Math.PI/180*.15);
+  // Same yaw as the photographed HDRI background. Object rotation changes reflections itself.
+  scene.environmentRotation.set(0,angle,0);
   for(let i=0;i<meshes.length;i++){
    const mesh=meshes[i],pose=poses[i];mesh.position.fromArray(pose.positionMm);mesh.quaternion.fromArray(pose.rotation);
    if(mesh.userData.lastSmooth!==smooth){
@@ -151,7 +161,7 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
    for(let i=0;i<sorted.length;i++)sorted[i].mesh.visible=i>=layer*stride&&i<(layer+1)*stride;
    const target=targets[layer%2];renderer.setRenderTarget(target);renderer.render(scene,camera);previous=target;
   }
-  finalMaterial.uniforms.image.value=previous.texture;finalMaterial.uniforms.exposure.value=exposure;
+  finalMaterial.uniforms.image.value=previous.texture;finalMaterial.uniforms.exposure.value=exposure;finalMaterial.uniforms.glow.value=glow;finalMaterial.uniforms.pixel.value.set(1/size,1/size);
   renderer.setRenderTarget(output);renderer.render(finalScene,camera);
   lastCalls=renderer.info.render.calls;
   // The bundled Three revision has no public get-native-texture method. This
