@@ -7,12 +7,16 @@
   "status": "RUNNING",
   "worker_model": "gpt-5.6-sol",
   "worker_reasoning": "high",
-  "frontier": [],
+  "frontier": [
+    "02",
+    "03",
+    "04"
+  ],
   "tickets": {
     "01": {
       "file": ".scratch/kaleidoscope-realism/issues/01-free-chip-motion.md",
       "blocked_by": [],
-      "state": "CANDIDATE",
+      "state": "INTEGRATED",
       "base_integration_sha": "10ebf5f9eeaa6702811882f495b12b14d0611f49",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-01",
       "owner": "worker-realism-01",
@@ -21,7 +25,9 @@
         "prototypes/PROTOTYPE-realism/evidence/checks.json",
         "prototypes/PROTOTYPE-realism/evidence/browser.json"
       ],
-      "candidate_verified_clean": true
+      "candidate_verified_clean": true,
+      "integration_sha": "939ab800f32ab20e2b6e714360d67c1090420c3b",
+      "integration_check": "node prototypes/PROTOTYPE-realism/evidence/check.mjs PASS; build PASS"
     },
     "02": {
       "file": ".scratch/kaleidoscope-realism/issues/02-glass-transmission.md",
@@ -63,5 +69,6 @@
   },
   "external_requirements": {
     "06": "Real reference video absent as of run start. Complete software preparation but mark INCOMPLETE if reference remains absent."
-  }
+  },
+  "last_code_integration_sha": "939ab800f32ab20e2b6e714360d67c1090420c3b"
 }
