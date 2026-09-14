@@ -8,7 +8,6 @@
   "worker_model": "gpt-5.6-sol",
   "worker_reasoning": "high",
   "frontier": [
-    "02",
     "03",
     "04"
   ],
@@ -34,11 +33,19 @@
       "blocked_by": [
         "01"
       ],
-      "state": "RUNNING",
+      "state": "CANDIDATE",
       "base_integration_sha": "056ff8ecec0d2fb359f3d371107495d1902effec",
       "worktree": "/Users/owner/Documents/projects/.worktrees/product-configurator/realism-02",
       "owner": "realism_02",
-      "edit_scope": "prototypes/PROTOTYPE-realism/optical/ and own ticket only"
+      "edit_scope": "prototypes/PROTOTYPE-realism/optical/ and own ticket only",
+      "candidate_sha": "b821ac029d923c3897274bf54aa28eeb350e9a69",
+      "ticket_fixed_point": "056ff8ecec0d2fb359f3d371107495d1902effec",
+      "checks": [
+        "prototypes/PROTOTYPE-realism/optical/evidence/checks.json",
+        "prototypes/PROTOTYPE-realism/optical/evidence/browser.json",
+        "prototypes/PROTOTYPE-realism/optical/evidence/convergence.json"
+      ],
+      "candidate_verified_clean": true
     },
     "03": {
       "file": ".scratch/kaleidoscope-realism/issues/03-cad-elving.md",
