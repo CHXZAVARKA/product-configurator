@@ -1,0 +1,627 @@
+{
+  "baseSHA": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T12:58:19.819Z",
+  "checks": [
+    {
+      "name": "offline-WebGL2-actual-CAD-with-without-grid-logo",
+      "passed": true,
+      "snapshot": {
+        "state": {
+          "enabled": true,
+          "rotationDeg": 0,
+          "viewDeg": 0,
+          "lightDeg": 0,
+          "intensity": 1,
+          "size": 256
+        },
+        "renderCount": 1,
+        "hashes": [
+          "2e155651",
+          "dfe5de73"
+        ],
+        "stats": [
+          {
+            "milliseconds": 59.5,
+            "status": {
+              "miss": 65536
+            },
+            "meanPathMm": 0,
+            "traces": [
+              {
+                "status": "miss",
+                "ray": {
+                  "origin": [
+                    10.9140625,
+                    -0.0859375,
+                    -57.076855
+                  ],
+                  "direction": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                "pathMm": 0,
+                "transmittance": [
+                  1,
+                  1,
+                  1
+                ],
+                "interfaces": []
+              },
+              {
+                "status": "miss",
+                "ray": {
+                  "origin": [
+                    -0.0859375,
+                    -0.0859375,
+                    -57.076855
+                  ],
+                  "direction": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                "pathMm": 0,
+                "transmittance": [
+                  1,
+                  1,
+                  1
+                ],
+                "interfaces": []
+              }
+            ],
+            "geometryBuilt": false,
+            "geometryMilliseconds": 0,
+            "cacheBuilds": 0
+          },
+          {
+            "milliseconds": 1468.8999999910593,
+            "status": {
+              "miss": 19404,
+              "transmitted": 45077,
+              "reflection-limit": 1055
+            },
+            "meanPathMm": 27.95655627170313,
+            "traces": [
+              {
+                "status": "transmitted",
+                "ray": {
+                  "origin": [
+                    9.57716998446695,
+                    0.37572132308586664,
+                    -0.4999603503648906
+                  ],
+                  "direction": [
+                    -0.12483291987016713,
+                    0.04310759331811738,
+                    0.9912408776452918
+                  ]
+                },
+                "pathMm": 16.064122231619947,
+                "transmittance": [
+                  0.8368442621895262,
+                  0.8781613557163463,
+                  0.8923821636597297
+                ],
+                "reflectance": 0.07848162254720759,
+                "interfaces": [
+                  {
+                    "t": 40.57511673353305,
+                    "point": [
+                      10.9140625,
+                      -0.0859375,
+                      -16.50173826646695
+                    ],
+                    "normal": [
+                      0.24404420959537257,
+                      -0.08427391228067278,
+                      -0.9660954049532994
+                    ],
+                    "triangle": 14809,
+                    "barycentric": [
+                      0.12034545664865448,
+                      0.4375201029116331,
+                      0.4421344404397124
+                    ],
+                    "event": "enter",
+                    "incident": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "outgoing": [
+                      -0.08322194658011142,
+                      0.028738395545411584,
+                      0.9961165655830108
+                    ],
+                    "n1": 1,
+                    "n2": 1.5
+                  },
+                  {
+                    "t": 16.06408223161995,
+                    "point": [
+                      9.577174977783745,
+                      0.3757195987821339,
+                      -0.49999999999999645
+                    ],
+                    "normal": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "triangle": 52,
+                    "barycentric": [
+                      0.17138433331910752,
+                      0.007709003809412748,
+                      0.8209066628714797
+                    ],
+                    "event": "exit",
+                    "incident": [
+                      -0.08322194658011142,
+                      0.028738395545411584,
+                      0.9961165655830108
+                    ],
+                    "outgoing": [
+                      -0.12483291987016713,
+                      0.04310759331811738,
+                      0.9912408776452918
+                    ],
+                    "n1": 1.5,
+                    "n2": 1
+                  }
+                ],
+                "internalReflections": 0
+              },
+              {
+                "status": "transmitted",
+                "ray": {
+                  "origin": [
+                    -0.20146404505202353,
+                    0.2063651257082028,
+                    -0.49996001557640923
+                  ],
+                  "direction": [
+                    -0.010256703877162744,
+                    0.02595127789077476,
+                    0.9996105897805465
+                  ]
+                },
+                "pathMm": 16.895213535572864,
+                "transmittance": [
+                  0.8327552934857511,
+                  0.8760520213648427,
+                  0.890978848229701
+                ],
+                "reflectance": 0.07840016131874816,
+                "interfaces": [
+                  {
+                    "t": 39.68456522310357,
+                    "point": [
+                      -0.0859375,
+                      -0.0859375,
+                      -17.392289776896433
+                    ],
+                    "normal": [
+                      0.020492141493163862,
+                      -0.05184874837327172,
+                      -0.9984446802047416
+                    ],
+                    "triangle": 20698,
+                    "barycentric": [
+                      0.6836545890289816,
+                      0.25714625539842856,
+                      0.059199155572589875
+                    ],
+                    "event": "enter",
+                    "incident": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "outgoing": [
+                      -0.006837802584775164,
+                      0.01730085192718318,
+                      0.9998269475156216
+                    ],
+                    "n1": 1,
+                    "n2": 1.5
+                  },
+                  {
+                    "t": 16.895173535572866,
+                    "point": [
+                      -0.20146363478386847,
+                      0.2063640876570872,
+                      -0.5
+                    ],
+                    "normal": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "triangle": 47,
+                    "barycentric": [
+                      0.3111399774682168,
+                      0.48407442440622256,
+                      0.20478559812556069
+                    ],
+                    "event": "exit",
+                    "incident": [
+                      -0.006837802584775164,
+                      0.01730085192718318,
+                      0.9998269475156216
+                    ],
+                    "outgoing": [
+                      -0.010256703877162744,
+                      0.02595127789077476,
+                      0.9996105897805465
+                    ],
+                    "n1": 1.5,
+                    "n2": 1
+                  }
+                ],
+                "internalReflections": 0
+              }
+            ],
+            "geometryBuilt": true,
+            "geometryMilliseconds": 1346.1000000089407,
+            "cacheBuilds": 1
+          }
+        ],
+        "cad": {
+          "file": "glazok - elving.step",
+          "stepSHA256": "2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0",
+          "units": "mm",
+          "vertices": 10468,
+          "triangles": 20932,
+          "boundsMm": {
+            "min": [
+              -20.7793,
+              -20.75,
+              -17.65371
+            ],
+            "max": [
+              20.91319,
+              20.75,
+              -0.5
+            ]
+          },
+          "signedVolumeMm3": 16478.45189947426,
+          "edges": 31398,
+          "nonManifoldEdges": 0,
+          "inconsistentEdges": 0
+        },
+        "webgl": true
+      }
+    },
+    {
+      "name": "fixed-CAD-no-autonomous-flow-and-deterministic-redraw",
+      "passed": true
+    },
+    {
+      "name": "lamp-changes-local-reflection-with-identical-cached-geometric-rays",
+      "passed": true,
+      "hashBefore": "dfe5de73",
+      "hashAfter": "20eeaf70",
+      "cachedFrameMilliseconds": 114.6000000089407,
+      "CADBuilds": 1
+    },
+    {
+      "name": "real-part-rotation-and-eye-angle-change-intersections",
+      "passed": true,
+      "snapshot": {
+        "state": {
+          "enabled": true,
+          "rotationDeg": 17,
+          "viewDeg": 11,
+          "lightDeg": 55,
+          "intensity": 1,
+          "size": 256
+        },
+        "renderCount": 5,
+        "hashes": [
+          "62c6247c",
+          "aebbd459"
+        ],
+        "stats": [
+          {
+            "milliseconds": 42.900000005960464,
+            "status": {
+              "miss": 65536
+            },
+            "meanPathMm": 0,
+            "traces": [
+              {
+                "status": "miss",
+                "ray": {
+                  "origin": [
+                    1.5547086537726198,
+                    -0.0859375,
+                    -58.2774611065897
+                  ],
+                  "direction": [
+                    0.1908089953765448,
+                    0,
+                    0.981627183447664
+                  ]
+                },
+                "pathMm": 0,
+                "transmittance": [
+                  1,
+                  1,
+                  1
+                ],
+                "interfaces": []
+              },
+              {
+                "status": "miss",
+                "ray": {
+                  "origin": [
+                    -9.243190364151683,
+                    -0.0859375,
+                    -56.1785621574477
+                  ],
+                  "direction": [
+                    0.1908089953765448,
+                    0,
+                    0.981627183447664
+                  ]
+                },
+                "pathMm": 0,
+                "transmittance": [
+                  1,
+                  1,
+                  1
+                ],
+                "interfaces": []
+              }
+            ],
+            "geometryBuilt": false,
+            "geometryMilliseconds": 0,
+            "cacheBuilds": 2
+          },
+          {
+            "milliseconds": 1573.7999999970198,
+            "status": {
+              "miss": 19553,
+              "transmitted": 44754,
+              "open-path": 1,
+              "reflection-limit": 1228
+            },
+            "meanPathMm": 28.683123223351732,
+            "traces": [
+              {
+                "status": "transmitted",
+                "ray": {
+                  "origin": [
+                    11.398450649168883,
+                    0.4153576632010486,
+                    -3.572456704045031
+                  ],
+                  "direction": [
+                    0.06541409157693914,
+                    0.047026560820337265,
+                    0.9967494666166494
+                  ]
+                },
+                "pathMm": 15.989685617893144,
+                "transmittance": [
+                  0.8372335004392336,
+                  0.8783736402508405,
+                  0.8925314464055952
+                ],
+                "reflectance": 0.07846466788208584,
+                "interfaces": [
+                  {
+                    "t": 39.615145960218285,
+                    "point": [
+                      9.113634856137057,
+                      -0.0859375,
+                      -19.390156955792513
+                    ],
+                    "normal": [
+                      -0.04659668538649653,
+                      -0.0931255140129645,
+                      -0.9945634155501663
+                    ],
+                    "triangle": 14021,
+                    "barycentric": [
+                      0.11853206374616143,
+                      0.31355469987520895,
+                      0.5679132363786296
+                    ],
+                    "event": "enter",
+                    "incident": [
+                      0.19080899537654478,
+                      0,
+                      0.9816271834476639
+                    ],
+                    "outgoing": [
+                      0.14289293930278146,
+                      0.0313510405468915,
+                      0.9892414872790358
+                    ],
+                    "n1": 1,
+                    "n2": 1.5
+                  },
+                  {
+                    "t": 15.989645617893144,
+                    "point": [
+                      11.39844803260522,
+                      0.4153557821386158,
+                      -3.5724965740236954
+                    ],
+                    "normal": [
+                      0.29237170472273677,
+                      0,
+                      0.9563047559630354
+                    ],
+                    "triangle": 47,
+                    "barycentric": [
+                      0.1722942061478623,
+                      0.8186381392564018,
+                      0.009067654595735868
+                    ],
+                    "event": "exit",
+                    "incident": [
+                      0.14289293930278146,
+                      0.0313510405468915,
+                      0.9892414872790358
+                    ],
+                    "outgoing": [
+                      0.06541409157693914,
+                      0.047026560820337265,
+                      0.9967494666166494
+                    ],
+                    "n1": 1.5,
+                    "n2": 1
+                  }
+                ],
+                "internalReflections": 0
+              },
+              {
+                "status": "transmitted",
+                "ray": {
+                  "origin": [
+                    2.175107020123601,
+                    0.26699167425033854,
+                    -0.752596647261015
+                  ],
+                  "direction": [
+                    0.19425624509517514,
+                    0.03127346317749174,
+                    0.9804521822824452
+                  ]
+                },
+                "pathMm": 16.92783053680901,
+                "transmittance": [
+                  0.8325868468110246,
+                  0.8759605262106644,
+                  0.8909148526098818
+                ],
+                "reflectance": 0.07840623903896149,
+                "interfaces": [
+                  {
+                    "t": 39.67398937415665,
+                    "point": [
+                      -1.6730363090891411,
+                      -0.0859375,
+                      -17.23349571196176
+                    ],
+                    "normal": [
+                      -0.2987220373326885,
+                      -0.06220585166933781,
+                      -0.9523106512214911
+                    ],
+                    "triangle": 20638,
+                    "barycentric": [
+                      0.3660744924315239,
+                      0.3161615124770648,
+                      0.3177639950914113
+                    ],
+                    "event": "enter",
+                    "incident": [
+                      0.19080899537654478,
+                      0,
+                      0.9816271834476639
+                    ],
+                    "outgoing": [
+                      0.22732597367366678,
+                      0.02084897545166117,
+                      0.9735955124772997
+                    ],
+                    "n1": 1,
+                    "n2": 1.5
+                  },
+                  {
+                    "t": 16.927790536809013,
+                    "point": [
+                      2.1750992498737975,
+                      0.26699042331181144,
+                      -0.7526358653483065
+                    ],
+                    "normal": [
+                      0.29237170472273677,
+                      0,
+                      0.9563047559630354
+                    ],
+                    "triangle": 47,
+                    "barycentric": [
+                      0.30531383263656797,
+                      0.47881328819758207,
+                      0.21587287916585
+                    ],
+                    "event": "exit",
+                    "incident": [
+                      0.22732597367366678,
+                      0.02084897545166117,
+                      0.9735955124772997
+                    ],
+                    "outgoing": [
+                      0.19425624509517514,
+                      0.03127346317749174,
+                      0.9804521822824452
+                    ],
+                    "n1": 1.5,
+                    "n2": 1
+                  }
+                ],
+                "internalReflections": 0
+              }
+            ],
+            "geometryBuilt": true,
+            "geometryMilliseconds": 1447.2000000029802,
+            "cacheBuilds": 3
+          }
+        ],
+        "cad": {
+          "file": "glazok - elving.step",
+          "stepSHA256": "2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0",
+          "units": "mm",
+          "vertices": 10468,
+          "triangles": 20932,
+          "boundsMm": {
+            "min": [
+              -20.7793,
+              -20.75,
+              -17.65371
+            ],
+            "max": [
+              20.91319,
+              20.75,
+              -0.5
+            ]
+          },
+          "signedVolumeMm3": 16478.45189947426,
+          "edges": 31398,
+          "nonManifoldEdges": 0,
+          "inconsistentEdges": 0
+        },
+        "webgl": true
+      }
+    },
+    {
+      "name": "disable-part-identical-reference-grid",
+      "passed": true
+    },
+    {
+      "name": "quantified-grid-logo-refraction-versus-no-part",
+      "passed": true,
+      "differentPixels": 11199,
+      "totalPixels": 16384,
+      "meanAbsoluteChannelDifference": 58.854960123697914
+    },
+    {
+      "name": "mobile-controls-and-comparison-layout",
+      "passed": true
+    },
+    {
+      "name": "local-preview-3039-identical-offline-render",
+      "passed": true
+    }
+  ],
+  "externalRequests": [],
+  "errors": [],
+  "passed": true
+}

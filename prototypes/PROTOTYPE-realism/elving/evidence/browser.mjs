@@ -1,0 +1,34 @@
+import {spawn} from 'node:child_process';
+import {writeFileSync,mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import assert from 'node:assert/strict';
+import {BASE_SHA} from '../cad-solid.mjs';
+const port=9349,profile=mkdtempSync(join(tmpdir(),'realism-03-'));
+const chrome=spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless=new',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'--window-size=1280,1280','--no-first-run','--no-default-browser-check','about:blank'],{stdio:'ignore'});
+const server=spawn('python3',[new URL('../preview.py',import.meta.url).pathname],{stdio:'ignore'}),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let ws,id=0;const pending=new Map(),errors=[],requests=[];
+const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});ws.send(JSON.stringify({id:n,method,params}));});
+const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
+const snapshot=()=>evaluate('window.ELVING.snapshot()');const results={baseSHA:BASE_SHA,generated:new Date().toISOString(),checks:[]};
+const shot=async name=>{const s=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});writeFileSync(new URL(name,import.meta.url),Buffer.from(s.data,'base64'));};
+try{
+ for(let i=0;i<100;i++){try{await fetch(`http://127.0.0.1:${port}/json/version`);break;}catch{await sleep(100);}}
+ const target=await(await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'})).json();ws=new WebSocket(target.webSocketDebuggerUrl);await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(Error(m.error.message)):p.resolve(m.result);}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);else if(m.method==='Log.entryAdded'&&m.params.entry.level==='error')errors.push(m.params.entry.text);else if(m.method==='Network.requestWillBeSent')requests.push(m.params.request.url);};
+ await send('Runtime.enable');await send('Log.enable');await send('Network.enable');await send('Page.enable');
+ await send('Page.navigate',{url:new URL('../PROTOTYPE-elving.html',import.meta.url).href});
+ for(let i=0;i<150;i++){if(await evaluate('!!window.ELVING'))break;await sleep(100);}assert(await evaluate('!!window.ELVING'));
+ const initial=await snapshot();assert(initial.webgl);assert.notEqual(initial.hashes[0],initial.hashes[1]);assert(initial.stats[1].status.transmitted>40000);assert(initial.stats[1].meanPathMm>8);await shot('elving-front.png');
+ results.checks.push({name:'offline-WebGL2-actual-CAD-with-without-grid-logo',passed:true,snapshot:initial});
+ await sleep(450);const still=await snapshot();assert.deepEqual(still.hashes,initial.hashes);assert.equal(still.renderCount,initial.renderCount);await evaluate('window.ELVING.render()');assert.deepEqual((await snapshot()).hashes,initial.hashes);results.checks.push({name:'fixed-CAD-no-autonomous-flow-and-deterministic-redraw',passed:true});
+ await evaluate("document.getElementById('lightDeg').value=55;document.getElementById('lightDeg').dispatchEvent(new Event('change'))");const light=await snapshot();assert.notEqual(light.hashes[1],initial.hashes[1]);assert.equal(light.hashes[0],initial.hashes[0]);assert.deepEqual(light.stats[1].traces,initial.stats[1].traces);assert.equal(light.stats[1].cacheBuilds,initial.stats[1].cacheBuilds);assert.equal(light.stats[1].geometryBuilt,false);await shot('elving-light.png');results.checks.push({name:'lamp-changes-local-reflection-with-identical-cached-geometric-rays',passed:true,hashBefore:initial.hashes[1],hashAfter:light.hashes[1],cachedFrameMilliseconds:light.stats[1].milliseconds,CADBuilds:light.stats[1].cacheBuilds});
+ await evaluate("document.getElementById('rotationDeg').value=17;document.getElementById('rotationDeg').dispatchEvent(new Event('change'));document.getElementById('viewDeg').value=11;document.getElementById('viewDeg').dispatchEvent(new Event('change'))");const angled=await snapshot();assert.notEqual(angled.hashes[1],light.hashes[1]);assert.notDeepEqual(angled.stats[1].traces,light.stats[1].traces);await shot('elving-angled.png');results.checks.push({name:'real-part-rotation-and-eye-angle-change-intersections',passed:true,snapshot:angled});
+ await evaluate("document.getElementById('enabled').click()");const disabled=await snapshot();assert.equal(disabled.state.enabled,false);assert.equal(disabled.hashes[0],disabled.hashes[1]);await shot('elving-disabled.png');results.checks.push({name:'disable-part-identical-reference-grid',passed:true});
+ await evaluate("document.getElementById('reset').click()");assert.deepEqual((await snapshot()).hashes,initial.hashes);
+ const pair=await evaluate(`(()=>{const a=window.ELVING.renderFrame({size:128,enabled:false}),b=window.ELVING.renderFrame({size:128,enabled:true});let different=0,absolute=0;for(let i=0;i<a.pixels.length;i+=4){let d=0;for(let c=0;c<3;c++)d+=Math.abs(a.pixels[i+c]-b.pixels[i+c]);absolute+=d;if(d>15)different++;}return {differentPixels:different,totalPixels:128*128,meanAbsoluteChannelDifference:absolute/(128*128*3)};})()`);assert(pair.differentPixels/pair.totalPixels>.25);results.checks.push({name:'quantified-grid-logo-refraction-versus-no-part',passed:true,...pair});
+ await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});assert(await evaluate('document.documentElement.scrollWidth<=innerWidth'));await shot('elving-mobile.png');results.checks.push({name:'mobile-controls-and-comparison-layout',passed:true});
+ assert.equal(errors.length,0,errors.join('\n'));assert(requests.every(u=>u.startsWith('file:')||u.startsWith('data:')),'Offline page makes no external requests');results.externalRequests=[];
+ await send('Page.navigate',{url:'http://127.0.0.1:3039/'});for(let i=0;i<150;i++){if(await evaluate('!!window.ELVING'))break;await sleep(100);}assert(await evaluate('!!window.ELVING'));assert.deepEqual((await snapshot()).hashes,initial.hashes);assert.equal(errors.length,0,errors.join('\n'));results.checks.push({name:'local-preview-3039-identical-offline-render',passed:true});results.errors=errors;results.passed=true;
+}catch(e){results.passed=false;results.error=String(e.stack||e);results.errors=errors;}
+finally{ws?.close();chrome.kill();server.kill();await sleep(300);rmSync(profile,{recursive:true,force:true});writeFileSync(new URL('browser.json',import.meta.url),JSON.stringify(results,null,2));}
+console.log(JSON.stringify({...results,checks:results.checks.map(({snapshot,...check})=>check)},null,2));process.exit(results.passed?0:1);
