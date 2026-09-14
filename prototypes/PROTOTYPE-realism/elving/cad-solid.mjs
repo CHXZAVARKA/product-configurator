@@ -1,5 +1,5 @@
 // Actual exported STEP triangles, in assembly millimetres. No height-map assumption.
-export const BASE_SHA = '056ff8ecec0d2fb359f3d371107495d1902effec';
+export const BASE_SHA = '0d51e61579e1a49aff5c4811ab2ce1b48c712ed6';
 export const ELVING_STEP_SHA256 = '2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0';
 export const add=(a,b)=>a.map((x,i)=>x+b[i]);
 export const sub=(a,b)=>a.map((x,i)=>x-b[i]);

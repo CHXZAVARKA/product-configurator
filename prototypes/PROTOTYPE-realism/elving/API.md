@@ -6,7 +6,7 @@
 import {CADOpticalSolid} from './elving/cad-solid.mjs';
 const solid = new CADOpticalSolid(cad.elving);
 const result = solid.trace(
-  {origin: [0, 0, -45], direction: [0, 0, 1]},
+  {origin: [0, 0, 45], direction: [0, 0, -1]},
   {
     pose: {rotationDeg: [0, 0, 0], translationMm: [0, 0, 0]},
     ior: 1.5,
@@ -37,12 +37,12 @@ import {CADRayFieldCache, RAY_STATUS} from './elving/render.mjs';
 const cache = new CADRayFieldCache(solid);
 const field = cache.get({size: 128, viewDeg: 0, pose: {rotationDeg: [0, 0, 0]}});
 
-// Same geometry returns the identical field object, no CAD intersection work.
+// Identical incoming rays and CAD pose reuse the field, no intersection work.
 const exitRay = field.rayAt(pixelIndex);
 const cadWeight = field.weightAt(pixelIndex, [0.006, 0.003, 0.002]);
 ```
 
-`get` принимает `size`, `halfSizeMm`, `viewDeg`, `pose`, `ior` и `maxInternalReflections`. Для другой камеры предусмотрен `rayForPixel(x, y, size)` с обязательным строковым `rayKey`. Ключ должен изменяться при изменении положения или направления любого исходного луча. Такая камера может быть перспективной или иметь произвольную ориентацию.
+`get` принимает `size`, `halfSizeMm`, `viewDeg`, `pose`, `ior` и `maxInternalReflections`. Для другой камеры предусмотрен `rayForPixel(x, y, size)` с обязательным строковым `rayKey`. Ключ должен изменяться при изменении положения или направления любого входящего в CAD луча. Это относится и к лучам после преломления осколками. Такая камера может быть перспективной или иметь произвольную ориентацию.
 
 Поле содержит упакованные `Float32Array`:
 
@@ -52,6 +52,39 @@ const cadWeight = field.weightAt(pixelIndex, [0.006, 0.003, 0.002]);
 
 `statuses` является `Uint8Array`, коды заданы `RAY_STATUS`. Поля также содержат `statusAt(index)`, `statusCounts`, `meanPathMm`, `geometryMilliseconds` и два подробных контрольных луча `controls`. Массивы кэша считаются неизменяемыми. Размер одного поля 256 × 256 около 4 МБ.
 
-Для продолжения через осколки передаются `field.rayAt(index).origin` и `.direction` в `optical/transport.mjs::transmittedRay`. Цвет умножается на `field.weightAt(index)` и вес осколков. Статус `miss` имеет единичный вес и исходный луч. Статусы `reflection-limit`, `open-path`, `invalid-orientation` и `origin-inside-unsupported` не являются пригодным выходом в насыпку. Поле обновляется при изменении CAD или камеры, при движении одних осколков поле сохраняется.
+## Порядок полной сборки и композиция
 
-Плоскость тестовой сетки расположена на z = 28 мм, за CAD-диском `nasipka` z = 10…12 мм. `viewingRay` смотрит от отрицательного z к положительному, ширина демонстрации 44 мм. Демонстрация не добавляет CAD-диск или насыпку в луч, это отдельный опыт эльвинга.
+`assembly.mjs::assemblyOrientationFromCAD(fullCAD)` проверяет границы всех исходных деталей. `evidence/check.mjs` читает полный `PROTOTYPE-optics/assets/cad.json`, поэтому сторона глазка определяется всей сборкой.
+
+| Деталь | Диапазон z, мм |
+| --- | --- |
+| Глазок `glazok` | 195…208 |
+| Стекло `steklo` | 192…195 |
+| Зеркальная призма `prizma` | 12…192 |
+| Диск `nasipka` | 10…12 |
+| Свободные осколки | −0,5…10 |
+| Эльвинг `elving` | −17,65371…−0,5 |
+
+Настоящий глазок находится на +z, выходящий из него луч идёт к −z. В камере луч проходит сначала осколки, затем эльвинг. Диск `nasipka` не является свободными осколками. Подсветка находится позади эльвинга на стороне −z.
+
+```js
+import {transmittedRay} from './optical/transport.mjs';
+const throughShards = transmittedRay(eyeRay.origin, eyeRay.direction, shards, {
+  backgroundZ: -0.5, // Handoff plane, ignore the separately projected point.
+});
+if (throughShards.ray) {
+  const throughCAD = solid.trace(throughShards.ray);
+  if (throughCAD.status === 'transmitted' || throughCAD.status === 'miss') {
+    const backgroundPoint = planePoint(throughCAD.ray, -28);
+    const weight = throughShards.weight.map((v, i) => v * throughCAD.transmittance[i]);
+  }
+}
+```
+
+`throughShards.ray` начинается у последнего выхода из осколков. Он передаётся в CAD с фактическим положением и направлением. Статус CAD `miss` имеет единичный вес и исходный луч. Статусы `reflection-limit`, `open-path`, `invalid-orientation` и `origin-inside-unsupported` не являются пригодным выходом к фону.
+
+Кэш точен только для одинаковых входящих в CAD лучей, позы CAD и IOR. В самостоятельном стенде без осколков изменение картинки, лампы или поглощения сохраняет поле. В полной насыпке движущиеся преломляющие осколки меняют входящие в CAD лучи, даже при неподвижном эльвинге и глазке. Старое первичное поле глазка нельзя применить к этим новым лучам как точное. `rayKey` должен включать изменение входящих лучей после осколков. Геометрический тест показывает это для двух поз одного процедурного осколка из общей библиотеки геометрии.
+
+Предварительно рассчитанное изображение неподвижного эльвинга может быть быстрым фоном для насыпки. Такой фон сохраняет только выбранный ракурс и является угловым приближением. Он не заменяет передачу фактического преломлённого луча в CAD.
+
+Плоскость тестовой сетки расположена на z = −28 мм, лампа на z = −46 мм. `viewingRay` смотрит от +z к −z, при нулевом ракурсе начало находится на z = +45 мм. Локальная демонстрация сокращает длинный зеркальный путь до эльвинга и не добавляет диск или насыпку в луч. Ширина демонстрации 44 мм.

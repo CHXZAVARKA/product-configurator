@@ -13,8 +13,8 @@ context.fillStyle='#ce5d28';context.beginPath();context.arc(mm(8),mm(-7),30,0,Ma
 context.fillStyle='#f2d077';context.fillRect(mm(-10),mm(5),55,55);
 const bitmap=context.getImageData(0,0,1024,1024).data;
 const sample=(x,y)=>{
- // Printed face looks towards the eye (-z), so its readable right axis is -x.
- const px=mm(-x)-.5,py=mm(-y)-.5;if(px<0||py<0||px>=1023||py>=1023)return [.065,.1,.14];
+ // Printed face looks towards the eye (+z), its readable right axis is +x.
+ const px=mm(x)-.5,py=mm(-y)-.5;if(px<0||py<0||px>=1023||py>=1023)return [.065,.1,.14];
  const ix=Math.floor(px),iy=Math.floor(py),fx=px-ix,fy=py-iy,result=[0,0,0];
  for(let c=0;c<3;c++)for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++)result[c]+=(bitmap[((iy+dy)*1024+ix+dx)*4+c]/255)**2.2*(dx?fx:1-fx)*(dy?fy:1-fy);
  return result;
@@ -39,5 +39,5 @@ function render() {
 for(const key of ['rotationDeg','viewDeg','lightDeg','intensity'])byId(key).addEventListener('change',e=>{state[key]=+e.target.value;render();});
 byId('enabled').addEventListener('change',e=>{state.enabled=e.target.checked;render();});byId('reset').onclick=()=>{state={...state,enabled:true,rotationDeg:0,viewDeg:0,lightDeg:0,intensity:1};render();};
 const hash=pixels=>{let h=2166136261;for(const v of pixels){h^=v;h=Math.imul(h,16777619);}return (h>>>0).toString(16);};
-window.ELVING={solid,render,renderFrame:options=>renderFrame(solid,sample,options),set:options=>{state={...state,...options};render();},snapshot:()=>({state:{...state},renderCount,hashes:frames.map(f=>hash(f.pixels)),stats:frames.map(f=>({...f.stats,traces:f.stats.traces})),cad:solid.audit,webgl:true})};
+window.ELVING={solid,render,renderFrame:options=>renderFrame(solid,sample,options),set:options=>{state={...state,...options};render();},snapshot:()=>({state:{...state},renderCount,hashes:frames.map(f=>hash(f.pixels)),stats:frames.map(f=>({...f.stats,traces:f.stats.traces})),cad:solid.audit,assembly:ASSEMBLY,webgl:true})};
 render();

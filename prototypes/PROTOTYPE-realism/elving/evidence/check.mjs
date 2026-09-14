@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {CADOpticalSolid,BASE_SHA,add,sub,scale,dot,cross,normalize,refract,fresnel} from '../cad-solid.mjs';
-import {viewingRay,planePoint,renderFrame,CADRayFieldCache} from '../render.mjs';
-const cad=JSON.parse(readFileSync(new URL('../../../PROTOTYPE-optics/assets/cad.json',import.meta.url))).elving;
+import {viewingRay,planePoint,renderFrame,CADRayFieldCache,BACKGROUND_Z_MM,BACKLIGHT_Z_MM,DEMO_EYE_Z_MM} from '../render.mjs';
+import {assemblyOrientationFromCAD} from '../assembly.mjs';
+import {makeChip} from '../../geometry.mjs';
+import {solidFromChip,transmittedRay} from '../../optical/transport.mjs';
+const fullCAD=JSON.parse(readFileSync(new URL('../../../PROTOTYPE-optics/assets/cad.json',import.meta.url))),cad=fullCAD.elving;
 const solid=new CADOpticalSolid(cad),checks=[],controls=[];
 const near=(actual,expected,tolerance=1e-6)=>assert(Math.abs(actual-expected)<=tolerance,`${actual} ≠ ${expected}`);
 const vectorNear=(a,b,tolerance=1e-6)=>a.forEach((v,i)=>near(v,b[i],tolerance));
@@ -27,6 +30,12 @@ check('actual-STEP-provenance-closed-outward-solid',()=>{
  assert.equal(solid.audit.nonManifoldEdges,0);assert.equal(solid.audit.inconsistentEdges,0);
  return {audit:solid.audit,STEPVolumeMm3:16478.45405733847,exportVolumeErrorMm3:solid.audit.signedVolumeMm3-16478.45405733847};
 });
+check('full-original-CAD-assembly-fixes-eye-positive-Z-and-backlight-negative-Z',()=>{
+ const assembly=assemblyOrientationFromCAD(fullCAD);assert.deepEqual(assembly.rayDirection,[0,0,-1]);assert.equal(assembly.eyeSide,'+Z');assert.deepEqual(assembly.chipSpaceZMm,[-.5,10]);
+ const ray=viewingRay(0,0);near(ray.origin[2],DEMO_EYE_Z_MM);assert.equal(DEMO_EYE_Z_MM,45);vectorNear(ray.direction,[0,0,-1]);assert(BACKGROUND_Z_MM<solid.bounds.min[2]);assert(BACKLIGHT_Z_MM<BACKGROUND_Z_MM);
+ const trace=solid.trace(ray);assert.equal(trace.status,'transmitted');near(trace.interfaces[0].point[2],-.5);assert(trace.interfaces.at(-1).point[2]<-16);assert(trace.ray.direction[2]<0);assert(planePoint(trace.ray)[2]<solid.bounds.min[2]);
+ return {assembly,demo:{eyeZMm:DEMO_EYE_Z_MM,backgroundZMm:BACKGROUND_Z_MM,backlightZMm:BACKLIGHT_Z_MM},firstInterface:trace.interfaces[0],lastInterface:trace.interfaces.at(-1)};
+});
 check('both-directions-BVH-matches-exhaustive-actual-triangles',()=>{
  let rays=0;for(const sign of [-1,1])for(let i=0;i<32;i++){
   const ray={origin:[Math.sin(i*1.83)*24+.131,Math.cos(i*.91)*24+.317,sign*45],direction:normalize([Math.sin(i*.7)*.11,Math.cos(i*.3)*.05,-sign])};
@@ -37,8 +46,8 @@ check('IOR-one-identity-through-both-real-interfaces-and-local-thickness',()=>{
  let rays=0,min=Infinity,max=0,flatTop=0,bevelTop=0;for(let y=-17;y<=17;y+=2)for(let x=-17;x<=17;x+=2){
   if(Math.hypot(x,y)>18)continue;const ray=viewingRay(x+.037,y+.071),t=solid.trace(ray,{ior:1,absorption:[0,0,0]});
   assert.equal(t.status,'transmitted');assert.equal(t.interfaces.length,2);vectorNear(t.ray.direction,ray.direction);vectorNear(planePoint(t.ray),planePoint(ray));vectorNear(t.transmittance,[1,1,1]);near(t.reflectance,0);
-  const exit=t.interfaces[1];assert(exit.point[2]<=-.5+1e-6);if(Math.abs(exit.point[2]+.5)<1e-6){vectorNear(exit.normal,[0,0,1]);flatTop++;}else bevelTop++;
-  near(t.pathMm,Math.hypot(...sub(exit.point,t.interfaces[0].point)),1e-8);
+  const entry=t.interfaces[0],exit=t.interfaces[1];assert(entry.point[2]<=-.5+1e-6);if(Math.abs(entry.point[2]+.5)<1e-6){vectorNear(entry.normal,[0,0,1]);flatTop++;}else bevelTop++;
+  near(t.pathMm,Math.hypot(...sub(exit.point,entry.point)),1e-8);
   min=Math.min(min,t.pathMm);max=Math.max(max,t.pathMm);rays++;
  }assert(max-min>.5,'Actual CAD thickness must vary');assert(flatTop>0&&bevelTop>0);return {rays,flatTop,bevelTop,thicknessMm:{min,max}};
 });
@@ -69,12 +78,22 @@ check('critical-angle-and-energy',()=>{
  assert.equal(refract(normalize([.8,0,.6]),[0,0,-1],1.5),null);near(fresnel(.6,1.5,1),1);
  return {normalReflectance:.04,criticalAngleDeg:Math.asin(1/1.5)*180/Math.PI};
 });
-check('actual-CAD-TIR-ray-reciprocity-and-explicit-reflection-budget',()=>{
- const ray=viewingRay(-5.863,-19.769),t=solid.trace(ray);assert.equal(t.status,'transmitted');assert.equal(t.internalReflections,3);
+check('generic-reverse-direction-actual-CAD-TIR-reciprocity-and-reflection-budget',()=>{
+ const ray={origin:[5.863,-19.769,-57.076855],direction:[0,0,1]},t=solid.trace(ray);assert.equal(t.status,'transmitted');assert.equal(t.internalReflections,3);
  for(const h of t.interfaces.filter(h=>h.event==='tir')){assert.equal(refract(h.incident,scale(h.normal,-1),1.5),null);near(fresnel(dot(h.incident,h.normal),1.5,1),1);}
  const reverse=solid.trace({origin:add(t.ray.origin,scale(t.ray.direction,8)),direction:scale(t.ray.direction,-1)});assert.equal(reverse.status,'transmitted');assert.equal(reverse.internalReflections,3);vectorNear(reverse.interfaces.at(-1).point,t.interfaces[0].point,2e-5);near(reverse.pathMm,t.pathMm,2e-5);
- const limit=solid.trace(viewingRay(3.137,-19.269));assert.equal(limit.status,'reflection-limit');assert.equal(limit.internalReflections,4);assert.equal(limit.interfaces.at(-1).event,'reflection-limit');
+ const limit=solid.trace({origin:[-3.137,-19.269,-57.076855],direction:[0,0,1]});assert.equal(limit.status,'reflection-limit');assert.equal(limit.internalReflections,4);assert.equal(limit.interfaces.at(-1).event,'reflection-limit');
  controls.push({TIRRay:ray,forward:t,reverse,reflectionLimit:limit});return {TIRReflections:t.internalReflections,pathMm:t.pathMm,reflectionLimit:limit.internalReflections};
+});
+check('actual-order-shards-then-CAD-and-changed-shard-ray-invalidates-primary-field',()=>{
+ const eye={origin:[.137,.231,18],direction:[0,0,-1]},cache=new CADRayFieldCache(solid);let before;
+ const records=[];for(const angle of [.4,.7]){
+  const chip=solidFromChip(makeChip(0),{positionMm:[0,0,5],rotation:[0,Math.sin(angle/2),0,Math.cos(angle/2)]}),shards=transmittedRay(eye.origin,eye.direction,[chip],{backgroundZ:-.5});
+  assert(shards.ray);assert.equal(shards.interfaces,2);assert(shards.ray.origin[2]>solid.bounds.max[2]);assert(shards.ray.direction[2]<0);
+  const cadResult=solid.trace(shards.ray);assert.equal(cadResult.status,'transmitted');assert(cadResult.interfaces[0].point[2]<shards.ray.origin[2]);assert(cadResult.interfaces.at(-1).point[2]<cadResult.interfaces[0].point[2]);
+  const field=cache.get({size:1,rayKey:`shard-angle-${angle}`,rayForPixel:()=>shards.ray});vectorNear(field.rayAt(0).origin,cadResult.ray.origin,2e-6);vectorNear(field.rayAt(0).direction,cadResult.ray.direction,1e-7);
+  if(before){assert(Math.hypot(...sub(shards.ray.origin,before.shards.ray.origin))>.2);assert(Math.hypot(...sub(cadResult.interfaces[0].point,before.cadResult.interfaces[0].point))>.2);assert.notEqual(field.key,before.key);}before={shards,cadResult,key:field.key};records.push({angle,shardExit:shards.ray,cadEntry:cadResult.interfaces[0].point,cadExit:cadResult.ray,combinedWeight:shards.weight.map((v,i)=>v*cadResult.transmittance[i])});
+ }assert.equal(cache.builds,2);return {records,buildsAfterShardChange:cache.builds,cacheValidOnlyForIdenticalIncomingRays:true};
 });
 check('deterministic-frame-light-and-view-response-no-autonomous-flow',()=>{
  const sample=(x,y)=>[Math.floor(x/2)%2===0?.8:.2,Math.floor(y/2)%2===0?.7:.1,.4];
