@@ -115,7 +115,9 @@ try {
   if(newBodies||['depth','edgeChips','detail'].some(k=>options[k]!==undefined))chipView.setGeometry(physics.chips,{depth:state.depth,edgeChips:state.edgeChips,detail:state.detail});
   if(state.mode!=='study'&&(options.turn!==undefined||options.tilt!==undefined))physics.orient(state.turn,state.tilt);
   if(options.mode!==undefined){state.auto=false;if(state.mode==='study')$('shape-settings').open=true;lastTime=0;}
-  chipDirty=true;controls();requestDraw(state.elving||Object.keys(options).some(k=>!['turn','tilt','auto','lightAuto','mode','fov','glow','studyTurn','studyTilt','studyMaterial','detail','depth','edgeChips'].includes(k)));
+  const sourceInputsChanged=Object.keys(options).some(k=>!['turn','tilt','auto','lightAuto','mode','fov','glow','studyTurn','studyTilt','studyMaterial','detail','depth','edgeChips'].includes(k));
+  const elvingPoseChanged=state.elving&&(options.turn!==undefined||options.tilt!==undefined);
+  chipDirty=true;controls();requestDraw(sourceInputsChanged||elvingPoseChanged);
  }
  for(const key of ['turn','tilt','light','intensity','glow','fov'])$(key).addEventListener('input',e=>set({[key]:Number(e.target.value)}));
  $('smooth').onchange=e=>set({smooth:e.target.checked});$('prism').onclick=()=>set({mode:'prism'});$('glass').onclick=()=>set({mode:'glass'});$('study').onclick=()=>set({mode:'study'});$('study-material').onchange=e=>set({studyMaterial:e.target.value});
