@@ -23,9 +23,9 @@ function undisplacedSubdivision(chip,subdivisions) {
  }
  return vertices;
 }
-const sim=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.5});
+const sim=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.15,sizeVariation:.1});
 const colliderBefore=digest(sim.chips),posesBefore=digest(sim.poses()),uniqueMeshes=new Set(),uniqueMaterials=new Set();
-const report={method:'Exact browser vendor Rapier injection and createChipPhysics(count=36,sizeScale=1.5), closed high-poly visual skin only; independent triangle, hull-plane and edge topology checks.',chips:[],totalTriangles:0,maxOutsideHullMm:0,maxDeviationMm:0,maxColliderSupportGapMm:0,minTriangleAreaMm2:Infinity,minOutwardDot:Infinity};
+const report={method:'Exact browser vendor Rapier injection and createChipPhysics(count=36,sizeScale=1.15,sizeVariation=.1), closed high-poly visual skin only; independent triangle, hull-plane and edge topology checks.',chips:[],totalTriangles:0,maxOutsideHullMm:0,maxDeviationMm:0,maxColliderSupportGapMm:0,minTriangleAreaMm2:Infinity,minOutwardDot:Infinity};
 const started=performance.now();
 for(const chip of sim.chips) {
  const before=JSON.stringify(chip),surface=buildChipSurface(chip);

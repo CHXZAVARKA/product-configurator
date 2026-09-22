@@ -33,8 +33,15 @@ for(let i=0;i<39;i++){
  }
 }
 report.initialization={sizeScale:1.5,capacity:39,minimumSeparatingGapMm:capacityGap,defaultGeometryPreserved:true};scaled.dispose();
+const varied=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.15,sizeVariation:.1});
+const variedScales=varied.chips.map(chip=>chip.sizeScale),diameters=varied.chips.map(chip=>2*Math.max(...chip.vertices.map(([x,y])=>Math.hypot(x,y))));
+assert.ok(Math.min(...variedScales)>=1.15*.9&&Math.max(...variedScales)<=1.15*1.1,'per-chip scales stay inside requested range');
+assert.ok(new Set(variedScales.map(scale=>scale.toFixed(6))).size>30,'working profile has varied chip sizes');
+assert.ok(Math.min(...diameters)>5.4&&Math.max(...diameters)<7.2,'working profile follows the supplier 5–7 mm fractions');
+report.workingProfile={sizeScale:1.15,sizeVariation:.1,chipScaleRange:[Math.min(...variedScales),Math.max(...variedScales)],diameterRangeMm:[Math.min(...diameters),Math.max(...diameters)]};
+varied.dispose();
 for(const [count,bulk] of [[18,.65],[30,.65],[36,.65],[36,0],[36,1]]) {
- const sim=createChipPhysics(RAPIER,cad,{count,sizeScale:1.5,bulk}),initial=sim.poses();
+ const sim=createChipPhysics(RAPIER,cad,{count,sizeScale:1.15,sizeVariation:.1,bulk}),initial=sim.poses();
  let minInitialClearance=Infinity,convexityWorst=0;
  for(const chip of sim.chips){assert.ok(signedVolume(chip)>0,'outward winding');for(let i=0;i<chip.indices.length;i+=3){const [a,b,c]=chip.indices.slice(i,i+3).map(j=>chip.vertices[j]);const ab=b.map((v,k)=>v-a[k]),ac=c.map((v,k)=>v-a[k]),normal=[ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]],length=Math.hypot(...normal);for(const vertex of chip.vertices){const side=vertex.reduce((sum,v,k)=>sum+(v-a[k])*normal[k]/length,0);convexityWorst=Math.max(convexityWorst,side);assert.ok(side<1e-8,'render hull must be convex');}}}
  const initialWorld=sim.chips.map((c,i)=>transformVertices(c,initial[i]));

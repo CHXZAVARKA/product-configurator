@@ -13,7 +13,7 @@ try {
  let glass=null;
  const environmentBytes=Uint8Array.from(atob(ENVIRONMENT_BASE64),c=>c.charCodeAt(0)).buffer;
  const backdrop=createWorldBackdrop(gl,environmentBytes),prism=prismFromCAD(CAD),view=createPrismView(gl,prism);
- const physics=createChipPhysics(RAPIER,CAD,{count:36,sizeScale:1.5}),chipView=await createPBRChipView(gl,{environmentBytes});chipView.setGeometry(physics.chips);
+ const physics=createChipPhysics(RAPIER,CAD,{count:36,sizeScale:1.15,sizeVariation:.1}),chipView=await createPBRChipView(gl,{environmentBytes});chipView.setGeometry(physics.chips);
  const state={mode:'prism',turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:32,smooth:true,auto:false,quality:'auto',background:'world',resolution:1024,filling:true,count:36,paused:false,elving:false,showColliders:false,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0,studyMaterial:'glass'};
  let raf=null,lastTime=0,frames=0,sourcePasses=0,lastSource=null,sourceDirty=true,measuring=false,uploadImage=null,lastFrameMs=null,qualityChecked=false,lastBenchmark=null,chipDirty=true,lastChips=null,cadPasses=0;
  const background=document.createElement('canvas');background.width=background.height=1024;

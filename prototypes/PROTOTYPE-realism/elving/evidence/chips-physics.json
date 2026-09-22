@@ -8,22 +8,22 @@
     {
       "count": 18,
       "bulk": 0.65,
-      "initialSeparatingGapMm": 0.030445940395686044,
-      "convexityWorstMm": 6.0021432268797525e-15,
-      "maxGravityTranslationMm": 28.536807330227607,
-      "maxTumbleDegrees": 179.81710644221803,
+      "initialSeparatingGapMm": 0.17969471083706967,
+      "convexityWorstMm": 7.653599976009673e-15,
+      "maxGravityTranslationMm": 24.564107679827607,
+      "maxTumbleDegrees": 179.69400557059654,
       "maxBoundaryLeakMm": 0,
       "activeFrameCpu": {
         "samples": 916,
-        "meanMs": 1.7105720971615697,
-        "p95Ms": 4.038250000000062,
-        "maxMs": 12.802167000000054
+        "meanMs": 1.0089982270742448,
+        "p95Ms": 1.3421249999998963,
+        "maxMs": 8.982042000000092
       },
       "frameCpu": {
         "samples": 1920,
-        "meanMs": 0.8161368244791668,
-        "p95Ms": 2.9162079999998696,
-        "maxMs": 12.802167000000054
+        "meanMs": 0.4813956312500063,
+        "p95Ms": 1.2072920000000522,
+        "maxMs": 8.982042000000092
       },
       "firstSettleSeconds": 1.9041666666666612,
       "snapshot": {
@@ -32,7 +32,12 @@
         "steps": 1829,
         "shaking": false,
         "count": 18,
-        "sizeScale": 1.5,
+        "sizeScale": 1.15,
+        "sizeVariation": 0.1,
+        "chipScaleRange": [
+          1.058566203713417,
+          1.2543878674227742
+        ],
         "bulk": 0.65,
         "rollDeg": -90,
         "tiltDeg": -70,
@@ -41,14 +46,14 @@
         "shakeDurationSeconds": 1.5,
         "maxCatchupSteps": 4,
         "stableForSeconds": 0.40416666666666645,
-        "smoothedRmsLinearMmPerSecond": 2.2109321650632214,
-        "smoothedRmsAngularRadPerSecond": 1.1386227556133064,
+        "smoothedRmsLinearMmPerSecond": 0.0770217358178187,
+        "smoothedRmsAngularRadPerSecond": 0.01062188851831982,
         "actionAgeSeconds": 1.9083333333333279,
         "freezeReason": "stable-subpixel-contact-jitter",
-        "lastRmsLinearMmPerSecond": 1.6411149338962616,
-        "lastRmsAngularRadPerSecond": 1.1457222603225923,
-        "boundaryCorrections": 1169,
-        "maxBoundaryCorrectionMm": 1.0817686700330054,
+        "lastRmsLinearMmPerSecond": 0.011494107009125495,
+        "lastRmsAngularRadPerSecond": 0.0038509757373683577,
+        "boundaryCorrections": 1095,
+        "maxBoundaryCorrectionMm": 0.8523170030015521,
         "hardBoundaryProjection": true,
         "settlePolicy": {
           "minActionAgeSeconds": 1.5,
@@ -58,8 +63,8 @@
           "linearDamping": 3,
           "angularDamping": 35
         },
-        "solidVolumeMm3": 1522.5607185693582,
-        "nominalSolidFraction": 0.1278581854797628,
+        "solidVolumeMm3": 705.1424396768723,
+        "nominalSolidFraction": 0.059214868571266746,
         "chamberAudit": {
           "radiusMm": 18.999993668083157,
           "floorEnvelopeMm": -0.5,
@@ -80,22 +85,22 @@
     {
       "count": 30,
       "bulk": 0.65,
-      "initialSeparatingGapMm": 0.030445940395686044,
-      "convexityWorstMm": 6.0021432268797525e-15,
-      "maxGravityTranslationMm": 26.843155066548185,
-      "maxTumbleDegrees": 179.99976111055898,
+      "initialSeparatingGapMm": 0.17969471083706967,
+      "convexityWorstMm": 7.653599976009673e-15,
+      "maxGravityTranslationMm": 27.119169529264756,
+      "maxTumbleDegrees": 179.98967503513936,
       "maxBoundaryLeakMm": 0,
       "activeFrameCpu": {
         "samples": 916,
-        "meanMs": 2.8392481866812167,
-        "p95Ms": 6.200917000000118,
-        "maxMs": 20.095792000000074
+        "meanMs": 1.8633796757641867,
+        "p95Ms": 2.639874999999847,
+        "maxMs": 6.826291999999739
       },
       "frameCpu": {
         "samples": 1920,
-        "meanMs": 1.3545971427083332,
-        "p95Ms": 4.579332999999679,
-        "maxMs": 20.095792000000074
+        "meanMs": 0.8890242843749971,
+        "p95Ms": 2.3186249999998836,
+        "maxMs": 6.826291999999739
       },
       "firstSettleSeconds": 1.9041666666666612,
       "snapshot": {
@@ -104,7 +109,12 @@
         "steps": 1829,
         "shaking": false,
         "count": 30,
-        "sizeScale": 1.5,
+        "sizeScale": 1.15,
+        "sizeVariation": 0.1,
+        "chipScaleRange": [
+          1.0380861961655319,
+          1.2543878674227742
+        ],
         "bulk": 0.65,
         "rollDeg": -90,
         "tiltDeg": -70,
@@ -113,14 +123,14 @@
         "shakeDurationSeconds": 1.5,
         "maxCatchupSteps": 4,
         "stableForSeconds": 0.40416666666666645,
-        "smoothedRmsLinearMmPerSecond": 0.18792105292023575,
-        "smoothedRmsAngularRadPerSecond": 0.0383771437993102,
+        "smoothedRmsLinearMmPerSecond": 0.20997169116120432,
+        "smoothedRmsAngularRadPerSecond": 0.08277699060938798,
         "actionAgeSeconds": 1.9083333333333279,
         "freezeReason": "stable-subpixel-contact-jitter",
-        "lastRmsLinearMmPerSecond": 0.09582199254918498,
-        "lastRmsAngularRadPerSecond": 0.025310462313602355,
-        "boundaryCorrections": 2092,
-        "maxBoundaryCorrectionMm": 0.7906229529681568,
+        "lastRmsLinearMmPerSecond": 0.12684933496274584,
+        "lastRmsAngularRadPerSecond": 0.033949469743873424,
+        "boundaryCorrections": 799,
+        "maxBoundaryCorrectionMm": 0.7390193474767663,
         "hardBoundaryProjection": true,
         "settlePolicy": {
           "minActionAgeSeconds": 1.5,
@@ -130,8 +140,8 @@
           "linearDamping": 3,
           "angularDamping": 35
         },
-        "solidVolumeMm3": 2564.182536707542,
-        "nominalSolidFraction": 0.21532916381185804,
+        "solidVolumeMm3": 1136.6266165914863,
+        "nominalSolidFraction": 0.09544907798615936,
         "chamberAudit": {
           "radiusMm": 18.999993668083157,
           "floorEnvelopeMm": -0.5,
@@ -152,22 +162,22 @@
     {
       "count": 36,
       "bulk": 0.65,
-      "initialSeparatingGapMm": 0.030445940395686044,
-      "convexityWorstMm": 6.0021432268797525e-15,
-      "maxGravityTranslationMm": 28.76704737108524,
-      "maxTumbleDegrees": 179.94070000305194,
+      "initialSeparatingGapMm": 0.17969471083706967,
+      "convexityWorstMm": 7.653599976009673e-15,
+      "maxGravityTranslationMm": 22.668009705661106,
+      "maxTumbleDegrees": 179.96296138562315,
       "maxBoundaryLeakMm": 0,
       "activeFrameCpu": {
         "samples": 916,
-        "meanMs": 2.5227626965065593,
-        "p95Ms": 3.8094580000006317,
-        "maxMs": 16.93474999999853
+        "meanMs": 2.084416667030567,
+        "p95Ms": 2.802832999999737,
+        "maxMs": 9.29004199999963
       },
       "frameCpu": {
         "samples": 1920,
-        "meanMs": 1.2035872484375134,
-        "p95Ms": 3.2779170000003433,
-        "maxMs": 16.93474999999853
+        "meanMs": 0.9944599249999891,
+        "p95Ms": 2.4529580000007627,
+        "maxMs": 9.29004199999963
       },
       "firstSettleSeconds": 1.9041666666666612,
       "snapshot": {
@@ -176,7 +186,12 @@
         "steps": 1829,
         "shaking": false,
         "count": 36,
-        "sizeScale": 1.5,
+        "sizeScale": 1.15,
+        "sizeVariation": 0.1,
+        "chipScaleRange": [
+          1.0380861961655319,
+          1.2543878674227742
+        ],
         "bulk": 0.65,
         "rollDeg": -90,
         "tiltDeg": -70,
@@ -185,14 +200,14 @@
         "shakeDurationSeconds": 1.5,
         "maxCatchupSteps": 4,
         "stableForSeconds": 0.40416666666666645,
-        "smoothedRmsLinearMmPerSecond": 0.6881721465370688,
-        "smoothedRmsAngularRadPerSecond": 0.2594437445943433,
+        "smoothedRmsLinearMmPerSecond": 0.11489523440511229,
+        "smoothedRmsAngularRadPerSecond": 0.04334041349895568,
         "actionAgeSeconds": 1.9083333333333279,
         "freezeReason": "stable-subpixel-contact-jitter",
-        "lastRmsLinearMmPerSecond": 0.730615017364327,
-        "lastRmsAngularRadPerSecond": 0.35906075457916553,
-        "boundaryCorrections": 3296,
-        "maxBoundaryCorrectionMm": 0.7023881957040778,
+        "lastRmsLinearMmPerSecond": 0.05152648619250903,
+        "lastRmsAngularRadPerSecond": 0.018352180581831943,
+        "boundaryCorrections": 2011,
+        "maxBoundaryCorrectionMm": 1.0914236873980432,
         "hardBoundaryProjection": true,
         "settlePolicy": {
           "minActionAgeSeconds": 1.5,
@@ -202,8 +217,8 @@
           "linearDamping": 3,
           "angularDamping": 35
         },
-        "solidVolumeMm3": 3073.2480589951438,
-        "nominalSolidFraction": 0.2580783252582135,
+        "solidVolumeMm3": 1373.1143195221498,
+        "nominalSolidFraction": 0.11530831132655663,
         "chamberAudit": {
           "radiusMm": 18.999993668083157,
           "floorEnvelopeMm": -0.5,
@@ -224,22 +239,22 @@
     {
       "count": 36,
       "bulk": 0,
-      "initialSeparatingGapMm": 0.022239369713933144,
-      "convexityWorstMm": 9.325873406851315e-15,
-      "maxGravityTranslationMm": 26.61671636102288,
-      "maxTumbleDegrees": 179.6529429348464,
+      "initialSeparatingGapMm": 0.255989894033414,
+      "convexityWorstMm": 1.1449174941446927e-14,
+      "maxGravityTranslationMm": 28.539962461294024,
+      "maxTumbleDegrees": 179.98061409471288,
       "maxBoundaryLeakMm": 0,
       "activeFrameCpu": {
         "samples": 916,
-        "meanMs": 2.486490228165961,
-        "p95Ms": 3.7218749999992724,
-        "maxMs": 13.326624999999694
+        "meanMs": 2.098761123362453,
+        "p95Ms": 2.5760000000009313,
+        "maxMs": 6.775875000000269
       },
       "frameCpu": {
         "samples": 1920,
-        "meanMs": 1.1862894531250077,
-        "p95Ms": 3.1109579999993002,
-        "maxMs": 13.326624999999694
+        "meanMs": 1.0012974140625062,
+        "p95Ms": 2.4500000000007276,
+        "maxMs": 6.775875000000269
       },
       "firstSettleSeconds": 1.9041666666666612,
       "snapshot": {
@@ -248,7 +263,12 @@
         "steps": 1829,
         "shaking": false,
         "count": 36,
-        "sizeScale": 1.5,
+        "sizeScale": 1.15,
+        "sizeVariation": 0.1,
+        "chipScaleRange": [
+          1.0354485515574923,
+          1.240092034828849
+        ],
         "bulk": 0,
         "rollDeg": -90,
         "tiltDeg": -70,
@@ -257,14 +277,14 @@
         "shakeDurationSeconds": 1.5,
         "maxCatchupSteps": 4,
         "stableForSeconds": 0.40416666666666645,
-        "smoothedRmsLinearMmPerSecond": 0.44847233143291204,
-        "smoothedRmsAngularRadPerSecond": 0.1810797700935278,
+        "smoothedRmsLinearMmPerSecond": 0.13661179921651478,
+        "smoothedRmsAngularRadPerSecond": 0.048726891747480586,
         "actionAgeSeconds": 1.9083333333333279,
         "freezeReason": "stable-subpixel-contact-jitter",
-        "lastRmsLinearMmPerSecond": 0.1626075512237528,
-        "lastRmsAngularRadPerSecond": 0.06322505949187404,
-        "boundaryCorrections": 3957,
-        "maxBoundaryCorrectionMm": 0.6917325029436867,
+        "lastRmsLinearMmPerSecond": 0.0825953424165568,
+        "lastRmsAngularRadPerSecond": 0.021926550885738794,
+        "boundaryCorrections": 1648,
+        "maxBoundaryCorrectionMm": 0.9784841225594807,
         "hardBoundaryProjection": true,
         "settlePolicy": {
           "minActionAgeSeconds": 1.5,
@@ -274,8 +294,8 @@
           "linearDamping": 3,
           "angularDamping": 35
         },
-        "solidVolumeMm3": 2766.4530634108364,
-        "nominalSolidFraction": 0.23231498395348088,
+        "solidVolumeMm3": 1244.0630911030719,
+        "nominalSolidFraction": 0.10447113701990447,
         "chamberAudit": {
           "radiusMm": 18.999993668083157,
           "floorEnvelopeMm": -0.5,
@@ -296,22 +316,22 @@
     {
       "count": 36,
       "bulk": 1,
-      "initialSeparatingGapMm": 0.02807645306350448,
-      "convexityWorstMm": 1.7486012637846216e-14,
-      "maxGravityTranslationMm": 26.63784226362826,
-      "maxTumbleDegrees": 172.6577256379041,
+      "initialSeparatingGapMm": 0.10667259892938352,
+      "convexityWorstMm": 6.598888102615774e-15,
+      "maxGravityTranslationMm": 28.595833111111286,
+      "maxTumbleDegrees": 179.9890284048827,
       "maxBoundaryLeakMm": 0,
       "activeFrameCpu": {
         "samples": 916,
-        "meanMs": 2.3392251724890887,
-        "p95Ms": 3.155957999999373,
-        "maxMs": 30.73845799999981
+        "meanMs": 2.0659916037117916,
+        "p95Ms": 2.588167000001704,
+        "maxMs": 7.808541999998852
       },
       "frameCpu": {
         "samples": 1920,
-        "meanMs": 1.1160393562499924,
-        "p95Ms": 2.8022909999999683,
-        "maxMs": 30.73845799999981
+        "meanMs": 0.985668223437499,
+        "p95Ms": 2.4190419999995356,
+        "maxMs": 7.808541999998852
       },
       "firstSettleSeconds": 1.9041666666666612,
       "snapshot": {
@@ -320,7 +340,12 @@
         "steps": 1829,
         "shaking": false,
         "count": 36,
-        "sizeScale": 1.5,
+        "sizeScale": 1.15,
+        "sizeVariation": 0.1,
+        "chipScaleRange": [
+          1.0380861961655319,
+          1.2573145491536706
+        ],
         "bulk": 1,
         "rollDeg": -90,
         "tiltDeg": -70,
@@ -329,14 +354,14 @@
         "shakeDurationSeconds": 1.5,
         "maxCatchupSteps": 4,
         "stableForSeconds": 0.40416666666666645,
-        "smoothedRmsLinearMmPerSecond": 3.734688572460225,
-        "smoothedRmsAngularRadPerSecond": 1.7950264327262977,
+        "smoothedRmsLinearMmPerSecond": 0.072986106222927,
+        "smoothedRmsAngularRadPerSecond": 0.015797851945166603,
         "actionAgeSeconds": 1.9083333333333279,
         "freezeReason": "stable-subpixel-contact-jitter",
-        "lastRmsLinearMmPerSecond": 3.1434182290974593,
-        "lastRmsAngularRadPerSecond": 2.7221553635480054,
-        "boundaryCorrections": 3081,
-        "maxBoundaryCorrectionMm": 0.8447441341682342,
+        "lastRmsLinearMmPerSecond": 0.046125173448803916,
+        "lastRmsAngularRadPerSecond": 0.012069205236431351,
+        "boundaryCorrections": 2777,
+        "maxBoundaryCorrectionMm": 0.8680332958461783,
         "hardBoundaryProjection": true,
         "settlePolicy": {
           "minActionAgeSeconds": 1.5,
@@ -346,8 +371,8 @@
           "linearDamping": 3,
           "angularDamping": 35
         },
-        "solidVolumeMm3": 3216.0234420237052,
-        "nominalSolidFraction": 0.27006799580636937,
+        "solidVolumeMm3": 1478.8002906957465,
+        "nominalSolidFraction": 0.12418337052131874,
         "chamberAudit": {
           "radiusMm": 18.999993668083157,
           "floorEnvelopeMm": -0.5,
@@ -371,5 +396,17 @@
     "capacity": 39,
     "minimumSeparatingGapMm": 0.030445940395686044,
     "defaultGeometryPreserved": true
+  },
+  "workingProfile": {
+    "sizeScale": 1.15,
+    "sizeVariation": 0.1,
+    "chipScaleRange": [
+      1.0380861961655319,
+      1.2543878674227742
+    ],
+    "diameterRangeMm": [
+      5.655859576888633,
+      6.977075815730612
+    ]
   }
 }

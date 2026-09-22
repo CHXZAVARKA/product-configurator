@@ -7,7 +7,7 @@ const cad=JSON.parse(fs.readFileSync(new URL('../../../PROTOTYPE-optics/assets/c
 const percentile=(values,q)=>[...values].sort((a,b)=>a-b)[Math.min(values.length-1,Math.floor(values.length*q))];
 const results=[];
 for(const action of ['initial','turn','reverse','shake']){
- const sim=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.5});
+ const sim=createChipPhysics(RAPIER,cad,{count:36,sizeScale:1.15,sizeVariation:.1});
  if(action!=='initial')for(let i=0;i<180;i++)sim.step(1/60);
  if(action==='turn')sim.orient(317,70);
  if(action==='reverse')sim.orient(120,-65);
