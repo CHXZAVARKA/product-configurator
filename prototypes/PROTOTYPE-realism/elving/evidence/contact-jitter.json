@@ -8,8 +8,8 @@
       "maxFrameDeltaMm": 0.003817899196509652,
       "initialTravelMm": 329.58906999219016,
       "shakeDeltaP95Mm": 0,
-      "preStopTailMaxMm": 0.0013571348365371513,
-      "settleSeconds": 2.304166666666676
+      "preStopTailMaxMm": 0.002066617194655209,
+      "settleSeconds": 1.9041666666666612
     },
     {
       "action": "turn",
@@ -17,8 +17,8 @@
       "maxFrameDeltaMm": 0.034248386015719036,
       "initialTravelMm": 62.0958074467138,
       "shakeDeltaP95Mm": 0,
-      "preStopTailMaxMm": 0.022643574651739468,
-      "settleSeconds": 2.304166666666676
+      "preStopTailMaxMm": 0.02939457183660755,
+      "settleSeconds": 1.9041666666666612
     },
     {
       "action": "reverse",
@@ -26,17 +26,17 @@
       "maxFrameDeltaMm": 0.002227006012827516,
       "initialTravelMm": 228.73114522038023,
       "shakeDeltaP95Mm": 0,
-      "preStopTailMaxMm": 0.0010746019166696708,
-      "settleSeconds": 2.304166666666676
+      "preStopTailMaxMm": 0.0016109366651483165,
+      "settleSeconds": 1.9041666666666612
     },
     {
       "action": "shake",
       "reversalsBetween1And2Seconds": 2,
-      "maxFrameDeltaMm": 3.3489972155994323,
-      "initialTravelMm": 16.637230092879836,
-      "shakeDeltaP95Mm": 0.44781219107543324,
-      "preStopTailMaxMm": 0.0016075126054121342,
-      "settleSeconds": 2.608333333333358
+      "maxFrameDeltaMm": 2.9843435226206427,
+      "initialTravelMm": 37.315147302006984,
+      "shakeDeltaP95Mm": 0.49653451854212843,
+      "preStopTailMaxMm": 0.0030923728396802215,
+      "settleSeconds": 1.9083333333333279
     }
   ]
 }

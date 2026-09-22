@@ -1,6 +1,12 @@
 {
-  "generated": "2026-09-22T16:58:04.434Z",
+  "generated": "2026-09-22T19:03:23.947Z",
   "checks": [
+    {
+      "name": "default-render-meets-display-resolution",
+      "passed": true,
+      "canvasWidth": 830,
+      "renderSize": 1024
+    },
     {
       "name": "settled-prism-no-jitter-or-flicker",
       "passed": true
@@ -54,14 +60,14 @@
     "maxDeviationMm": 0.55
   },
   "performance": {
-    "sourceSize": 256,
+    "sourceSize": 1024,
     "outputSize": [
       830,
       830
     ],
     "samples": 40,
-    "p95Ms": 6.9000000059604645,
-    "meanMs": 4.644999998062849,
+    "p95Ms": 3.5,
+    "meanMs": 3.172500001639128,
     "method": "Rapier + moving source + HDR PBR + bloom + mirrors, gl.finish",
     "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
     "mode": "prism",
@@ -75,7 +81,7 @@
     "physics": {
       "moving": true,
       "sleeping": 0,
-      "steps": 679,
+      "steps": 584,
       "shaking": true,
       "count": 36,
       "sizeScale": 1.5,
@@ -84,21 +90,21 @@
       "tiltDeg": 0,
       "fixedDtSeconds": 0.004166666666666667,
       "playbackRate": 0.5,
-      "shakeDurationSeconds": 1.8,
+      "shakeDurationSeconds": 1.5,
       "maxCatchupSteps": 4,
       "stableForSeconds": 0,
-      "smoothedRmsLinearMmPerSecond": 0.8571277370597911,
-      "smoothedRmsAngularRadPerSecond": 0.15830691626438004,
-      "actionAgeSeconds": 0.3916666666666665,
+      "smoothedRmsLinearMmPerSecond": 5.546182320482281,
+      "smoothedRmsAngularRadPerSecond": 0.9976385615981419,
+      "actionAgeSeconds": 0.3999999999999998,
       "freezeReason": null,
-      "lastRmsLinearMmPerSecond": 2.3934455250175835,
-      "lastRmsAngularRadPerSecond": 0.4390487344844841,
-      "boundaryCorrections": 471,
+      "lastRmsLinearMmPerSecond": 16.177432718232605,
+      "lastRmsAngularRadPerSecond": 2.34585851696659,
+      "boundaryCorrections": 489,
       "maxBoundaryCorrectionMm": 0.5121846113831445,
       "hardBoundaryProjection": true,
       "settlePolicy": {
         "minActionAgeSeconds": 1.5,
-        "sustainedSeconds": 0.8,
+        "sustainedSeconds": 0.4,
         "smoothedRmsLinearLimitMmPerSecond": 8,
         "smoothedRmsAngularLimitRadPerSecond": 3,
         "linearDamping": 3,

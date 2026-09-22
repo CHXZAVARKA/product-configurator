@@ -6,7 +6,8 @@ export {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G};
 const FIXED_DT = 1 / 240;
 const PLAYBACK_RATE = .5;
 const GRAVITY_MM_S2 = 9810;
-const SHAKE_DURATION_SECONDS = 1.8;
+const SHAKE_DURATION_SECONDS = 1.5;
+const SETTLE_WINDOW_SECONDS = .4;
 const MAX_COUNT = 140;
 const WALLS = 32;
 const CLEARANCE = .16;
@@ -43,7 +44,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
  }
  for(const z of [chamber.solverFloorMm-2,chamber.solverCeilingMm+2]) world.createCollider(R.ColliderDesc.cuboid(23,23,2).setTranslation(0,0,z).setFriction(.3).setRestitution(.015),wallBody);
  let chips=[],bodies=[],colliders=[],accumulator=0,steps=0,roll=0,tilt=0,moving=true,stableFor=0,actionAge=0,lastRmsLinear=0,lastRmsAngular=0,smoothLinear=0,smoothAngular=0,freezeReason=null,disposed=false,boundaryCorrections=0,maxBoundaryCorrectionMm=0;
- let random=randomFrom(seed),shakeMotion=null;
+ let random=randomFrom(seed),shakeMotion=null,shakeSerial=0;
  const api={get chips(){return chips;},chamberAudit:chamber,poses,step,orient,shake,reset,snapshot,dispose};
  function gravityForOrientation() {
   const r=roll*Math.PI/180,t=tilt*Math.PI/180;
@@ -57,7 +58,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   const layerCapacity=enlarged?Math.floor((chamber.solverCeilingMm-chamber.solverFloorMm+.03)/layerPitch):0;
   const capacity=enlarged?Math.min(MAX_COUNT,13*layerCapacity):MAX_COUNT;
   count=Math.max(0,Math.min(capacity,Math.round(Number(nextCount)||0)));
-  random=randomFrom(seed);shakeMotion=null;world.gravity=gravityForOrientation();
+  random=randomFrom(seed);shakeMotion=null;shakeSerial=0;world.gravity=gravityForOrientation();
   for(const b of bodies)world.removeRigidBody(b);
   bodies=[];colliders=[];chips=[];accumulator=0;
   const slots=[];
@@ -98,7 +99,10 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   roll=nextRoll;tilt=nextTilt;world.gravity=gravityForOrientation();wake();return true;
  }
  function shake() {
-  wake();shakeMotion={elapsed:0};return true;
+  // A real hand never repeats the exact same stroke. Rotate the next bounded
+  // chamber trajectory by the golden angle so repeated clicks release a
+  // different part of the pile without applying per-chip randomness.
+  wake();shakeMotion={elapsed:0,azimuth:(shakeSerial++*2.399963229728653)%(Math.PI*2)};return true;
  }
  function advanceShake(dt) {
   if(!shakeMotion)return;
@@ -112,7 +116,10 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   let ux=-ny,uy=nx,uz=0,uLength=Math.hypot(ux,uy,uz);
   if(uLength<.01){ux=1;uy=0;uz=0;uLength=1;}
   ux/=uLength;uy/=uLength;uz/=uLength;
-  const vx=ny*uz-nz*uy,vy=nz*ux-nx*uz,vz=nx*uy-ny*ux;
+  let vx=ny*uz-nz*uy,vy=nz*ux-nx*uz,vz=nx*uy-ny*ux;
+  const ca=Math.cos(motion.azimuth),sa=Math.sin(motion.azimuth),baseU=[ux,uy,uz];
+  ux=baseU[0]*ca+vx*sa;uy=baseU[1]*ca+vy*sa;uz=baseU[2]*ca+vz*sa;
+  vx=vx*ca-baseU[0]*sa;vy=vy*ca-baseU[1]*sa;vz=vz*ca-baseU[2]*sa;
   const k=Math.PI/SHAKE_DURATION_SECONDS,s=Math.sin(k*t),c=Math.cos(k*t),window=s**3;
   const windowVelocity=3*k*s*s*c,windowAcceleration=6*k*k*s*c*c-3*k*k*s**3;
   const acceleration=(amplitudeMm,frequencyHz,phase)=>{const omega=2*Math.PI*frequencyHz,q=omega*t+phase;return amplitudeMm*((windowAcceleration-omega*omega*window)*Math.sin(q)+2*omega*windowVelocity*Math.cos(q));};
@@ -156,11 +163,11 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
    // roughly 0.2 simulation seconds. One 240 Hz step then moves about 0.03 mm.
    smoothLinear+=(rmsLinear-smoothLinear)*.04;smoothAngular+=(rmsAngular-smoothAngular)*.04;
    stableFor=!shakeMotion&&actionAge>1.5&&smoothLinear<8&&smoothAngular<3?stableFor+FIXED_DT:0;
-   if(!shakeMotion&&(awake===0||stableFor>.8)){if(awake){for(const b of bodies)b.sleep();freezeReason='stable-subpixel-contact-jitter';}else freezeReason='rapier-sleep';moving=false;accumulator=0;}
+   if(!shakeMotion&&(awake===0||stableFor>SETTLE_WINDOW_SECONDS)){if(awake){for(const b of bodies)b.sleep();freezeReason='stable-subpixel-contact-jitter';}else freezeReason='rapier-sleep';moving=false;accumulator=0;}
   }
   return moved;
  }
- function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0);return {moving,sleeping,steps,shaking:shakeMotion!==null,count:chips.length,sizeScale,bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,playbackRate:PLAYBACK_RATE,shakeDurationSeconds:SHAKE_DURATION_SECONDS,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:.8,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
+ function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0);return {moving,sleeping,steps,shaking:shakeMotion!==null,count:chips.length,sizeScale,bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,playbackRate:PLAYBACK_RATE,shakeDurationSeconds:SHAKE_DURATION_SECONDS,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:SETTLE_WINDOW_SECONDS,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
  function dispose(){if(!disposed){world.free();disposed=true;moving=false;}}
  reset(count);return api;
 }

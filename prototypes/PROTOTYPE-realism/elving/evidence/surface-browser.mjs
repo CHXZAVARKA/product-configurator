@@ -20,6 +20,9 @@ try{
  await send('Page.navigate',{url:new URL('../PROTOTYPE-realtime.html',import.meta.url).href});await ready();
  assert(await evaluate("document.getElementById('error').hidden"));
  const initial=await snapshot();assert.equal(initial.state.elving,false);assert.equal(initial.state.count,36);assert.equal(initial.surface.count,36);assert.equal(initial.physics.sizeScale,1.5);assert(initial.surface.visualTriangles/initial.surface.collisionTriangles>=64);assert(initial.surface.visualTriangles>20000&&initial.surface.visualTriangles<=250000);assert(initial.surface.maxDeviationMm<=.550001);
+ const resolutionAudit=await evaluate("(()=>{const canvas=document.getElementById('viewer'),match=document.getElementById('status').textContent.match(/(\\d+)²/);return {canvasWidth:canvas.width,renderSize:match?Number(match[1]):0};})()");
+ assert(resolutionAudit.renderSize>=resolutionAudit.canvasWidth,'Default render must not be upscaled inside the kaleidoscope view: '+JSON.stringify(resolutionAudit));
+ results.checks.push({name:'default-render-meets-display-resolution',passed:true,...resolutionAudit});
  results.geometry={count:initial.surface.count,visualTriangles:initial.surface.visualTriangles,collisionTriangles:initial.surface.collisionTriangles,maxDeviationMm:initial.surface.maxDeviationMm};
  for(let i=0;i<60&&(await snapshot()).physics.moving;i++)await sleep(100);
  assert.equal((await snapshot()).physics.moving,false,'Pile must settle');

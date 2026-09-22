@@ -1,35 +1,79 @@
 {
   "passed": true,
-  "results": [
+  "orientations": [
     {
       "roll": 0,
       "tilt": 0,
-      "gestureFrames": 216,
-      "gestureMeanTravelMm": 17.728382349957023,
-      "gestureFrameDeltaP95Mm": 0.4037904614930435,
-      "movedOver2Mm": 21,
-      "meanMm": 3.119238040824932,
+      "gestureFrames": 180,
+      "gestureMeanTravelMm": 17.786074946669384,
+      "gestureFrameDeltaP95Mm": 0.5073348406579549,
+      "movedOver2Mm": 23,
+      "meanMm": 3.1231496762108786,
       "sleeping": 36
     },
     {
       "roll": 120,
       "tilt": 35,
-      "gestureFrames": 216,
-      "gestureMeanTravelMm": 29.44300032266845,
-      "gestureFrameDeltaP95Mm": 0.7664741045150824,
-      "movedOver2Mm": 26,
-      "meanMm": 5.023255720255758,
+      "gestureFrames": 180,
+      "gestureMeanTravelMm": 18.607003821653873,
+      "gestureFrameDeltaP95Mm": 0.5770550313761037,
+      "movedOver2Mm": 20,
+      "meanMm": 3.1868436512817633,
       "sleeping": 36
     },
     {
       "roll": -90,
       "tilt": -70,
-      "gestureFrames": 216,
-      "gestureMeanTravelMm": 48.582038153803865,
-      "gestureFrameDeltaP95Mm": 1.1993017312096883,
+      "gestureFrames": 180,
+      "gestureMeanTravelMm": 50.088975594352526,
+      "gestureFrameDeltaP95Mm": 1.619380300022873,
       "movedOver2Mm": 31,
-      "meanMm": 7.0467301548646875,
+      "meanMm": 5.929484932967448,
       "sleeping": 36
+    }
+  ],
+  "repeated": [
+    {
+      "shake": 0,
+      "wallFrames": 229,
+      "minPathMm": 5.088315490860611,
+      "medianPathMm": 15.512485262574366,
+      "pathsUnder2_5Mm": 0
+    },
+    {
+      "shake": 1,
+      "wallFrames": 229,
+      "minPathMm": 4.328016862367318,
+      "medianPathMm": 14.638262171668947,
+      "pathsUnder2_5Mm": 0
+    },
+    {
+      "shake": 2,
+      "wallFrames": 229,
+      "minPathMm": 2.9081910490968705,
+      "medianPathMm": 9.727199317506468,
+      "pathsUnder2_5Mm": 0
+    },
+    {
+      "shake": 3,
+      "wallFrames": 229,
+      "minPathMm": 8.669951600046266,
+      "medianPathMm": 17.8673590763181,
+      "pathsUnder2_5Mm": 0
+    },
+    {
+      "shake": 4,
+      "wallFrames": 229,
+      "minPathMm": 3.4958951764528043,
+      "medianPathMm": 15.997381477224303,
+      "pathsUnder2_5Mm": 0
+    },
+    {
+      "shake": 5,
+      "wallFrames": 229,
+      "minPathMm": 4.353608186712321,
+      "medianPathMm": 13.164054151570435,
+      "pathsUnder2_5Mm": 0
     }
   ]
 }

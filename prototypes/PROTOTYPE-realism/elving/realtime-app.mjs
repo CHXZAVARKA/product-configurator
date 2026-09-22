@@ -14,7 +14,7 @@ try {
  const environmentBytes=Uint8Array.from(atob(ENVIRONMENT_BASE64),c=>c.charCodeAt(0)).buffer;
  const backdrop=createWorldBackdrop(gl,environmentBytes),prism=prismFromCAD(CAD),view=createPrismView(gl,prism);
  const physics=createChipPhysics(RAPIER,CAD,{count:36,sizeScale:1.5}),chipView=await createPBRChipView(gl,{environmentBytes});chipView.setGeometry(physics.chips);
- const state={mode:'prism',turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:38,smooth:true,auto:false,quality:'auto',background:'world',resolution:256,filling:true,count:36,paused:false,elving:false,showColliders:false,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0,studyMaterial:'glass'};
+ const state={mode:'prism',turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:32,smooth:true,auto:false,quality:'auto',background:'world',resolution:1024,filling:true,count:36,paused:false,elving:false,showColliders:false,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0,studyMaterial:'glass'};
  let raf=null,lastTime=0,frames=0,sourcePasses=0,lastSource=null,sourceDirty=true,measuring=false,uploadImage=null,lastFrameMs=null,qualityChecked=false,lastBenchmark=null,chipDirty=true,lastChips=null,cadPasses=0;
  const background=document.createElement('canvas');background.width=background.height=1024;
  const ctx=background.getContext('2d');
@@ -56,8 +56,8 @@ try {
   $('animate').textContent=state.auto?'Остановить':'Вращать';$('animate').setAttribute('aria-pressed',String(state.auto));
  }
  function draw(forceSource=false){
-  if(sourceDirty||forceSource||!lastSource){if(state.elving){if(!glass){glass=createRealtimeGlass(gl,CAD);glass.setBackground(background);}cadPasses++;lastSource=glass.render({rotationDeg:[0,state.filling?0:state.tilt,state.turn],viewDeg:0,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,size:state.resolution});}else lastSource=backdrop.render({world:state.background==='world',linearOutput:state.filling&&state.background==='world',yawDeg:state.light,rollDeg:0,tiltDeg:0,intensity:state.intensity,size:512});sourceDirty=false;sourcePasses++;chipDirty=true;}
-  if((state.filling||state.mode==='study')&&(chipDirty||forceSource||!lastChips)){lastChips=chipView.render(lastSource.texture,physics.poses(),{size:state.mode==='study'?768:512,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,rollDeg:state.turn,tiltDeg:state.tilt,sourceLinear:!state.elving&&state.background==='world',glow:state.glow,showColliders:state.showColliders,study:state.mode==='study',studyTurn:state.studyTurn,studyTilt:state.studyTilt,studyMaterial:state.studyMaterial});chipDirty=false;}
+  if(sourceDirty||forceSource||!lastSource){if(state.elving){if(!glass){glass=createRealtimeGlass(gl,CAD);glass.setBackground(background);}cadPasses++;lastSource=glass.render({rotationDeg:[0,state.filling?0:state.tilt,state.turn],viewDeg:0,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,size:state.resolution});}else lastSource=backdrop.render({world:state.background==='world',linearOutput:state.filling&&state.background==='world',yawDeg:state.light,rollDeg:0,tiltDeg:0,intensity:state.intensity,size:state.resolution});sourceDirty=false;sourcePasses++;chipDirty=true;}
+  if((state.filling||state.mode==='study')&&(chipDirty||forceSource||!lastChips)){lastChips=chipView.render(lastSource.texture,physics.poses(),{size:state.mode==='study'?768:state.resolution,lightDeg:state.light,intensity:state.intensity,smooth:state.smooth,rollDeg:state.turn,tiltDeg:state.tilt,sourceLinear:!state.elving&&state.background==='world',glow:state.glow,showColliders:state.showColliders,study:state.mode==='study',studyTurn:state.studyTurn,studyTilt:state.studyTilt,studyMaterial:state.studyMaterial});chipDirty=false;}
   view.draw(state.filling||state.mode==='study'?lastChips.texture:lastSource.texture,{mode:state.mode,fovDeg:state.fov,rollDeg:state.turn});frames++;
  }
  function requestDraw(changed=true){if(changed)sourceDirty=true;if(raf===null&&!measuring)raf=requestAnimationFrame(frame);}
@@ -69,7 +69,8 @@ try {
   if(state.mode!=='study')physics.orient(state.turn,state.tilt);
   if(state.mode!=='study'&&state.filling&&!state.paused&&physics.step(dt))chipDirty=true;
   lastTime=now;draw();controls();
-  $('status').textContent=((state.auto||state.lightAuto)&&lastFrameMs?`${Math.round(1000/lastFrameMs)} кадров/с · `:'')+(state.mode==='study'?'Образцы · 768²':`512² · PBR · ${state.elving?'с эльвингом':'без эльвинга'}`);
+  const renderedSize=state.mode==='study'?768:state.filling?lastChips?.size:lastSource?.size;
+  $('status').textContent=((state.auto||state.lightAuto)&&lastFrameMs?`${Math.round(1000/lastFrameMs)} кадров/с · `:'')+(state.mode==='study'?'Образцы · 768²':`${renderedSize||state.resolution}² · PBR · ${state.elving?'с эльвингом':'без эльвинга'}`);
   $('physics-status').textContent=state.mode==='study'?'Шесть образцов · перетаскивайте для осмотра':!state.filling?'Насыпка скрыта':state.paused?'Физика на паузе':physics.snapshot().moving?'Стёкла пересыпаются':'Стёкла успокоились · физика спит';
   if(!qualityChecked){qualityChecked=true;setTimeout(()=>calibrate(),0);}
   if(state.auto||state.lightAuto||(state.mode!=='study'&&state.filling&&!state.paused&&physics.snapshot().moving))requestDraw(false);else lastTime=0;
@@ -87,12 +88,12 @@ try {
  }
  async function calibrate(){
   if(state.quality!=='auto')return;
-  for(const size of [256,192,128,96]){state.resolution=size;sourceDirty=true;const result=await benchmark(8);if(!result||state.quality!=='auto')break;if(result.p95Ms<=30)break;}
+  for(const size of [1024,768,512]){state.resolution=size;sourceDirty=true;const result=await benchmark(8);if(!result||state.quality!=='auto')break;if(result.p95Ms<=30)break;}
   requestDraw();
  }
  function set(options){
   const previous={...state};Object.assign(state,options);
-  if(options.quality){state.resolution=options.quality==='auto'?256:Number(options.quality);if(options.quality==='auto')setTimeout(calibrate,0);}
+  if(options.quality){state.resolution=options.quality==='auto'?1024:Number(options.quality);if(options.quality==='auto')setTimeout(calibrate,0);}
   if(options.background&&options.background!==previous.background)updateBackground();
   const newBodies=options.count!==undefined||options.bulk!==undefined;
   if(newBodies){physics.reset(state.count,{bulk:state.bulk});state.count=physics.chips.length;}
@@ -108,7 +109,7 @@ try {
  for(const key of ['bulk','depth','edgeChips','detail']){$(key).oninput=e=>$(key+'-value').textContent=Math.round(Number(e.target.value)*100)+'%';$(key).onchange=e=>set({[key]:Number(e.target.value)});}
  $('animate-light').onclick=()=>set({lightAuto:!state.lightAuto,background:'world'});
  $('animate').onclick=()=>set({auto:!state.auto});$('quality').onchange=e=>set({quality:e.target.value});$('background').onchange=e=>set({background:e.target.value});
- $('reset').onclick=()=>set({turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:38,smooth:true,auto:false,paused:false,count:state.count,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0});
+ $('reset').onclick=()=>set({turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:32,smooth:true,auto:false,paused:false,count:state.count,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0});
  $('show-colliders').onchange=e=>set({showColliders:e.target.checked});$('elving').onchange=e=>set({elving:e.target.checked});$('filling').onchange=e=>set({filling:e.target.checked});$('count').onchange=e=>set({count:Number(e.target.value)});$('count').oninput=e=>$('count-value').textContent=e.target.value+' шт.';
  $('shake-viewer').onclick=$('shake').onclick=()=>{if(state.mode==='study')set({mode:'glass'});set({paused:false,filling:true});physics.orient(state.turn,state.tilt);physics.shake();requestDraw(false);};$('pause').onclick=()=>set({paused:!state.paused});$('measure').onclick=()=>benchmark();
  $('upload').onchange=async e=>{
