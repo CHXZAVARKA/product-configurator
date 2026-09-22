@@ -1,0 +1,124 @@
+{
+  "baseSHA": "10ebf5f9eeaa6702811882f495b12b14d0611f49",
+  "generated": "2026-09-14T12:45:52.994Z",
+  "cad": {
+    "radiusMm": 18.999993668083157,
+    "nominalGapMm": 10.5,
+    "sources": [
+      {
+        "name": "trubka",
+        "source": "glazok - trubka.step",
+        "sha256": "3d815fd03171d01c8b5ec9bf5603e9df87eeb0505650f416301673c0acfcc554"
+      },
+      {
+        "name": "nasipka",
+        "source": "glazok - nasipka.step",
+        "sha256": "2548651eb1b3d874eeed4f78af5dc65c3183a9464af7be577bac67639934e5f3"
+      },
+      {
+        "name": "elving",
+        "source": "glazok - elving.step",
+        "sha256": "2b92aa152d8576d1eb1616d54e6d247afe33757b87c49bfabe9e79ac3b0e16b0"
+      },
+      {
+        "name": "krishka",
+        "source": "glazok - krishka.step",
+        "sha256": "629a83f443ac6a1264f93bb6bdb4c9e7c947634047721ff290678607af064106"
+      }
+    ],
+    "localFloorSamplesMm": [
+      {
+        "x": 0,
+        "y": 0,
+        "z": -0.49999999999999994
+      },
+      {
+        "x": 10,
+        "y": 0,
+        "z": -0.5
+      },
+      {
+        "x": 15,
+        "y": 0,
+        "z": -4.000000800001279
+      },
+      {
+        "x": 18,
+        "y": 0,
+        "z": -7.00000560000896
+      }
+    ]
+  },
+  "runs": [
+    {
+      "count": 1,
+      "bodies": [
+        {
+          "id": 0,
+          "visibleVolumeMm3": 61.181764799999996,
+          "nativeColliderVolumeMm3": 61.181766510009766,
+          "ratio": 1.000000027949664,
+          "initialBoundaryPenetrationMm": 0,
+          "dimensionsMm": [
+            7.1,
+            5.4,
+            2.4
+          ],
+          "initialLocalFloorGapMm": 3.715069104632681
+        }
+      ],
+      "initialIntersectionMm": 0,
+      "visibleMovementMm": 19.503070372649773,
+      "orientationChangeRad": 2.0766199940233796,
+      "maxSampledBoundaryPenetrationMm": 0.020176846648709557,
+      "maxSampledPairPenetrationMm": 0,
+      "maxNativeManifoldPenetrationMm": 0.020192734897136688,
+      "pausedSteps": 2064,
+      "sleepSteps": 13404,
+      "sleeping": true,
+      "wakePassed": true
+    },
+    {
+      "count": 2,
+      "bodies": [
+        {
+          "id": 0,
+          "visibleVolumeMm3": 61.181764799999996,
+          "nativeColliderVolumeMm3": 61.181766510009766,
+          "ratio": 1.000000027949664,
+          "initialBoundaryPenetrationMm": 0,
+          "dimensionsMm": [
+            7.1,
+            5.4,
+            2.4
+          ],
+          "initialLocalFloorGapMm": 3.715069104632681
+        },
+        {
+          "id": 1,
+          "visibleVolumeMm3": 42.57988799999999,
+          "nativeColliderVolumeMm3": 42.579891204833984,
+          "ratio": 1.0000000752663791,
+          "initialBoundaryPenetrationMm": 0,
+          "dimensionsMm": [
+            6,
+            5.1,
+            2
+          ],
+          "initialLocalFloorGapMm": 3.403675489611727
+        }
+      ],
+      "initialIntersectionMm": 0,
+      "visibleMovementMm": 20.679173484557435,
+      "orientationChangeRad": 2.9508591486480826,
+      "maxSampledBoundaryPenetrationMm": 0.019196738680800962,
+      "maxSampledPairPenetrationMm": 0.015115796998344422,
+      "maxNativeManifoldPenetrationMm": 0.019831586629152298,
+      "pausedSteps": 2080,
+      "sleepSteps": 13420,
+      "sleeping": true,
+      "wakePassed": true
+    }
+  ],
+  "passed": true
+}

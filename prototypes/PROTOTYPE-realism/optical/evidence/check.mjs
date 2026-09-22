@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {writeFileSync} from 'node:fs';
+import {frozenScene,transmittedRay,background,beer,refract,fresnel,intersectSolid,traceSample,seededRandom,FIXED_BASE} from '../transport.mjs';
+const scene=frozenScene(),a=transmittedRay([0,0,18],[0,0,-1],scene.slice(0,1)),b=transmittedRay([0,0,18],[0,0,-1],scene);
+assert.equal(a.interfaces,2);assert.equal(b.interfaces,4);assert(Math.hypot(...a.point.slice(0,2))>.2);assert(Math.hypot(...b.point.slice(0,2))>.1);
+assert(b.weight[1]<a.weight[1]);assert(beer([.1,.2,.3],4)[0]<beer([.1,.2,.3],2)[0]);
+const normal=[0,0,1],d=[.6,0,-.8],r=refract(d,normal,1,1.5);assert(Math.abs(r[0]-.4)<1e-9);assert.equal(refract([.9,0,Math.sqrt(.19)],normal,1.5,1),null);assert(Math.abs(fresnel([0,0,-1],normal,1,1.5)-.04)<1e-10);
+assert.equal(intersectSolid([20,20,18],[0,0,-1],scene[0]),null);
+const rand=seededRandom(77),sum=[0,0,0];for(let i=0;i<20000;i++){const v=traceSample([0,0,18],[0,0,-1],scene,rand);v.forEach((c,j)=>sum[j]+=c/20000);}assert(sum.every(Number.isFinite));
+const angles=[-.35,0,.35].map(angle=>transmittedRay([-18*Math.tan(angle),0,18],[Math.sin(angle),0,-Math.cos(angle)],scene));
+const thin=transmittedRay([0,0,18],[0,0,-1],frozenScene(1,{thicknessScale:.5}));assert(Math.abs(thin.lengths[0]*2-a.lengths[0])<.001);assert(thin.weight[0]>a.weight[0]);assert(angles.every(v=>v.interfaces===4));assert(Math.abs(angles[0].lengths[0]-angles[2].lengths[0])>.1);
+const reverse=transmittedRay([0,0,-18],[0,0,1],scene,{backgroundZ:18});assert.equal(b.point[2],-18);assert(b.ray.direction[2]<0);assert.equal(reverse.point[2],18);assert.equal(reverse.interfaces,4);assert(reverse.ray.direction[2]>0);assert(reverse.weight.every((v,j)=>Math.abs(v-b.weight[j])<1e-8));
+assert.deepEqual(traceSample([.2,.2,-18],[0,0,1],[],seededRandom(1),24,18),background([.2,.2,18]));assert.deepEqual(traceSample([.2,.2,18],[0,0,-1],[],seededRandom(1)),background([.2,.2,-18]));
+const result={orientation:{eyeZ:18,backgroundZ:-18,direction:[0,0,-1]},reversePositiveZ:reverse,halfThicknessSamePose:thin,fixedBase:FIXED_BASE,passed:true,checks:['negative Z eye-to-light path','explicit positive Z transport','Snell sine law','exact Fresnel 4%','total internal reflection','one/two actual surface pairs','grid displacement mm','Beer path monotonicity','angular paths','seeded Monte Carlo finite'],one:a,two:b,angles,tracedMean:sum};writeFileSync(new URL('checks.json',import.meta.url),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));

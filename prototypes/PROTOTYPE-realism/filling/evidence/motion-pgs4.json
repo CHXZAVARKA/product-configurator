@@ -1,0 +1,99 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:12:21.959Z",
+  "thresholdMm": 0.2,
+  "runs": [
+    {
+      "seed": 93,
+      "level": "dense",
+      "count": 109,
+      "fill": {
+        "attempts": 39432,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 2157,
+          "emptyAccessibleCells": 9083,
+          "freeAccessibleFraction": 0.8080960854092527
+        },
+        "visibleVolumeMm3": 2144.9074273481533,
+        "physicalVolumeMm3": 2144.9074082374573,
+        "visibleFraction": 0.18012022005959052,
+        "physicalFraction": 0.1801202184547554,
+        "unoccupiedNominalFraction": 0.8198797815452445,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 300.21925,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.010040678793487245,
+      "maxIndependentPairMm": 0.006095590239276305,
+      "maxNativePenetrationMm": 0.3325243592262268,
+      "activeFrameMs": [
+        160.15991599999995,
+        184.98575000000005,
+        243.9022920000001,
+        302.445792
+      ],
+      "sleepFrameMs": [],
+      "integration": {
+        "hz": 960,
+        "frameSubstepsAt60Hz": 16,
+        "lengthUnit": 1000,
+        "allowedErrorMm": 0.01,
+        "predictionMm": 0.5,
+        "solverIterations": 24,
+        "contactFrequency": 960,
+        "timestep": 0.0010416667209938169,
+        "experimentalOverrides": {
+          "numInternalPgsIterations": 4
+        }
+      },
+      "maxSampledSpeedMmS": 171.28174673364418,
+      "maxSampledSweepMm": 0.17841849548612854,
+      "initialFreeSpace": {
+        "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+        "spacingMm": 1,
+        "nominalCells": 11240,
+        "cadBlockedCells": 0,
+        "accessibleCells": 11240,
+        "occupiedCells": 2157,
+        "emptyAccessibleCells": 9083,
+        "freeAccessibleFraction": 0.8080960854092527
+      },
+      "shardDimensionsMm": {
+        "min": 3.6065455870707948,
+        "median": 4.904867461719284,
+        "max": 6.3262715105331235
+      },
+      "thicknessMm": {
+        "min": 1.3005279822275042,
+        "median": 1.6971218096092344,
+        "max": 2.0972266810014846
+      },
+      "temporalWitness": {
+        "timeSeconds": 0.06666667014360428,
+        "chip": 23,
+        "other": 67,
+        "rawMm": 0.3325243592262268,
+        "freshNativeMm": 0.2956446707248688,
+        "independentPostSolveMm": 0.29564463331888957
+      }
+    }
+  ],
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.7.0",
+    "cpu": "Apple M1"
+  },
+  "note": "16 substeps are exactly 16.667ms simulated time; no artificial simulation slowdown. Concurrent worker load can affect measurements.",
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Every-frame native depth: 0.3325243592262268\n    at sampleNative (file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:11:2)\n    at file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:18:630"
+}

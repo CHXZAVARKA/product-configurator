@@ -1,0 +1,322 @@
+{
+  "fixedBase": "0d51e61579e1a49aff5c4811ab2ce1b48c712ed6",
+  "generated": "2026-09-14T13:28:39.186Z",
+  "checks": [
+    {
+      "name": "offline-WebGL2-real-surface-shader",
+      "passed": true
+    },
+    {
+      "name": "fast-more-than-two-solids-rejected-explicitly",
+      "passed": true
+    },
+    {
+      "name": "1-layer-control-same-frozen-poses",
+      "passed": true,
+      "method": {
+        "spp": 64,
+        "maxDepth": 24,
+        "seed": 20260914,
+        "resolution": [
+          256,
+          256
+        ],
+        "elapsedMs": 7930.199999988079,
+        "poses": [
+          {
+            "positionMm": [
+              -1,
+              0,
+              5.8
+            ],
+            "rotation": [
+              0.16852984034728374,
+              0.11797088824309862,
+              0.033705968069456756,
+              0.9780309147241483
+            ]
+          }
+        ],
+        "angle": 0,
+        "thicknessScale": 1,
+        "orientation": {
+          "eyeZ": 18,
+          "backgroundZ": -18,
+          "direction": [
+            0,
+            0,
+            -1
+          ]
+        },
+        "method": "Monte Carlo delta dielectric paths; exact convex surfaces; Fresnel reflection/transmission; Beer; luminous grid and environment area lamp; pixel jitter; no denoiser"
+      },
+      "center": {
+        "point": [
+          -0.21297450898931553,
+          0.28297770135756123,
+          -18
+        ],
+        "ray": {
+          "origin": [
+            -0.21297450898931303,
+            0.28297770135756867,
+            4.380220408187741
+          ],
+          "direction": [
+            -1.1102230246251563e-16,
+            -3.3306690738754686e-16,
+            -1
+          ]
+        },
+        "weight": [
+          0.7636540390772978,
+          0.8934307258853811,
+          0.8801750480326649
+        ],
+        "lengths": [
+          2.4913324163802866
+        ],
+        "interfaces": 2
+      }
+    },
+    {
+      "name": "1-layer-GPU-pixels-match-independent-CPU-ray",
+      "passed": true,
+      "probes": [
+        {
+          "x": 118,
+          "y": 122,
+          "expected": [
+            207,
+            227,
+            232
+          ],
+          "actual": [
+            207,
+            227,
+            232,
+            255
+          ],
+          "backgroundPointMm": [
+            -0.8067245089893155,
+            0.626727701357561,
+            -18
+          ]
+        },
+        {
+          "x": 128,
+          "y": 127,
+          "expected": [
+            207,
+            227,
+            232
+          ],
+          "actual": [
+            207,
+            227,
+            232,
+            255
+          ],
+          "backgroundPointMm": [
+            -0.18172450898931553,
+            0.31422770135756123,
+            -18
+          ]
+        },
+        {
+          "x": 140,
+          "y": 137,
+          "expected": [
+            207,
+            227,
+            232
+          ],
+          "actual": [
+            207,
+            227,
+            232,
+            255
+          ],
+          "backgroundPointMm": [
+            0.5682754910106845,
+            -0.31077229864243866,
+            -18
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2-layer-control-same-frozen-poses",
+      "passed": true,
+      "method": {
+        "spp": 64,
+        "maxDepth": 24,
+        "seed": 20260914,
+        "resolution": [
+          256,
+          256
+        ],
+        "elapsedMs": 14842,
+        "poses": [
+          {
+            "positionMm": [
+              -1,
+              0,
+              5.8
+            ],
+            "rotation": [
+              0.16852984034728374,
+              0.11797088824309862,
+              0.033705968069456756,
+              0.9780309147241483
+            ]
+          },
+          {
+            "positionMm": [
+              1,
+              0.2,
+              1
+            ],
+            "rotation": [
+              -0.050525056733845886,
+              -0.1684168557794863,
+              -0.033683371155897264,
+              0.9838436927881214
+            ]
+          }
+        ],
+        "angle": 0,
+        "thicknessScale": 1,
+        "orientation": {
+          "eyeZ": 18,
+          "backgroundZ": -18,
+          "direction": [
+            0,
+            0,
+            -1
+          ]
+        },
+        "method": "Monte Carlo delta dielectric paths; exact convex surfaces; Fresnel reflection/transmission; Beer; luminous grid and environment area lamp; pixel jitter; no denoiser"
+      },
+      "center": {
+        "point": [
+          0.021341911618101162,
+          0.20384786068144098,
+          -18
+        ],
+        "ray": {
+          "origin": [
+            0.021341911618100673,
+            0.20384786068144806,
+            -0.40860806461280785
+          ],
+          "direction": [
+            2.7755575615628895e-17,
+            -4.02455846426619e-16,
+            -1
+          ]
+        },
+        "weight": [
+          0.6862357750123846,
+          0.7199915491825722,
+          0.7700897963324786
+        ],
+        "lengths": [
+          2.4913324163802866,
+          2.055391161635169
+        ],
+        "interfaces": 4
+      }
+    },
+    {
+      "name": "2-layer-GPU-pixels-match-independent-CPU-ray",
+      "passed": true,
+      "probes": [
+        {
+          "x": 118,
+          "y": 122,
+          "expected": [
+            197,
+            206,
+            218
+          ],
+          "actual": [
+            197,
+            206,
+            218,
+            255
+          ],
+          "backgroundPointMm": [
+            -0.5724080883818987,
+            0.5475978606814406,
+            -18
+          ]
+        },
+        {
+          "x": 128,
+          "y": 127,
+          "expected": [
+            91,
+            117,
+            186
+          ],
+          "actual": [
+            91,
+            117,
+            186,
+            255
+          ],
+          "backgroundPointMm": [
+            0.05259191161810127,
+            0.23509786068144092,
+            -18
+          ]
+        },
+        {
+          "x": 140,
+          "y": 137,
+          "expected": [
+            197,
+            206,
+            218
+          ],
+          "actual": [
+            197,
+            206,
+            218,
+            255
+          ],
+          "backgroundPointMm": [
+            0.8025919116181013,
+            -0.38990213931855894,
+            -18
+          ]
+        }
+      ]
+    },
+    {
+      "name": "actual-geometry-thickness-control-invalidates-reference",
+      "passed": true
+    },
+    {
+      "name": "local-preview-3038",
+      "passed": true
+    }
+  ],
+  "benchmark": {
+    "resolution": [
+      256,
+      256
+    ],
+    "frames": 120,
+    "method": "CPU submission + gl.finish GPU completion, excluding display/vsync",
+    "p50Ms": 0,
+    "p95Ms": 0.10000000894069672,
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
+    "timerResolutionNote": "0.1ms CPU clock quantization; p95 below resolution is not a precise GPU cost",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "externalRequests": [],
+  "errors": [],
+  "passed": true
+}

@@ -1,0 +1,70 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:29:22.103Z",
+  "checks": [
+    {
+      "name": "offline-WebGL-no-errors",
+      "passed": true
+    },
+    {
+      "name": "pause-preserves-poses",
+      "passed": true
+    },
+    {
+      "name": "programmatic-configure-syncs-visible-controls-and-resets-old-timing",
+      "passed": true,
+      "controls": {
+        "seed": 93,
+        "level": "dense"
+      }
+    },
+    {
+      "name": "dense-physical-fill-and-matching-visible-shells",
+      "passed": true,
+      "count": 109,
+      "fill": {
+        "attempts": 39432,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 2157,
+          "emptyAccessibleCells": 9083,
+          "freeAccessibleFraction": 0.8080960854092527
+        },
+        "visibleVolumeMm3": 2144.9074273481533,
+        "physicalVolumeMm3": 2144.9074082374573,
+        "visibleFraction": 0.18012022005959052,
+        "physicalFraction": 0.1801202184547554,
+        "unoccupiedNominalFraction": 0.8198797815452445,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      }
+    },
+    {
+      "name": "record-replay-exact-poses-no-solver",
+      "passed": true,
+      "frames": 31
+    },
+    {
+      "name": "mobile-layout",
+      "passed": true
+    }
+  ],
+  "physicsProfile": {
+    "hz": 960,
+    "frameSubstepsAt60Hz": 16,
+    "lengthUnit": 1000,
+    "allowedErrorMm": 0.01,
+    "predictionMm": 1,
+    "solverIterations": 24,
+    "contactFrequency": 960
+  },
+  "errors": [],
+  "externalRequests": [],
+  "passed": true
+}

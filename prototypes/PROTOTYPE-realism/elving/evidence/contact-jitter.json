@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "sourcePixelMm": 0.086,
+  "results": [
+    {
+      "action": "initial",
+      "reversalsBetween1And2Seconds": 0,
+      "maxFrameDeltaMm": 0.06094699169701986,
+      "initialTravelMm": 396.2119675693824,
+      "settleSeconds": 2.308333333333328
+    },
+    {
+      "action": "turn",
+      "reversalsBetween1And2Seconds": 0,
+      "maxFrameDeltaMm": 0.18501688221578233,
+      "initialTravelMm": 53.40858668197862,
+      "settleSeconds": 2.308333333333328
+    },
+    {
+      "action": "reverse",
+      "reversalsBetween1And2Seconds": 0,
+      "maxFrameDeltaMm": 0.05153682024919717,
+      "initialTravelMm": 246.98637289002832,
+      "settleSeconds": 2.308333333333328
+    },
+    {
+      "action": "shake",
+      "reversalsBetween1And2Seconds": 1,
+      "maxFrameDeltaMm": 1.5619146570430762,
+      "initialTravelMm": 3524.9711490703003,
+      "settleSeconds": 2.3249999999999944
+    }
+  ]
+}

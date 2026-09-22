@@ -1,0 +1,102 @@
+{
+  "baseSHA": "10ebf5f9eeaa6702811882f495b12b14d0611f49",
+  "generated": "2026-09-14T12:44:43.990Z",
+  "checks": [
+    {
+      "name": "offline-file-WebGL",
+      "passed": true,
+      "steps": 1435
+    },
+    {
+      "name": "pause-preserves-poses-and-steps",
+      "passed": true
+    },
+    {
+      "name": "rotate-tilt-shake-change-poses",
+      "passed": true,
+      "before": [
+        {
+          "id": 0,
+          "positionMm": [
+            -3.488088846206665,
+            -16.249967575073242,
+            3.202904462814331
+          ],
+          "rotation": [
+            0.022928977385163307,
+            -0.09321232885122299,
+            -0.17630556225776672,
+            0.9796438813209534
+          ],
+          "sleeping": false
+        },
+        {
+          "id": 1,
+          "positionMm": [
+            3.2890093326568604,
+            -17.504837036132812,
+            7.061969757080078
+          ],
+          "rotation": [
+            0.6881111264228821,
+            -0.1078190803527832,
+            0.23013295233249664,
+            0.6796447038650513
+          ],
+          "sleeping": false
+        }
+      ],
+      "after": [
+        {
+          "id": 0,
+          "positionMm": [
+            -0.616412878036499,
+            -16.41461944580078,
+            0.051584646105766296
+          ],
+          "rotation": [
+            0.1785898059606552,
+            0.024832792580127716,
+            -0.09882564097642899,
+            0.9786329865455627
+          ],
+          "sleeping": false
+        },
+        {
+          "id": 1,
+          "positionMm": [
+            4.29526948928833,
+            -17.215662002563477,
+            3.7783427238464355
+          ],
+          "rotation": [
+            0.6552456021308899,
+            -0.1686740219593048,
+            0.3432495892047882,
+            0.6514461040496826
+          ],
+          "sleeping": false
+        }
+      ]
+    },
+    {
+      "name": "switch-one-two-and-collider-toggle",
+      "passed": true
+    },
+    {
+      "name": "sleep-stops-and-action-wakes-solver",
+      "passed": true
+    },
+    {
+      "name": "mobile-layout-and-readable-poses",
+      "passed": true
+    },
+    {
+      "name": "local-preview-3037",
+      "passed": true
+    }
+  ],
+  "externalRequests": [],
+  "errors": [],
+  "passed": true
+}

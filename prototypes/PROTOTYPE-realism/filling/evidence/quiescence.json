@@ -1,0 +1,19 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:09:56.709Z",
+  "thresholds": {
+    "durationSeconds": 2,
+    "maxVertexDisplacementMm": 0.05,
+    "maxLinearSpeedMmS": 0.5,
+    "maxAngularSpeedRadS": 0.2,
+    "maxPenetrationMm": 0.2
+  },
+  "automaticSleep": false,
+  "window": {
+    "durationSeconds": 2.0000001043081284,
+    "maxVertexDisplacementMm": 0.03949422395378187,
+    "maxLinearSpeedMmS": 0.05645779256599493,
+    "maxAngularSpeedRadS": 0.028907288552632533
+  },
+  "passed": true
+}
