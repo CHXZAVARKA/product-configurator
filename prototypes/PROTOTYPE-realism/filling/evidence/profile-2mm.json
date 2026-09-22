@@ -1,0 +1,34 @@
+{
+  "run": "base",
+  "count": 36,
+  "predictionMm": 2.0000000949949026,
+  "allowedErrorMm": 0.009999999747378752,
+  "cpuMs": 6096.795582999997,
+  "cpuMsPerSimSecond": 12193.591165999995,
+  "stepP95Ms": 17.184708,
+  "profile": {
+    "timingStep": 6071.178413000005,
+    "timingCollisionDetection": 1311.6694089999996,
+    "timingBroadPhase": 9.175195999999994,
+    "timingNarrowPhase": 1301.7680350000012,
+    "timingSolver": 4463.690078999999,
+    "timingVelocityAssembly": 215.29232799999983,
+    "timingVelocityResolution": 4194.318956000001,
+    "timingCcd": 0,
+    "timingCcdToiComputation": 78.02045800000002,
+    "timingCcdBroadPhase": 0,
+    "timingCcdNarrowPhase": 0,
+    "timingCcdSolver": 0,
+    "timingIslandConstruction": 29.421743999999993
+  },
+  "contactCounts": {
+    "trubka": 4187,
+    "nasipka": 376,
+    "krishka": 2639,
+    "elving": 857
+  },
+  "maxNative": 0.08492179960012436,
+  "maxBoundary": 0.11022323946525248,
+  "maxPair": 0.06264156851264957,
+  "steps": 480
+}

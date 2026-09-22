@@ -1,0 +1,356 @@
+{
+  "fixedPoint": "056ff8ecec0d2fb359f3d371107495d1902effec",
+  "generated": "2026-09-14T13:20:43.860Z",
+  "thresholdMm": 0.2,
+  "runs": [
+    {
+      "seed": 41,
+      "level": "loose",
+      "count": 36,
+      "fill": {
+        "attempts": 157,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.06,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 723,
+          "emptyAccessibleCells": 10517,
+          "freeAccessibleFraction": 0.9356761565836299
+        },
+        "visibleVolumeMm3": 718.585451593186,
+        "physicalVolumeMm3": 718.5854239463806,
+        "visibleFraction": 0.06034375564292175,
+        "physicalFraction": 0.0603437533212604,
+        "unoccupiedNominalFraction": 0.9396562466787396,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 97.703125,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.027682940104231335,
+      "maxIndependentPairMm": 0.033746480715608485,
+      "maxNativePenetrationMm": 0.19678056240081787,
+      "integration": {
+        "hz": 960,
+        "frameSubstepsAt60Hz": 16,
+        "lengthUnit": 1000,
+        "allowedErrorMm": 0.01,
+        "predictionMm": 1,
+        "solverIterations": 24,
+        "contactFrequency": 960,
+        "timestep": 0.0010416667209938169,
+        "experimentalOverrides": null,
+        "actualHz": 959.999949932101,
+        "frameSteps": 16
+      },
+      "maxSampledSpeedMmS": 163.12898998240144,
+      "maxSampledSweepMm": 0.1699260400940013,
+      "contactCountsMax": {
+        "dynamic": 577,
+        "trubka": 1746,
+        "elving": 593,
+        "nasipka": 394,
+        "krishka": 889
+      },
+      "maxFreshNativeCADMm": 0.03559589385986328,
+      "maxFreshNativePairMm": 0.14039069414138794,
+      "maxEveryFrameSATPairMm": 0.14039056877482992,
+      "initialFreeSpace": {
+        "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+        "spacingMm": 1,
+        "nominalCells": 11240,
+        "cadBlockedCells": 0,
+        "accessibleCells": 11240,
+        "occupiedCells": 723,
+        "emptyAccessibleCells": 10517,
+        "freeAccessibleFraction": 0.9356761565836299
+      },
+      "shardDimensionsMm": {
+        "min": 3.9463431216653704,
+        "median": 4.9761859557208075,
+        "max": 6.262706988057519
+      },
+      "thicknessMm": {
+        "min": 1.3263787601143122,
+        "median": 1.715519011579454,
+        "max": 2.0656235400587324
+      },
+      "redistributionMm": 29.54245328039464,
+      "orientationChangeRad": 3.0456231310440725,
+      "normalFlipCount": 19,
+      "recordedFrames": 121,
+      "sleepCause": "native-auto",
+      "quiescence": null,
+      "residualMoving": 0,
+      "maxLinearSpeedMmS": 0,
+      "maxAngularSpeedRadS": 0,
+      "quiescenceRejections": {
+        "speed": 300,
+        "drift": 4
+      },
+      "pausePassed": true,
+      "replayPassed": true,
+      "sleepPassed": true,
+      "wakePassed": true,
+      "activeFrameP95Ms": 122.01187500000015,
+      "activeCpuMsPerSimulatedSecond": 6852.950375499992,
+      "sleepFrameP95Ms": 0.000750000006519258,
+      "activeTarget33MsPassed": false
+    },
+    {
+      "seed": 17,
+      "level": "medium",
+      "count": 70,
+      "fill": {
+        "attempts": 1398,
+        "rejectedShapes": 0,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.12,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 1418,
+          "emptyAccessibleCells": 9822,
+          "freeAccessibleFraction": 0.8738434163701068
+        },
+        "visibleVolumeMm3": 1430.2968691455771,
+        "physicalVolumeMm3": 1430.2968430519104,
+        "visibleFraction": 0.12011025908915737,
+        "physicalFraction": 0.12011025689792201,
+        "unoccupiedNominalFraction": 0.879889743102078,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 87.51583400000527,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.016730691842361978,
+      "maxIndependentPairMm": 0.0588946432336499,
+      "maxNativePenetrationMm": 0.20450487732887268,
+      "integration": {
+        "hz": 960,
+        "frameSubstepsAt60Hz": 16,
+        "lengthUnit": 1000,
+        "allowedErrorMm": 0.01,
+        "predictionMm": 1,
+        "solverIterations": 24,
+        "contactFrequency": 960,
+        "timestep": 0.0010416667209938169,
+        "experimentalOverrides": null,
+        "actualHz": 959.999949932101,
+        "frameSteps": 16
+      },
+      "maxSampledSpeedMmS": 281.8089570932997,
+      "maxSampledSweepMm": 0.2935510122820647,
+      "contactCountsMax": {
+        "dynamic": 1229,
+        "trubka": 2305,
+        "elving": 867,
+        "krishka": 810,
+        "nasipka": 463
+      },
+      "maxFreshNativeCADMm": 0.02047325298190117,
+      "maxFreshNativePairMm": 0.1332162618637085,
+      "maxEveryFrameSATPairMm": 0.13321634987575948,
+      "initialFreeSpace": {
+        "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+        "spacingMm": 1,
+        "nominalCells": 11240,
+        "cadBlockedCells": 0,
+        "accessibleCells": 11240,
+        "occupiedCells": 1418,
+        "emptyAccessibleCells": 9822,
+        "freeAccessibleFraction": 0.8738434163701068
+      },
+      "shardDimensionsMm": {
+        "min": 3.7012658587948475,
+        "median": 5.0971439254215065,
+        "max": 6.167243204331783
+      },
+      "thicknessMm": {
+        "min": 1.340158423781395,
+        "median": 1.7375900842249394,
+        "max": 2.099554821290076
+      },
+      "temporalWitness": {
+        "timeSeconds": 0.06666667014360428,
+        "chip": 37,
+        "other": 54,
+        "rawMm": 0.20450487732887268,
+        "freshNativeMm": 0.1332162618637085,
+        "independentPostSolveMm": 0.13321634987575948
+      },
+      "redistributionMm": 22.08119680921231,
+      "orientationChangeRad": 3.1018609639200156,
+      "normalFlipCount": 14,
+      "recordedFrames": 121,
+      "sleepCause": "native-auto",
+      "quiescence": null,
+      "residualMoving": 0,
+      "maxLinearSpeedMmS": 0,
+      "maxAngularSpeedRadS": 0,
+      "quiescenceRejections": {
+        "speed": 131,
+        "drift": 4
+      },
+      "pausePassed": true,
+      "replayPassed": true,
+      "sleepPassed": true,
+      "wakePassed": true,
+      "activeFrameP95Ms": 179.29404199999408,
+      "activeCpuMsPerSimulatedSecond": 10085.424335500007,
+      "sleepFrameP95Ms": 0.0012920000008307397,
+      "activeTarget33MsPassed": false
+    },
+    {
+      "seed": 41,
+      "level": "dense",
+      "count": 114,
+      "fill": {
+        "attempts": 103191,
+        "rejectedShapes": 2,
+        "chamberVolumeMm3": 11908.199016404364,
+        "nominalTargetFraction": 0.18,
+        "sampledFreeSpace": {
+          "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+          "spacingMm": 1,
+          "nominalCells": 11240,
+          "cadBlockedCells": 0,
+          "accessibleCells": 11240,
+          "occupiedCells": 2164,
+          "emptyAccessibleCells": 9076,
+          "freeAccessibleFraction": 0.8074733096085409
+        },
+        "visibleVolumeMm3": 2150.7581779856305,
+        "physicalVolumeMm3": 2150.7581486701965,
+        "visibleFraction": 0.18061154126016982,
+        "physicalFraction": 0.18061153879838412,
+        "unoccupiedNominalFraction": 0.8193884612016159,
+        "geometryNote": "Сумма выпуклых объёмов, не измеренный объём объединения; CAD-рельеф добавляет местный зазор ниже номинальной плоскости."
+      },
+      "packingMs": 591.4634580000129,
+      "initialBoundaryMm": 0,
+      "initialPairMm": 0,
+      "maxBoundaryMm": 0.002281746240257121,
+      "maxIndependentPairMm": 0.012895224334627642,
+      "maxNativePenetrationMm": 0.26313650608062744,
+      "activeFrameMs": [
+        148.05241699999897,
+        176.99683300001197,
+        218.7652910000179
+      ],
+      "sleepFrameMs": [],
+      "integration": {
+        "hz": 960,
+        "frameSubstepsAt60Hz": 16,
+        "lengthUnit": 1000,
+        "allowedErrorMm": 0.01,
+        "predictionMm": 1,
+        "solverIterations": 24,
+        "contactFrequency": 960,
+        "timestep": 0.0010416667209938169,
+        "experimentalOverrides": null,
+        "actualHz": 959.999949932101,
+        "frameSteps": 16
+      },
+      "maxSampledSpeedMmS": 163.12898998240144,
+      "maxSampledSweepMm": 0.1699260400940013,
+      "contactCountsMax": {
+        "dynamic": 1652,
+        "trubka": 1767,
+        "elving": 763,
+        "nasipka": 772,
+        "krishka": 181
+      },
+      "maxFreshNativeCADMm": 0.017702318727970123,
+      "maxFreshNativePairMm": 0.22908484935760498,
+      "maxEveryFrameSATPairMm": 0.2290851753631138,
+      "initialFreeSpace": {
+        "method": "1mm cell-centre grid, clipped to nominal cylinder, independently checked against CAD surfaces and closed shard halfspaces",
+        "spacingMm": 1,
+        "nominalCells": 11240,
+        "cadBlockedCells": 0,
+        "accessibleCells": 11240,
+        "occupiedCells": 2164,
+        "emptyAccessibleCells": 9076,
+        "freeAccessibleFraction": 0.8074733096085409
+      },
+      "shardDimensionsMm": {
+        "min": 3.8651926529090597,
+        "median": 4.815377005197247,
+        "max": 6.262706988057519
+      },
+      "thicknessMm": {
+        "min": 1.3177991600707173,
+        "median": 1.6550437038764358,
+        "max": 2.0876190194860103
+      },
+      "temporalWitness": {
+        "timeSeconds": 0.05000000260770321,
+        "chip": 53,
+        "other": 83,
+        "rawMm": 0.26313650608062744,
+        "freshNativeMm": 0.22908484935760498,
+        "independentPostSolveMm": 0.2290851753631138
+      },
+      "currentGeometryWitness": {
+        "timeSeconds": 0.05000000260770321,
+        "pair": [
+          53,
+          83
+        ],
+        "freshNativeMm": 0.22908484935760498,
+        "independentSATMm": 0.2290851753631138,
+        "poses": [
+          {
+            "id": 53,
+            "positionMm": [
+              7.679186820983887,
+              -15.36764907836914,
+              1.8927133083343506
+            ],
+            "rotation": [
+              -0.018836354836821556,
+              0.6436871290206909,
+              -0.7612532377243042,
+              0.0761943906545639
+            ],
+            "sleeping": false
+          },
+          {
+            "id": 83,
+            "positionMm": [
+              5.0883708000183105,
+              -17.421998977661133,
+              3.4308226108551025
+            ],
+            "rotation": [
+              0.6768126487731934,
+              0.11727522313594818,
+              0.08557235449552536,
+              0.7216984629631042
+            ],
+            "sleeping": false
+          }
+        ]
+      }
+    }
+  ],
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v26.7.0",
+    "cpu": "Apple M1"
+  },
+  "contactOracle": "Cached manifold is recorded only; fresh native all AABB-active convex pairs plus independent SAT every frame, fresh CAD contacts each frame, original-CAD surface containment every8 frames and final. Threshold remains .2mm. Temporal false failure proved by1mm witness .210569cached vs .195112fresh/SAT.",
+  "note": "16 substeps are exactly 16.667ms simulated time; no artificial simulation slowdown. Concurrent worker load can affect measurements.",
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Fresh native pair 0.22908484935760498mm\n    at sampleFresh (file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:24:5)\n    at sampleNative (file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:13:2)\n    at file:///Users/owner/Documents/projects/.worktrees/product-configurator/realism-04/prototypes/PROTOTYPE-realism/filling/evidence/check.mjs:33:638"
+}
