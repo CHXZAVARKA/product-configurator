@@ -1,5 +1,7 @@
-import {makeBrokenChip} from './broken-chip.mjs';
+import {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G,makeBrokenChip} from './broken-chip.mjs';
 import { chamberFromCAD } from '../geometry.mjs';
+
+export {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G};
 
 const FIXED_DT = 1 / 120;
 const MAX_COUNT = 140;

@@ -1,5 +1,5 @@
 import RAPIER from 'rapier';
-import {createChipPhysics} from './chips-physics.mjs';
+import {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G,createChipPhysics} from './chips-physics.mjs';
 import {createPBRChipView} from './pbr-chips-view.mjs';
 import {createWorldBackdrop} from './world-backdrop.mjs';
 import {createRealtimeGlass} from './realtime-glass.mjs';
@@ -18,6 +18,12 @@ try {
  let raf=null,lastTime=0,frames=0,sourcePasses=0,lastSource=null,sourceDirty=true,measuring=false,uploadImage=null,lastFrameMs=null,qualityChecked=false,lastBenchmark=null,chipDirty=true,lastChips=null,cadPasses=0;
  const background=document.createElement('canvas');background.width=background.height=1024;
  const ctx=background.getContext('2d');
+ $('fill-mass').textContent=AUTHOR_FILL_MASS_G.toLocaleString('ru-RU')+' г';
+ $('fill-colors').textContent=AUTHOR_FILL_COLORS.length+' цветов';
+ $('fill-spec-list').replaceChildren(...AUTHOR_FILL_COLORS.map(item=>{
+  const row=document.createElement('div'),swatch=document.createElement('i'),name=document.createElement('span'),size=document.createElement('small');
+  row.className='fill-spec-item';swatch.style.background=`rgb(${item.rgb.map(value=>Math.round(value*255)).join(' ')})`;name.textContent=item.name;size.textContent=item.fractionMm+' мм';row.append(swatch,name,size);return row;
+ }));
  function updateBackground(){
   ctx.fillStyle='#f6f2e7';ctx.fillRect(0,0,1024,1024);
   const mm=v=>(v+55)/110*1024;

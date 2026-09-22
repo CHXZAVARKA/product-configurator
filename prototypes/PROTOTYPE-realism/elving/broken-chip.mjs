@@ -2,7 +2,22 @@ import { volumeMm3 } from '../geometry.mjs';
 
 // A fragment is an intersection of independently tilted fracture halfspaces.
 // There is no shared top/bottom outline or intermediate gemstone girdle.
-const colors=[[.025,.57,.66],[.67,.035,.43],[.025,.12,.58],[.94,.29,.018],[.30,.085,.48],[.035,.48,.08],[.63,.78,.76],[.76,.66,.63],[.71,.74,.81],[.62,.47,.65],[.70,.13,.18],[.91,.61,.035]];
+// Supplier names and fractions are the confirmed September 2026 filling
+// specification for «Авторский». RGB remains a visual approximation because
+// the supplier does not publish calibrated colour-profile data.
+export const AUTHOR_FILL_MASS_G=11.4;
+export const AUTHOR_FILL_COLORS=Object.freeze([
+ {id:'kiwi',name:'Киви',fractionMm:'6–7',rgb:[.30,.72,.08]},
+ {id:'blue',name:'Голубая',fractionMm:'7',rgb:[.08,.44,.88]},
+ {id:'sky',name:'Небесная',fractionMm:'6',rgb:[.28,.72,.96]},
+ {id:'scarlet-mix',name:'Алая микс',fractionMm:'6',rgb:[.91,.08,.045]},
+ {id:'ruby',name:'Рубиновая',fractionMm:'5',rgb:[.55,.012,.10]},
+ {id:'bright-blue',name:'Ярко-синяя',fractionMm:'5',rgb:[.025,.13,.92]},
+ {id:'fuchsia',name:'Фуксия',fractionMm:'5–6',rgb:[.91,.025,.52]},
+ {id:'orange-yellow',name:'Оранжево-жёлтая',fractionMm:'6',rgb:[.98,.43,.018]},
+ {id:'aquamarine',name:'Аквамарин',fractionMm:'6',rgb:[.02,.69,.64]},
+ {id:'dark-blue',name:'Тёмно-синяя',fractionMm:'5',rgb:[.012,.035,.29]},
+]);
 const sub=(a,b)=>a.map((v,k)=>v-b[k]);
 const dot=(a,b)=>a.reduce((s,v,k)=>s+v*b[k],0);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
@@ -40,6 +55,8 @@ function intersect(planes) {
  return {vertices,indices,faces,worst,cornerCutCount};
 }
 export function makeBrokenChip(id,random,thin=false,options={}) {
+ const colourIndex=id<AUTHOR_FILL_COLORS.length?id:Math.floor(random()*AUTHOR_FILL_COLORS.length);
+ const colourSpec=AUTHOR_FILL_COLORS[colourIndex];
  const bulk=clamp(options.bulk??.65),choice=random();
  const family=thin?'flake':choice<.52?'short':choice<.81?'wedge':choice<.93?'splinter':'flake';
  const n=random()<(family==='short'?.40:family==='wedge'?.25:.12)?5:4;
@@ -93,7 +110,7 @@ export function makeBrokenChip(id,random,thin=false,options={}) {
  const xyScale=radius/Math.max(...vertices.map(v=>Math.hypot(v[0],v[1])));
  const zScale=halfHeight/Math.max(...vertices.map(v=>Math.abs(v[2])));
  vertices=vertices.map(([x,y,z])=>[x*xyScale,y*xyScale,z*zScale]);
- const color=colors[(id+Math.floor(random()*colors.length))%colors.length].map(v=>Math.min(1,v*(.92+random()*.16)));
+ const color=colourSpec.rgb.map(v=>Math.min(1,v*(.92+random()*.16)));
  const thicknessMm=2*halfHeight;
- return {id,vertices,indices,color,thicknessMm,volumeMm3:volumeMm3(vertices,indices),shapeAudit:{family,bulk,faceCount:faces.length,cornerCutCount:solid.cornerCutCount,halfspaceIntersection:true,pairedXYContours:false},provenance:'Procedural volumetric broken-glass hypothesis guided by the user photograph: irregular intersections of independent 3D fracture planes, short chunks, wedges, splinters and flakes; dimensions and palette are not measured STEP parts.'};
+ return {id,vertices,indices,color,colorId:colourSpec.id,colorName:colourSpec.name,supplierFractionMm:colourSpec.fractionMm,thicknessMm,volumeMm3:volumeMm3(vertices,indices),shapeAudit:{family,bulk,faceCount:faces.length,cornerCutCount:solid.cornerCutCount,halfspaceIntersection:true,pairedXYContours:false},provenance:'Procedural volumetric broken-glass hypothesis guided by the user photograph. Colour names and commercial fractions follow the confirmed «Авторский» supplier list; RGB, exact chip geometry and thickness remain visual hypotheses.'};
 }
