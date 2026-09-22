@@ -5,30 +5,38 @@
     {
       "action": "initial",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.06094699169701986,
-      "initialTravelMm": 396.2119675693824,
-      "settleSeconds": 2.308333333333328
+      "maxFrameDeltaMm": 0.003817899196509652,
+      "initialTravelMm": 329.58906999219016,
+      "shakeDeltaP95Mm": 0,
+      "preStopTailMaxMm": 0.0013571348365371513,
+      "settleSeconds": 2.304166666666676
     },
     {
       "action": "turn",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.18501688221578233,
-      "initialTravelMm": 53.40858668197862,
-      "settleSeconds": 2.308333333333328
+      "maxFrameDeltaMm": 0.034248386015719036,
+      "initialTravelMm": 62.0958074467138,
+      "shakeDeltaP95Mm": 0,
+      "preStopTailMaxMm": 0.022643574651739468,
+      "settleSeconds": 2.304166666666676
     },
     {
       "action": "reverse",
       "reversalsBetween1And2Seconds": 0,
-      "maxFrameDeltaMm": 0.05153682024919717,
-      "initialTravelMm": 246.98637289002832,
-      "settleSeconds": 2.308333333333328
+      "maxFrameDeltaMm": 0.002227006012827516,
+      "initialTravelMm": 228.73114522038023,
+      "shakeDeltaP95Mm": 0,
+      "preStopTailMaxMm": 0.0010746019166696708,
+      "settleSeconds": 2.304166666666676
     },
     {
       "action": "shake",
-      "reversalsBetween1And2Seconds": 1,
-      "maxFrameDeltaMm": 1.5619146570430762,
-      "initialTravelMm": 3524.9711490703003,
-      "settleSeconds": 2.3249999999999944
+      "reversalsBetween1And2Seconds": 2,
+      "maxFrameDeltaMm": 3.3489972155994323,
+      "initialTravelMm": 16.637230092879836,
+      "shakeDeltaP95Mm": 0.44781219107543324,
+      "preStopTailMaxMm": 0.0016075126054121342,
+      "settleSeconds": 2.608333333333358
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-22T16:27:06.697Z",
+  "generated": "2026-09-22T16:58:04.434Z",
   "checks": [
     {
       "name": "settled-prism-no-jitter-or-flicker",
@@ -28,7 +28,7 @@
     {
       "name": "auto-roll-rotates-glass-with-fixed-world-while-physics-paused",
       "passed": true,
-      "frames": 68
+      "frames": 67
     },
     {
       "name": "high-poly-and-physics-full-frame-under33ms",
@@ -60,8 +60,8 @@
       830
     ],
     "samples": 40,
-    "p95Ms": 10.600000023841858,
-    "meanMs": 4.58500000089407,
+    "p95Ms": 6.9000000059604645,
+    "meanMs": 4.644999998062849,
     "method": "Rapier + moving source + HDR PBR + bloom + mirrors, gl.finish",
     "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1, Unspecified Version)",
     "mode": "prism",
@@ -75,24 +75,26 @@
     "physics": {
       "moving": true,
       "sleeping": 0,
-      "steps": 402,
-      "shaking": false,
+      "steps": 679,
+      "shaking": true,
       "count": 36,
       "sizeScale": 1.5,
       "bulk": 0.65,
       "rollDeg": 0,
       "tiltDeg": 0,
-      "fixedDtSeconds": 0.008333333333333333,
+      "fixedDtSeconds": 0.004166666666666667,
+      "playbackRate": 0.5,
+      "shakeDurationSeconds": 1.8,
       "maxCatchupSteps": 4,
       "stableForSeconds": 0,
-      "smoothedRmsLinearMmPerSecond": 153.63715856802042,
-      "smoothedRmsAngularRadPerSecond": 9.800290325921555,
-      "actionAgeSeconds": 0.783333333333333,
+      "smoothedRmsLinearMmPerSecond": 0.8571277370597911,
+      "smoothedRmsAngularRadPerSecond": 0.15830691626438004,
+      "actionAgeSeconds": 0.3916666666666665,
       "freezeReason": null,
-      "lastRmsLinearMmPerSecond": 350.1071947960348,
-      "lastRmsAngularRadPerSecond": 3.6826157568541826,
-      "boundaryCorrections": 1145,
-      "maxBoundaryCorrectionMm": 1.2142352361734616,
+      "lastRmsLinearMmPerSecond": 2.3934455250175835,
+      "lastRmsAngularRadPerSecond": 0.4390487344844841,
+      "boundaryCorrections": 471,
+      "maxBoundaryCorrectionMm": 0.5121846113831445,
       "hardBoundaryProjection": true,
       "settlePolicy": {
         "minActionAgeSeconds": 1.5,

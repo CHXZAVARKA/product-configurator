@@ -4,18 +4,20 @@ import {createChipPhysics} from '../chips-physics.mjs';
 import R from '../../../PROTOTYPE-optics/tooling/node_modules/@dimforge/rapier3d-compat/rapier.mjs';
 await R.init();
 const cad=JSON.parse(fs.readFileSync(new URL('../../../PROTOTYPE-optics/assets/cad.json',import.meta.url)));
+const p95=values=>[...values].sort((a,b)=>a-b)[Math.floor(values.length*.95)];
 const results=[];
 for(const [roll,tilt] of [[0,0],[120,35],[-90,-70]]){
  const sim=createChipPhysics(R,cad,{count:36,sizeScale:1.5});sim.orient(roll,tilt);for(let i=0;i<300;i++)sim.step(1/60);
- const before=sim.poses();sim.shake();let previous=before,lateTravelMm=0;
- for(let frame=0;frame<300;frame++){
+ const before=sim.poses();sim.shake();let previous=before,gestureTravelMm=0,gestureDeltas=[],gestureFrames=0;
+ for(let frame=0;frame<480;frame++){
   sim.step(1/60);const next=sim.poses();
-  if(frame>=30&&frame<48)for(let i=0;i<next.length;i++)lateTravelMm+=Math.hypot(...next[i].positionMm.map((v,k)=>v-previous[i].positionMm[k]));
+  if(sim.snapshot().shaking){gestureFrames++;for(let i=0;i<next.length;i++){const distance=Math.hypot(...next[i].positionMm.map((v,k)=>v-previous[i].positionMm[k]));gestureTravelMm+=distance;gestureDeltas.push(distance);}}
   previous=next;
  }
- assert(lateTravelMm/36>2,'Visible movement must continue between 0.5 and 0.8 seconds after clicking');
+ assert(gestureTravelMm/36>10,'A bounded chamber gesture must visibly redistribute the filling');
+ assert(p95(gestureDeltas)<1.5,'A chamber gesture must not launch chips across the view in one display frame');
  const distances=sim.poses().map((p,i)=>Math.hypot(...p.positionMm.map((v,k)=>v-before[i].positionMm[k])));
- const result={roll,tilt,lateMeanTravelMm:lateTravelMm/36,movedOver2Mm:distances.filter(d=>d>2).length,meanMm:distances.reduce((a,b)=>a+b,0)/36,sleeping:sim.snapshot().sleeping};
+ const result={roll,tilt,gestureFrames,gestureMeanTravelMm:gestureTravelMm/36,gestureFrameDeltaP95Mm:p95(gestureDeltas),movedOver2Mm:distances.filter(d=>d>2).length,meanMm:distances.reduce((a,b)=>a+b,0)/36,sleeping:sim.snapshot().sleeping};
  assert(result.movedOver2Mm>=18,'At least half the filling should settle over 2 mm from its previous position');
  assert.equal(result.sleeping,36,'Mixing must settle again');
  results.push(result);sim.dispose();

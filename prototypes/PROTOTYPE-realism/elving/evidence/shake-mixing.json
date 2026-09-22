@@ -4,25 +4,31 @@
     {
       "roll": 0,
       "tilt": 0,
-      "lateMeanTravelMm": 30.21193043062499,
-      "movedOver2Mm": 35,
-      "meanMm": 5.708104931995954,
+      "gestureFrames": 216,
+      "gestureMeanTravelMm": 17.728382349957023,
+      "gestureFrameDeltaP95Mm": 0.4037904614930435,
+      "movedOver2Mm": 21,
+      "meanMm": 3.119238040824932,
       "sleeping": 36
     },
     {
       "roll": 120,
       "tilt": 35,
-      "lateMeanTravelMm": 29.929886923002357,
-      "movedOver2Mm": 35,
-      "meanMm": 7.02696655260726,
+      "gestureFrames": 216,
+      "gestureMeanTravelMm": 29.44300032266845,
+      "gestureFrameDeltaP95Mm": 0.7664741045150824,
+      "movedOver2Mm": 26,
+      "meanMm": 5.023255720255758,
       "sleeping": 36
     },
     {
       "roll": -90,
       "tilt": -70,
-      "lateMeanTravelMm": 13.76775753358568,
-      "movedOver2Mm": 34,
-      "meanMm": 4.554771315148042,
+      "gestureFrames": 216,
+      "gestureMeanTravelMm": 48.582038153803865,
+      "gestureFrameDeltaP95Mm": 1.1993017312096883,
+      "movedOver2Mm": 31,
+      "meanMm": 7.0467301548646875,
       "sleeping": 36
     }
   ]
