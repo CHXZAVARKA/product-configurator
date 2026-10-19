@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const port=9358,profile=mkdtempSync(join(tmpdir(),'real-time-prism-'));
 const chrome=spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless=new',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'--window-size=1280,1100','--no-first-run','--no-default-browser-check','about:blank'],{stdio:'ignore'});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));let ws,id=0;const pending=new Map(),errors=[],requests=[];
-const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pending.set(n,{resolve,reject});ws.send(JSON.stringify({id:n,method,params}));});
+const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>{pending.delete(n);reject(Error(`CDP timeout: ${method} ${String(params.expression||'').slice(0,100)}`));},90000);pending.set(n,{resolve:value=>{clearTimeout(timer);resolve(value);},reject:error=>{clearTimeout(timer);reject(error);}});ws.send(JSON.stringify({id:n,method,params}));});
 const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
 const snapshot=()=>evaluate('window.REALTIME.snapshot()');
 const results={generated:new Date().toISOString(),checks:[]};
@@ -19,7 +19,7 @@ try{
  await send('Emulation.setFocusEmulationEnabled',{enabled:true});await send('Runtime.enable');await send('Log.enable');await send('Network.enable');await send('Page.enable');
  await send('Page.navigate',{url:new URL('../PROTOTYPE-realtime.html',import.meta.url).href});await ready();
  assert(await evaluate("document.getElementById('error').hidden"));
- const initial=await snapshot();assert.equal(initial.state.elving,false);assert.equal(initial.state.count,36);assert.equal(initial.surface.count,36);assert.equal(initial.physics.sizeScale,1.15);assert.equal(initial.physics.sizeVariation,.1);assert(initial.physics.chipScaleRange[0]<initial.physics.chipScaleRange[1]);assert(initial.surface.visualTriangles/initial.surface.collisionTriangles>=64);assert(initial.surface.visualTriangles>20000&&initial.surface.visualTriangles<=250000);assert(initial.surface.maxDeviationMm<=.550001);
+ const initial=await snapshot();assert.equal(initial.state.elving,false);assert.equal(initial.state.count,40);assert.equal(initial.surface.count,40);assert.equal(initial.physics.chamberAudit.measuredDepthMm,14);assert(Math.abs(initial.physics.solidVolumeMm3-4560)<.001);assert(initial.physics.chipScaleRange[0]<initial.physics.chipScaleRange[1]);assert(initial.surface.visualTriangles/initial.surface.collisionTriangles>=64);assert(initial.surface.visualTriangles>20000&&initial.surface.visualTriangles<=300000);assert(initial.surface.maxDeviationMm<=.550001);
  const resolutionAudit=await evaluate("(()=>{const canvas=document.getElementById('viewer'),match=document.getElementById('status').textContent.match(/(\\d+)²/);return {canvasWidth:canvas.width,renderSize:match?Number(match[1]):0};})()");
  assert(resolutionAudit.renderSize>=resolutionAudit.canvasWidth,'Default render must not be upscaled inside the kaleidoscope view: '+JSON.stringify(resolutionAudit));
  results.checks.push({name:'default-render-meets-display-resolution',passed:true,...resolutionAudit});

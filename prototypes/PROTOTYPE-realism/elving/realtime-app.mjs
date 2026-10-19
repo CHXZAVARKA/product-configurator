@@ -1,5 +1,5 @@
 import RAPIER from 'rapier';
-import {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G,createChipPhysics} from './chips-physics.mjs';
+import {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G,PHOTO_FILL_PROFILE,createChipPhysics} from './chips-physics.mjs';
 import {createPBRChipView} from './pbr-chips-view.mjs';
 import {createWorldBackdrop} from './world-backdrop.mjs';
 import {createRealtimeGlass} from './realtime-glass.mjs';
@@ -13,8 +13,8 @@ try {
  let glass=null;
  const environmentBytes=Uint8Array.from(atob(ENVIRONMENT_BASE64),c=>c.charCodeAt(0)).buffer;
  const backdrop=createWorldBackdrop(gl,environmentBytes),prism=prismFromCAD(CAD),view=createPrismView(gl,prism);
- const physics=createChipPhysics(RAPIER,CAD,{count:36,sizeScale:1.15,sizeVariation:.1}),chipView=await createPBRChipView(gl,{environmentBytes});chipView.setGeometry(physics.chips);
- const state={mode:'prism',turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:32,smooth:true,auto:false,quality:'auto',background:'world',resolution:1024,filling:true,count:36,paused:false,elving:false,showColliders:false,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0,studyMaterial:'glass'};
+ const physics=createChipPhysics(RAPIER,CAD,{count:PHOTO_FILL_PROFILE.length,profile:PHOTO_FILL_PROFILE}),chipView=await createPBRChipView(gl,{environmentBytes});chipView.setGeometry(physics.chips);
+ const state={mode:'prism',turn:0,tilt:0,light:55,intensity:1.5,glow:.65,lightAuto:false,fov:30,smooth:true,auto:false,quality:'auto',background:'world',resolution:1024,filling:true,count:PHOTO_FILL_PROFILE.length,paused:false,elving:false,showColliders:false,bulk:.65,depth:.75,edgeChips:.6,detail:.65,studyTurn:0,studyTilt:0,studyMaterial:'glass'};
  let raf=null,lastTime=0,frames=0,sourcePasses=0,lastSource=null,sourceDirty=true,measuring=false,uploadImage=null,lastFrameMs=null,qualityChecked=false,lastBenchmark=null,chipDirty=true,lastChips=null,cadPasses=0;
  const background=document.createElement('canvas');background.width=background.height=1024;
  const ctx=background.getContext('2d');
@@ -109,7 +109,7 @@ try {
  for(const key of ['bulk','depth','edgeChips','detail']){$(key).oninput=e=>$(key+'-value').textContent=Math.round(Number(e.target.value)*100)+'%';$(key).onchange=e=>set({[key]:Number(e.target.value)});}
  $('animate-light').onclick=()=>set({lightAuto:!state.lightAuto,background:'world'});
  $('animate').onclick=()=>set({auto:!state.auto});$('quality').onchange=e=>set({quality:e.target.value});$('background').onchange=e=>set({background:e.target.value});
- $('reset').onclick=()=>set({turn:0,tilt:0,light:55,intensity:2.2,glow:.65,lightAuto:false,fov:32,smooth:true,auto:false,paused:false,count:state.count,bulk:.65,depth:.75,edgeChips:.6,detail:.4,studyTurn:0,studyTilt:0});
+ $('reset').onclick=()=>set({turn:0,tilt:0,light:55,intensity:1.5,glow:.65,lightAuto:false,fov:30,smooth:true,auto:false,paused:false,count:state.count,bulk:.65,depth:.75,edgeChips:.6,detail:.65,studyTurn:0,studyTilt:0});
  $('show-colliders').onchange=e=>set({showColliders:e.target.checked});$('elving').onchange=e=>set({elving:e.target.checked});$('filling').onchange=e=>set({filling:e.target.checked});$('count').onchange=e=>set({count:Number(e.target.value)});$('count').oninput=e=>$('count-value').textContent=e.target.value+' шт.';
  $('shake-viewer').onclick=$('shake').onclick=()=>{if(state.mode==='study')set({mode:'glass'});set({paused:false,filling:true});physics.orient(state.turn,state.tilt);physics.shake();requestDraw(false);};$('pause').onclick=()=>set({paused:!state.paused});$('measure').onclick=()=>benchmark();
  $('upload').onchange=async e=>{

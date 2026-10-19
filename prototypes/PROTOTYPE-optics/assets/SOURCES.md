@@ -1,7 +1,7 @@
 # Источники ресурсов
 
 - `cad.json`: тесселяция STEP-деталей владельца из `/Users/owner/Downloads/glazok(1)` скриптом `export-cad.py` (FreeCAD). Хэши исходных файлов внутри JSON.
-- `studio_small_08_1k.hdr`: Poly Haven, «Studio Small 08», лицензия CC0, <https://polyhaven.com/a/studio_small_08>. Копия файла из `komponent-l01/source/hdris/polyhaven/Studio-Small-08/`.
+- `studio_small_08_1k.hdr`: Poly Haven, «Studio Small 08», лицензия CC0, <https://polyhaven.com/a/studio_small_08>. Копия файла из `komponent-l01/source/hdris/polyhaven/Studio-Small-08/`. Используется как нейтральный фон и источник отражений в realtime-прототипе.
 
 
 ## Визуальный референс стекла
@@ -30,4 +30,4 @@
 
 `user-glass-pieces.png`: снимок, приложенный владельцем 11 сентября 2026. Использован как ориентир для процедурных форм, сколов и восьми цветов. Сохранён без ретуши, в HTML физического просмотра не встраивается. Размеры, IOR, поглощение и рельеф эльвинга не измерялись по фотографии; параметры прототипа подобраны визуально.
 
-- `forest_slope_1k.hdr`: Poly Haven, «Forest Slope», Andreas Mischok, CC0. Источник: https://polyhaven.com/a/forest_slope . Файл: https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/forest_slope_1k.hdr . Загружен 2026-09-14; используется для фона и отражений в realtime-прототипе.
+- `forest_slope_1k.hdr`: Poly Haven, «Forest Slope», Andreas Mischok, CC0. Источник: https://polyhaven.com/a/forest_slope . Файл: https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/forest_slope_1k.hdr . Загружен 2026-09-14; сохранён как прежний вариант освещения, больше не встраивается в realtime-прототип.

@@ -5,22 +5,39 @@ import * as THREE from 'three';
 import {HDRLoader} from 'HDRLoader';
 
 function fractureTexture() {
- const n=128,data=new Uint8Array(n*n*4);
+ const n=256,data=new Uint8Array(n*n*4);
+ const hash=(x,y)=>((Math.imul(x+17,73856093)^Math.imul(y+31,19349663))>>>0)/4294967295;
+ const noise=(x,y,cell)=>{
+  const gx=Math.floor(x/cell),gy=Math.floor(y/cell),fx=x/cell-gx,fy=y/cell-gy;
+  const sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy);
+  const a=hash(gx,gy)*(1-sx)+hash(gx+1,gy)*sx,b=hash(gx,gy+1)*(1-sx)+hash(gx+1,gy+1)*sx;
+  return a*(1-sy)+b*sy;
+ };
+ const cracks=Array.from({length:22},(_,i)=>{
+  const a=hash(i,101)*Math.PI*2,length=22+hash(i,102)*88;
+  const x=hash(i,103)*n,y=hash(i,104)*n;
+  return {x,y,dx:Math.cos(a)*length,dy:Math.sin(a)*length,width:.6+hash(i,105)*1.6};
+ });
  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-  const hash=Math.imul(x+11,73856093)^Math.imul(y+7,19349663);
-  const ridge=Math.abs(Math.sin(x*.049+y*.031+Math.sin(y*.08)*.11));
-  const cross=Math.abs(Math.sin(x*.036-y*.067+1.2));
-  const height=128+(hash&7)+(ridge<.018?28:0)+(cross<.014?16:0);
+  const field=.47*noise(x,y,29)+.31*noise(x,y,11)+.17*noise(x,y,4)+.05*hash(x,y);
+  let fissure=0;
+  for(const crack of cracks){
+   const t=Math.max(0,Math.min(1,((x-crack.x)*crack.dx+(y-crack.y)*crack.dy)/(crack.dx**2+crack.dy**2)));
+   const d=Math.hypot(x-crack.x-t*crack.dx,y-crack.y-t*crack.dy);
+   fissure=Math.max(fissure,Math.max(0,1-d/crack.width));
+  }
+  const height=Math.max(0,Math.min(255,59+157*field+65*fissure));
   data.set([height,height,height,255],(y*n+x)*4);
  }
  const texture=new THREE.DataTexture(data,n,n,THREE.RGBAFormat);
- texture.minFilter=texture.magFilter=THREE.LinearFilter;texture.needsUpdate=true;
+ texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+ texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.needsUpdate=true;
  return texture;
 }
 
 // Smooth the curved fracture patches while retaining normal discontinuities
 // where neighbouring triangles meet at more than 40 degrees.
-function polishedNormals(chip) {
+function polishedNormals(chip,creaseDeg=40) {
  const neighbours=Array.from({length:chip.vertices.length},()=>[]),faces=[];
  for(let i=0;i<chip.indices.length;i+=3){
   const ids=chip.indices.slice(i,i+3),[a,b,c]=ids.map(j=>chip.vertices[j]);
@@ -29,7 +46,7 @@ function polishedNormals(chip) {
   const length=Math.hypot(...area),normal=area.map(q=>q/length);
   const face={ids,area,normal};faces.push(face);for(const id of ids)neighbours[id].push(face);
  }
- const data=[],threshold=Math.cos(40*Math.PI/180);
+ const data=[],threshold=Math.cos(creaseDeg*Math.PI/180);
  for(const face of faces)for(const id of face.ids){
   const sum=[0,0,0];for(const neighbour of neighbours[id]){
    if(face.normal.reduce((dot,q,k)=>dot+q*neighbour.normal[k],0)<threshold)continue;
@@ -121,27 +138,39 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
    const indexed=new THREE.BufferGeometry();
    indexed.setAttribute('position',new THREE.Float32BufferAttribute(surface.vertices.flat(),3));indexed.setIndex(surface.indices);
    const geometry=indexed.toNonIndexed();indexed.dispose();geometry.computeVertexNormals();
-   geometry.setAttribute('uv',new THREE.Float32BufferAttribute(surface.indices.flatMap(j=>[surface.vertices[j][0]/6+.5,surface.vertices[j][1]/6+.5]),2));
+   const positions=geometry.getAttribute('position'),faceNormals=geometry.getAttribute('normal'),uv=[];
+   const uvAngle=(surface.audit.seed%6283)/1000,uvC=Math.cos(uvAngle),uvS=Math.sin(uvAngle);
+   const uvOffsetX=((surface.audit.seed>>>8)%997)/997,uvOffsetY=((surface.audit.seed>>>18)%991)/991;
+   for(let i=0;i<positions.count;i+=3){
+    const nx=Math.abs(faceNormals.getX(i)),ny=Math.abs(faceNormals.getY(i)),nz=Math.abs(faceNormals.getZ(i));
+    for(let j=i;j<i+3;j++){
+     const x=positions.getX(j),y=positions.getY(j),z=positions.getZ(j);
+     const [u,v]=nz>=nx&&nz>=ny?[x/7,y/7]:nx>=ny?[y/7,z/7]:[x/7,z/7];
+     uv.push(u*uvC-v*uvS+uvOffsetX,u*uvS+v*uvC+uvOffsetY);
+    }
+   }
+   geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
    const thickness=vertexThickness(chip,surface);
    geometry.setAttribute('glassThickness',new THREE.Float32BufferAttribute(surface.indices.map(j=>thickness[j]),1));
-   const flatNormals=geometry.getAttribute('normal'),smoothNormals=polishedNormals(surface);
+   const flatNormals=geometry.getAttribute('normal'),smoothNormals=polishedNormals(surface,chip.photoDiameterMm?23:40);
    geometry.setAttribute('normal',smoothNormals.clone());
    const tint=new THREE.Color().setRGB(...chip.color.map(v=>Math.min(1,v*variation.tintScale)),THREE.SRGBColorSpace);
    const material=new THREE.MeshPhysicalMaterial({
     color:0xffffff,metalness:0,roughness:variation.roughness*.45,transmission:1,ior:1.5,
-    thickness:chip.thicknessMm,attenuationColor:tint,attenuationDistance:3.8,
+    thickness:chip.thicknessMm,attenuationColor:tint,attenuationDistance:2.15,
     envMapIntensity:1.15,specularIntensity:1,side:THREE.FrontSide,
-    transparent:false,depthWrite:true,bumpMap:fracture,bumpScale:variation.bumpScale*.5*(options.detail??.4)
+    transparent:false,depthWrite:true,bumpMap:fracture,bumpScale:variation.bumpScale*(options.detail??.65)
    });
    material.onBeforeCompile=shader=>{
     shader.vertexShader='attribute float glassThickness;varying float vGlassThickness;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvGlassThickness=glassThickness;');
-    shader.fragmentShader='varying float vGlassThickness;\n'+shader.fragmentShader.replace('#include <transmission_fragment>',THREE.ShaderChunk.transmission_fragment.replace('material.thickness = thickness;','material.thickness = vGlassThickness;'));
+    shader.uniforms.glassDetail={value:options.detail??.65};
+    shader.fragmentShader='varying float vGlassThickness;uniform float glassDetail;\n'+shader.fragmentShader.replace('#include <roughnessmap_fragment>',THREE.ShaderChunk.roughnessmap_fragment+'\nroughnessFactor = clamp(roughnessFactor + glassDetail * 0.22 * smoothstep(0.66, 0.84, texture2D(bumpMap, vBumpMapUv).g), 0.02, 0.48);').replace('#include <transmission_fragment>',THREE.ShaderChunk.transmission_fragment.replace('material.thickness = thickness;','material.thickness = vGlassThickness * clamp(1.0 + glassDetail * (texture2D(bumpMap, vBumpMapUv).g - 0.52) * 4.2, 0.35, 2.2);'));
    };
-   material.customProgramCacheKey=()=> 'glass-local-normal-thickness-v1';
-   const mesh=new THREE.Mesh(geometry,material);mesh.userData={flatNormals,smoothNormals,lastSmooth:true,visualGeometry:geometry,collisionGeometry,glassMaterial:material,wireMaterial:new THREE.MeshBasicMaterial({color:0xffcf79,wireframe:true}),clayMaterial:new THREE.MeshStandardMaterial({color:0x92908a,roughness:.55}),supportVertices:chip.vertices,shapeFamily:chip.shapeAudit?.family,surfaceAudit:{...surface.audit,minOpticalThicknessMm:Math.min(...thickness),maxOpticalThicknessMm:Math.max(...thickness)}};mesh.frustumCulled=false;group.add(mesh);return mesh;
+   material.customProgramCacheKey=()=> 'glass-local-normal-thickness-v4';
+   const mesh=new THREE.Mesh(geometry,material);mesh.userData={flatNormals,smoothNormals,lastSmooth:true,visualGeometry:geometry,collisionGeometry,glassMaterial:material,wireMaterial:new THREE.MeshBasicMaterial({color:0xffcf79,wireframe:true}),clayMaterial:new THREE.MeshStandardMaterial({color:0x92908a,roughness:.55}),supportVertices:chip.vertices,shapeFamily:chip.shapeAudit?.family,colorId:chip.colorId,photoProfile:Boolean(chip.photoDiameterMm),surfaceAudit:{...surface.audit,minOpticalThicknessMm:Math.min(...thickness),maxOpticalThicknessMm:Math.max(...thickness)}};mesh.frustumCulled=false;group.add(mesh);return mesh;
   });
  }
- function render(sourceTexture,poses,{size:next=512,rollDeg=0,tiltDeg=0,lightDeg=0,intensity=1,smooth=true,layers=4,exposure=1,sourceLinear=false,glow=.65,showColliders=false,study=false,studyTurn=0,studyTilt=0,studyMaterial='glass'}={}) {
+ function render(sourceTexture,poses,{size:next=512,rollDeg=0,tiltDeg=0,lightDeg=0,intensity=1,smooth=true,layers=6,exposure=1,sourceLinear=false,glow=.65,showColliders=false,study=false,studyTurn=0,studyTilt=0,studyMaterial='glass'}={}) {
   if(disposed)throw Error('PBR chip view is disposed');
   if(poses.length!==meshes.length)throw Error('Every PBR chip requires its rigid-body pose');
   next=Math.max(32,Math.min(1024,Math.round(next)));
@@ -160,7 +189,11 @@ export async function createPBRChipView(gl, {environmentBytes} = {}) {
   scene.environmentIntensity=1.1*intensity;
   // Same yaw as the photographed HDRI background. Object rotation changes reflections itself.
   scene.environmentRotation.setFromRotationMatrix(new THREE.Matrix4().setFromMatrix3(new THREE.Matrix3().fromArray(orientation.environmentToView)));
-  const sampleIndices=[];for(const family of ['short','wedge','splinter','flake']){const index=meshes.findIndex(m=>m.userData.shapeFamily===family);if(index>=0&&!sampleIndices.includes(index))sampleIndices.push(index);}
+  const sampleIndices=[];
+  if(meshes.some(m=>m.userData.photoProfile))for(const color of ['orange-yellow','bright-blue','aquamarine','kiwi','fuchsia','ruby']){
+   const index=meshes.findIndex(m=>m.userData.colorId===color);if(index>=0&&!sampleIndices.includes(index))sampleIndices.push(index);
+  }
+  else for(const family of ['short','wedge','splinter','flake']){const index=meshes.findIndex(m=>m.userData.shapeFamily===family);if(index>=0&&!sampleIndices.includes(index))sampleIndices.push(index);}
   for(let i=0;sampleIndices.length<Math.min(6,meshes.length);i++)if(!sampleIndices.includes(i))sampleIndices.push(i);
   for(let i=0;i<meshes.length;i++){
    const mesh=meshes[i],pose=poses[i];mesh.castShadow=study;mesh.position.fromArray(pose.positionMm);mesh.quaternion.fromArray(pose.rotation);

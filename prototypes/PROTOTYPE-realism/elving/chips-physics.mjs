@@ -1,7 +1,7 @@
-import {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G,makeBrokenChip} from './broken-chip.mjs';
+import {AUTHOR_FILL_COLORS,AUTHOR_FILL_DEPTH_MM,AUTHOR_FILL_MASS_G,PHOTO_FILL_PROFILE,makeBrokenChip} from './broken-chip.mjs';
 import { chamberFromCAD } from '../geometry.mjs';
 
-export {AUTHOR_FILL_COLORS,AUTHOR_FILL_MASS_G};
+export {AUTHOR_FILL_COLORS,AUTHOR_FILL_DEPTH_MM,AUTHOR_FILL_MASS_G,PHOTO_FILL_PROFILE};
 
 const FIXED_DT = 1 / 240;
 const PLAYBACK_RATE = .5;
@@ -13,15 +13,15 @@ const WALLS = 32;
 const CLEARANCE = .16;
 const DENSITY_KG_MM3 = 2.5e-6;
 const randomFrom = seed => { let n = seed >>> 0; return () => { n += 0x6d2b79f5; let t = Math.imul(n ^ n >>> 15, 1 | n); t ^= t + Math.imul(t ^ t >>> 7, 61 | t); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
-export function chipChamberAudit(cad) {
- const c=chamberFromCAD(cad), radiusMm=c.radiusMm-CLEARANCE;
- return Object.freeze({radiusMm:c.radiusMm,floorEnvelopeMm:c.floorEnvelopeMm,ceilingMm:c.ceilingMm,wallSegments:WALLS,solverWallApothemMm:radiusMm*Math.cos(Math.PI/WALLS),solverFloorMm:c.floorEnvelopeMm+CLEARANCE,solverCeilingMm:c.ceilingMm-CLEARANCE,clearanceMm:CLEARANCE,hardProjectionWallApothemMm:(c.radiusMm-.01)*Math.cos(Math.PI/WALLS),hardProjectionFloorMm:c.floorEnvelopeMm+.01,hardProjectionCeilingMm:c.ceilingMm-.01,approximation:'Conservative 32-sided inscribed cylinder and planar maximum-z CAD floor envelope. Actual Elving recesses and surface facets do not participate in chip contacts.',nominalVolumeMm3:Math.PI*c.radiusMm**2*c.nominalGapMm});
+export function chipChamberAudit(cad,{measuredDepthMm=null}={}) {
+ const c=chamberFromCAD(cad), radiusMm=c.radiusMm-CLEARANCE,ceilingMm=measuredDepthMm===null?c.ceilingMm:c.floorEnvelopeMm+measuredDepthMm;
+ return Object.freeze({radiusMm:c.radiusMm,floorEnvelopeMm:c.floorEnvelopeMm,ceilingMm,measuredDepthMm,wallSegments:WALLS,solverWallApothemMm:radiusMm*Math.cos(Math.PI/WALLS),solverFloorMm:c.floorEnvelopeMm+CLEARANCE,solverCeilingMm:ceilingMm-CLEARANCE,clearanceMm:CLEARANCE,hardProjectionWallApothemMm:(c.radiusMm-.01)*Math.cos(Math.PI/WALLS),hardProjectionFloorMm:c.floorEnvelopeMm+.01,hardProjectionCeilingMm:ceilingMm-.01,approximation:'Conservative 32-sided inscribed cylinder and planar floor envelope; measured depth overrides the CAD ceiling for the photo profile. Actual Elving recesses and surface facets do not participate in chip contacts.',nominalVolumeMm3:Math.PI*c.radiusMm**2*(ceilingMm-c.floorEnvelopeMm)});
 }
 
-export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=1,sizeVariation=0,bulk=.65}={}) {
+export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=1,sizeVariation=0,bulk=.65,profile=null}={}) {
  if(!Number.isFinite(sizeScale)||sizeScale<=0)throw Error('Chip sizeScale must be a positive finite number');
  if(!Number.isFinite(sizeVariation)||sizeVariation<0||sizeVariation>=1)throw Error('Chip sizeVariation must be finite and between zero and one');
- const chamber=chipChamberAudit(cad), world=new RAPIER.World({x:0,y:-GRAVITY_MM_S2,z:0});
+ const chamber=chipChamberAudit(cad,{measuredDepthMm:profile?AUTHOR_FILL_DEPTH_MM:null}), world=new RAPIER.World({x:0,y:-GRAVITY_MM_S2,z:0});
  world.timestep=FIXED_DT;
  const p=world.integrationParameters;
  // Geometry is authored in millimetres. Rapier's normalized tolerances are
@@ -38,13 +38,13 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
  const R=RAPIER, fixed=R.RigidBodyDesc.fixed();
  const wallNormals=Array.from({length:WALLS},(_,i)=>[Math.cos(i*2*Math.PI/WALLS),Math.sin(i*2*Math.PI/WALLS)]);
  const wallBody=world.createRigidBody(fixed);
- const wallRadius=chamber.solverWallApothemMm, projectionWallRadius=chamber.hardProjectionWallApothemMm, wallDepth=3, halfWidth=wallRadius*Math.tan(Math.PI/WALLS)+.5;
+ const wallRadius=chamber.solverWallApothemMm, projectionWallRadius=chamber.hardProjectionWallApothemMm, wallDepth=3, halfWidth=wallRadius*Math.tan(Math.PI/WALLS)+.5,wallHalfHeight=(chamber.solverCeilingMm-chamber.solverFloorMm)/2+4,wallCenterZ=(chamber.solverCeilingMm+chamber.solverFloorMm)/2;
  for(let i=0;i<WALLS;i++) {
   const a=i*2*Math.PI/WALLS, q={x:0,y:0,z:Math.sin(a/2),w:Math.cos(a/2)};
-  world.createCollider(R.ColliderDesc.cuboid(wallDepth/2,halfWidth,9).setTranslation(Math.cos(a)*(wallRadius+wallDepth/2),Math.sin(a)*(wallRadius+wallDepth/2),4.75).setRotation(q).setFriction(.3).setRestitution(.015),wallBody);
+  world.createCollider(R.ColliderDesc.cuboid(wallDepth/2,halfWidth,wallHalfHeight).setTranslation(Math.cos(a)*(wallRadius+wallDepth/2),Math.sin(a)*(wallRadius+wallDepth/2),wallCenterZ).setRotation(q).setFriction(.3).setRestitution(.015),wallBody);
  }
  for(const z of [chamber.solverFloorMm-2,chamber.solverCeilingMm+2]) world.createCollider(R.ColliderDesc.cuboid(23,23,2).setTranslation(0,0,z).setFriction(.3).setRestitution(.015),wallBody);
- let chips=[],bodies=[],colliders=[],accumulator=0,steps=0,roll=0,tilt=0,moving=true,stableFor=0,actionAge=0,lastRmsLinear=0,lastRmsAngular=0,smoothLinear=0,smoothAngular=0,freezeReason=null,disposed=false,boundaryCorrections=0,maxBoundaryCorrectionMm=0;
+ let chips=[],bodies=[],colliders=[],accumulator=0,steps=0,roll=0,tilt=0,moving=true,stableFor=0,actionAge=0,lastRmsLinear=0,lastRmsAngular=0,smoothLinear=0,smoothAngular=0,freezeReason=null,disposed=false,boundaryCorrections=0,maxBoundaryCorrectionMm=0,maxInitialPenetrationMm=0;
  let random=randomFrom(seed),shakeMotion=null,shakeSerial=0;
  const api={get chips(){return chips;},chamberAudit:chamber,poses,step,orient,shake,reset,snapshot,dispose};
  function gravityForOrientation() {
@@ -58,10 +58,85 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   const maximumScale=sizeScale*(1+sizeVariation),enlarged=maximumScale>1,layerPitch=2.195*maximumScale+.03;
   const layerCapacity=enlarged?Math.floor((chamber.solverCeilingMm-chamber.solverFloorMm+.03)/layerPitch):0;
   const capacity=enlarged?Math.min(MAX_COUNT,13*layerCapacity):MAX_COUNT;
-  count=Math.max(0,Math.min(capacity,Math.round(Number(nextCount)||0)));
+  count=Math.max(0,Math.min(profile?profile.length:capacity,Math.round(Number(nextCount)||0)));
   random=randomFrom(seed);shakeMotion=null;shakeSerial=0;world.gravity=gravityForOrientation();
   for(const b of bodies)world.removeRigidBody(b);
-  bodies=[];colliders=[];chips=[];accumulator=0;
+  bodies=[];colliders=[];chips=[];accumulator=0;maxInitialPenetrationMm=0;boundaryCorrections=0;maxBoundaryCorrectionMm=0;
+  if(profile){
+   // Keep all three dimensions tied to the photographed fragment and measured
+   // heights. A small common height correction makes the full 40-piece fill
+   // agree with the weighed 11.4 g while staying within measurement error.
+   const prepared=Array.from({length:count},(_,i)=>{
+    const spec=profile[i],chip=makeBrokenChip(i,random,false,{bulk,colorId:spec.colorId,family:spec.family,ice:spec.ice,photo:true});
+    const diameter=2*Math.max(...chip.vertices.map(([x,y])=>Math.hypot(x,y)));
+    return {chip,spec,xyScale:spec.diameterMm/diameter};
+   });
+   const uncorrectedVolume=prepared.reduce((sum,{chip,spec,xyScale})=>sum+chip.volumeMm3*xyScale**2*spec.heightMm/chip.thicknessMm,0);
+   const targetVolumeMm3=AUTHOR_FILL_MASS_G/(DENSITY_KG_MM3*1000);
+   const heightCorrection=count===profile.length?targetVolumeMm3/uncorrectedVolume:1;
+   for(const {chip,spec,xyScale} of prepared){
+    const zScale=spec.heightMm*heightCorrection/chip.thicknessMm;
+    chip.vertices=chip.vertices.map(([x,y,z])=>[x*xyScale,y*xyScale,z*zScale]);
+    chip.thicknessMm*=zScale;chip.volumeMm3*=xyScale**2*zScale;
+    chip.boundingRadiusMm=Math.max(...chip.vertices.map(v=>Math.hypot(...v)));
+    chip.photoDiameterMm=spec.diameterMm;chip.photoHeightMm=spec.heightMm;chip.sizeScale=xyScale;
+   }
+   // Interleave the three size classes. Probe real Rapier hulls for free
+   // positions, then relax the tightest placements before showing a frame.
+   // Keep the chamber weightless until the initial arrangement is ready.
+   world.gravity={x:0,y:0,z:0};world.step();
+   const bySize=prepared.map((entry,i)=>({...entry,i})).sort((a,b)=>b.spec.diameterMm-a.spec.diameterMm);
+   const largePieces=bySize.filter(e=>e.spec.heightMm>=5),mediumPieces=bySize.filter(e=>e.spec.heightMm===3),smallPieces=bySize.filter(e=>e.spec.heightMm<3);
+   const placed=[];
+   while(largePieces.length||mediumPieces.length||smallPieces.length){if(largePieces.length)placed.push(largePieces.shift());if(mediumPieces.length)placed.push(mediumPieces.shift());if(mediumPieces.length)placed.push(mediumPieces.shift());if(smallPieces.length)placed.push(smallPieces.shift());}
+   let packed=false,bestPlaced=0;
+   for(let restart=0;restart<32&&!packed;restart++){
+    for(const body of bodies)if(body)world.removeRigidBody(body);
+    chips=[];bodies=[];colliders=[];world.step();
+    let largePlaced=0,failed=false;
+   for(const {chip,i} of placed){
+    const shape=new R.ConvexPolyhedron(new Float32Array(chip.vertices.flat()));
+    const large=chip.photoHeightMm>=5;
+    let pose=null,fallback=null,minHits=Infinity;
+    for(let attempt=0;attempt<1600;attempt++){
+     const yaw=random()*Math.PI*2,tilt=(random()-.5)*(large?.24:1.35);
+     const sy=Math.sin(yaw/2),cy=Math.cos(yaw/2),st=Math.sin(tilt/2),ct=Math.cos(tilt/2);
+     const q={x:cy*st,y:sy*st,z:sy*ct,w:cy*ct};
+     const points=chip.vertices.map(([vx,vy,vz])=>{
+      const tx=2*(q.y*vz-q.z*vy),ty=2*(q.z*vx-q.x*vz),tz=2*(q.x*vy-q.y*vx);
+      return [vx+q.w*tx+q.y*tz-q.z*ty,vy+q.w*ty+q.z*tx-q.x*tz,vz+q.w*tz+q.x*ty-q.y*tx];
+     });
+     const zMin=chamber.solverFloorMm-Math.min(...points.map(p=>p[2]))+.06;
+     const zMax=chamber.solverCeilingMm-Math.max(...points.map(p=>p[2]))-.06;
+     const maxRadius=wallRadius-Math.max(...points.map(([x,y])=>Math.hypot(x,y)))-.06;
+     if(zMin>zMax||maxRadius<=0)continue;
+     const azimuth=random()*Math.PI*2,radius=maxRadius*Math.sqrt(random());
+     const x=radius*Math.cos(azimuth),y=radius*Math.sin(azimuth),z=large?(largePlaced%2?zMax:zMin):(random()<.5?zMin:zMax);
+     if(wallNormals.some(([nx,ny])=>points.some(([vx,vy])=>(x+vx)*nx+(y+vy)*ny>wallRadius-.01)))continue;
+     let hits=0;
+     world.intersectionsWithShape({x,y,z},q,shape,()=>{hits++;return true;});
+     if(hits<minHits){minHits=hits;fallback={x,y,z,q};}
+     if(!hits){pose={x,y,z,q};break;}
+    }
+    if(!pose)pose=fallback;
+    if(!pose){failed=true;break;}
+    const body=world.createRigidBody(R.RigidBodyDesc.dynamic().setTranslation(pose.x,pose.y,pose.z).setRotation(pose.q).setCcdEnabled(true).setLinearDamping(3).setAngularDamping(35).setCanSleep(true));
+    const hull=R.ColliderDesc.convexHull(new Float32Array(chip.vertices.flat()));
+    if(!hull)throw Error(`Invalid photo glass hull ${i}`);
+    const collider=world.createCollider(hull.setDensity(DENSITY_KG_MM3).setFriction(.34).setRestitution(.015),body);
+    chips[i]=chip;bodies[i]=body;colliders[i]=collider;for(let j=0;j<(minHits?12:1);j++)world.step();
+    if(large)largePlaced++;
+   }
+    bestPlaced=Math.max(bestPlaced,bodies.filter(Boolean).length);
+    packed=!failed;
+   }
+   if(!packed)throw Error(`The photographed filling cannot be packed in the CAD chamber (best ${bestPlaced}/${count})`);
+   // Settle the few unavoidable close placements before the first visible frame.
+   for(let j=0;j<480;j++){world.step();enforceBoundary();}
+   for(let i=0;i<count;i++)for(let j=i+1;j<count;j++)world.contactPair(colliders[i],colliders[j],manifold=>{for(let k=0;k<manifold.numContacts();k++)maxInitialPenetrationMm=Math.max(maxInitialPenetrationMm,-manifold.contactDist(k));});
+   world.gravity=gravityForOrientation();wake();if(count===0)moving=false;
+   return;
+  }
   const slots=[];
   const xyPitch=enlarged?5.6*maximumScale+.02:5.65;
   for(let q=-3;q<=3;q++)for(let r=-3;r<=3;r++)if(Math.max(Math.abs(q),Math.abs(r),Math.abs(q+r))<=3&&q*q+q*r+r*r<(enlarged?4:9))slots.push([xyPitch*(q+r*.5),xyPitch*Math.sqrt(3)/2*r]);
@@ -172,7 +247,7 @@ export function createChipPhysics(RAPIER,cad,{count=108,seed=0x4e17a9,sizeScale=
   }
   return moved;
  }
- function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0),chipScales=chips.map(chip=>chip.sizeScale);return {moving,sleeping,steps,shaking:shakeMotion!==null,count:chips.length,sizeScale,sizeVariation,chipScaleRange:chipScales.length?[Math.min(...chipScales),Math.max(...chipScales)]:[0,0],bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,playbackRate:PLAYBACK_RATE,shakeDurationSeconds:SHAKE_DURATION_SECONDS,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:SETTLE_WINDOW_SECONDS,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
+ function snapshot(){const sleeping=bodies.filter(b=>b.isSleeping()).length,solidVolumeMm3=chips.reduce((sum,c)=>sum+c.volumeMm3,0),chipScales=chips.map(chip=>chip.sizeScale);return {moving,sleeping,steps,shaking:shakeMotion!==null,count:chips.length,sizeScale,sizeVariation,chipScaleRange:chipScales.length?[Math.min(...chipScales),Math.max(...chipScales)]:[0,0],bulk,rollDeg:roll,tiltDeg:tilt,fixedDtSeconds:FIXED_DT,playbackRate:PLAYBACK_RATE,shakeDurationSeconds:SHAKE_DURATION_SECONDS,maxCatchupSteps:4,stableForSeconds:stableFor,smoothedRmsLinearMmPerSecond:smoothLinear,smoothedRmsAngularRadPerSecond:smoothAngular,actionAgeSeconds:actionAge,freezeReason,lastRmsLinearMmPerSecond:lastRmsLinear,lastRmsAngularRadPerSecond:lastRmsAngular,boundaryCorrections,maxBoundaryCorrectionMm,maxInitialPenetrationMm,hardBoundaryProjection:true,settlePolicy:{minActionAgeSeconds:1.5,sustainedSeconds:SETTLE_WINDOW_SECONDS,smoothedRmsLinearLimitMmPerSecond:8,smoothedRmsAngularLimitRadPerSecond:3,linearDamping:3,angularDamping:35},solidVolumeMm3,nominalSolidFraction:solidVolumeMm3/chamber.nominalVolumeMm3,chamberAudit:chamber};}
  function dispose(){if(!disposed){world.free();disposed=true;moving=false;}}
  reset(count);return api;
 }
